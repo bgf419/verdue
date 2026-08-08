@@ -45,6 +45,20 @@ type Profile = {
   zip: string;
 };
 
+type StoredClaim = {
+  id: string;
+  caseId: string;
+  personalStatus: string;
+  statusProvenance: string;
+  confirmationNumber: string | null;
+  submittedAt: string | null;
+  approvedAmountCents: number | null;
+  receivedAmountCents: number | null;
+  amountSource: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
 type ClaimAppProps = {
   user: User;
   signInPath: string;
@@ -132,6 +146,7 @@ export default function ClaimApp({ user, signInPath }: ClaimAppProps) {
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [toast, setToast] = useState("");
   const [profileSaved, setProfileSaved] = useState(false);
+  const [storedClaims, setStoredClaims] = useState<StoredClaim[]>([]);
   const [profile, setProfile] = useState<Profile>({
     fullName: user?.displayName ?? "",
     email: user?.email ?? "",
@@ -163,20 +178,25 @@ export default function ClaimApp({ user, signInPath }: ClaimAppProps) {
   useEffect(() => {
     if (!user) return;
     let cancelled = false;
-    fetch("/api/profile")
-      .then((response) => (response.ok ? response.json() : null))
-      .then((result) => {
-        if (cancelled || !result?.profile) return;
-        setProfile({
-          fullName: result.profile.fullName ?? user.displayName,
-          email: result.profile.email ?? user.email,
-          phone: result.profile.phone ?? "",
-          address: result.profile.address ?? "",
-          city: result.profile.city ?? "",
-          state: result.profile.state ?? "",
-          zip: result.profile.zip ?? "",
-        });
-        setProfileSaved(true);
+    Promise.all([
+      fetch("/api/profile").then((response) => (response.ok ? response.json() : null)),
+      fetch("/api/applications").then((response) => (response.ok ? response.json() : null)),
+    ])
+      .then(([profileResult, claimsResult]) => {
+        if (cancelled) return;
+        if (profileResult?.profile) {
+          setProfile({
+            fullName: profileResult.profile.fullName ?? user.displayName,
+            email: profileResult.profile.email ?? user.email,
+            phone: profileResult.profile.phone ?? "",
+            address: profileResult.profile.address ?? "",
+            city: profileResult.profile.city ?? "",
+            state: profileResult.profile.state ?? "",
+            zip: profileResult.profile.zip ?? "",
+          });
+          setProfileSaved(true);
+        }
+        if (Array.isArray(claimsResult?.claims)) setStoredClaims(claimsResult.claims);
       })
       .catch(() => undefined);
     return () => {
@@ -250,7 +270,16 @@ export default function ClaimApp({ user, signInPath }: ClaimAppProps) {
         method: "POST",
         headers: { "content-type": "application/json" },
         body: JSON.stringify({ caseId: item.id, action: "official_site_opened" }),
-      }).catch(() => undefined);
+      })
+        .then((response) => (response.ok ? response.json() : null))
+        .then((result) => {
+          if (!result?.claim) return;
+          setStoredClaims((current) => [
+            result.claim,
+            ...current.filter((claim) => claim.caseId !== result.claim.caseId),
+          ]);
+        })
+        .catch(() => undefined);
     }
     window.open(item.claimUrl, "_blank", "noopener,noreferrer");
     setToast(user ? "Official form opened · activity recorded" : "Official claim form opened");
@@ -563,24 +592,41 @@ export default function ClaimApp({ user, signInPath }: ClaimAppProps) {
           {!user && (
             <div className="demo-banner"><Sparkles size={17} /><span><strong>Example tracker</strong> — create an account to keep your own confirmations, reminders, and outcomes.</span><button onClick={() => setAccountOpen(true)}>Create account</button></div>
           )}
+          {user && storedClaims.length === 0 && (
+            <div className="demo-banner"><Info size={17} /><span><strong>Your ledger is empty.</strong> Open an official form from Discover and Verdue will record the handoff here.</span><button onClick={() => setPage("discover")}>Browse claims</button></div>
+          )}
           <div className="claim-summary-grid">
-            <div><span>Needs attention</span><strong>1</strong><small>One deadline this month</small></div>
-            <div><span>In progress</span><strong>2</strong><small>Awaiting administrator review</small></div>
-            <div><span>Finished</span><strong>1</strong><small>Payment outcome recorded</small></div>
-            <div className="received-card"><span>Total received</span><strong>$31.77</strong><small>User-reported example</small></div>
+            <div><span>Needs attention</span><strong>{user ? 0 : 1}</strong><small>{user ? "No recorded action due" : "Example: one deadline this month"}</small></div>
+            <div><span>In progress</span><strong>{user ? storedClaims.length : 2}</strong><small>{user ? "Official-site handoffs recorded" : "Example administrator reviews"}</small></div>
+            <div><span>Finished</span><strong>{user ? storedClaims.filter((claim) => claim.receivedAmountCents !== null).length : 1}</strong><small>Payment outcome recorded</small></div>
+            <div className="received-card"><span>Total received</span><strong>{user ? `$${(storedClaims.reduce((sum, claim) => sum + (claim.receivedAmountCents ?? 0), 0) / 100).toFixed(2)}` : "$31.77"}</strong><small>{user ? "From your recorded outcomes" : "User-reported example"}</small></div>
           </div>
           <div className="claim-ledger">
-            <div className="ledger-head"><div><h2>Application history</h2><p>Example records show how provenance is labeled.</p></div><button><Filter size={15} /> Filter</button></div>
-            {demoClaims.map((claim) => (
-              <div className="ledger-row" key={claim.company}>
-                <span className={`ledger-status-dot ${claim.tone}`} />
-                <div className="ledger-company"><strong>{claim.company}</strong><span>{claim.title}</span></div>
-                <div><small>Personal claim status</small><strong>{claim.status}</strong><span>{claim.provenance}</span></div>
-                <div><small>Activity</small><strong>{claim.date}</strong><span>Case page checked recently</span></div>
-                <div><small>Benefit outcome</small><strong>{claim.amount}</strong><span>Never inferred from case status</span></div>
-                <button aria-label={`Open ${claim.company} claim history`}><ArrowRight size={18} /></button>
-              </div>
-            ))}
+            <div className="ledger-head"><div><h2>Application history</h2><p>{user ? "Your records show the source of every status." : "Example records show how provenance is labeled."}</p></div><button><Filter size={15} /> Filter</button></div>
+            {(user && storedClaims.length > 0
+              ? storedClaims.map((claim) => {
+                  const item = cases.find((entry) => entry.id === claim.caseId);
+                  return {
+                    company: item?.company ?? "Tracked claim",
+                    title: item?.title ?? claim.caseId,
+                    status: claim.personalStatus === "continued_to_official_site" ? "Continued to official site" : claim.personalStatus,
+                    provenance: "Recorded from your Verdue action",
+                    date: `Activity ${new Date(claim.updatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" })}`,
+                    amount: claim.receivedAmountCents !== null ? `$${(claim.receivedAmountCents / 100).toFixed(2)} received` : "Outcome unknown",
+                    tone: "progress" as const,
+                  };
+                })
+              : demoClaims
+            ).map((claim) => (
+                <div className="ledger-row" key={`${claim.company}-${claim.title}`}>
+                  <span className={`ledger-status-dot ${claim.tone}`} />
+                  <div className="ledger-company"><strong>{claim.company}</strong><span>{claim.title}</span></div>
+                  <div><small>Personal claim status</small><strong>{claim.status}</strong><span>{claim.provenance}</span></div>
+                  <div><small>Activity</small><strong>{claim.date}</strong><span>Case page checked recently</span></div>
+                  <div><small>Benefit outcome</small><strong>{claim.amount}</strong><span>Never inferred from case status</span></div>
+                  <button aria-label={`Open ${claim.company} claim history`}><ArrowRight size={18} /></button>
+                </div>
+              ))}
           </div>
         </section>
       )}

@@ -30,38 +30,34 @@ export async function POST(request: Request) {
   const now = new Date().toISOString();
   const id = crypto.randomUUID();
   const db = getDb();
-  const [claim] = await db.batch([
-    db
-      .insert(userClaims)
-      .values({
-        id,
-        userId: user.userId,
-        caseId,
+  const [claim] = await db
+    .insert(userClaims)
+    .values({
+      id,
+      userId: user.userId,
+      caseId,
+      personalStatus: "continued_to_official_site",
+      statusProvenance: "user_action",
+      createdAt: now,
+      updatedAt: now,
+    })
+    .onConflictDoUpdate({
+      target: [userClaims.userId, userClaims.caseId],
+      set: {
         personalStatus: "continued_to_official_site",
         statusProvenance: "user_action",
-        createdAt: now,
         updatedAt: now,
-      })
-      .onConflictDoUpdate({
-        target: [userClaims.userId, userClaims.caseId],
-        set: {
-          personalStatus: "continued_to_official_site",
-          statusProvenance: "user_action",
-          updatedAt: now,
-        },
-      })
-      .returning(),
-    db
-      .insert(userClaimEvents)
-      .values({
-        userClaimId: id,
-        userId: user.userId,
-        eventType: payload.action === "submitted" ? "submitted_user_reported" : "official_site_opened",
-        provenance: "user_action",
-        happenedAt: now,
-      })
-      .returning(),
-  ]);
+      },
+    })
+    .returning();
 
-  return Response.json({ claim: claim[0] }, { status: 201 });
+  await db.insert(userClaimEvents).values({
+    userClaimId: claim.id,
+    userId: user.userId,
+    eventType: payload.action === "submitted" ? "submitted_user_reported" : "official_site_opened",
+    provenance: "user_action",
+    happenedAt: now,
+  });
+
+  return Response.json({ claim }, { status: 201 });
 }
