@@ -40,3 +40,15 @@ test("account login is separated from real contact email", async () => {
   assert.doesNotMatch(source, /signUp\(input: \{[^}]*email:/);
   assert.doesNotMatch(source, /email: initialUser/);
 });
+
+test("curated destinations are not overclaimed as direct claim forms", async () => {
+  const catalog = await readFile(new URL("../app/catalog.ts", import.meta.url), "utf8");
+
+  assert.match(catalog, /actionLabel: "Open official settlement site"/);
+  assert.match(catalog, /actionRole: "verified_official_settlement_site"/);
+  assert.match(catalog, /verificationState: "official_settlement_site_checked"/);
+  assert.doesNotMatch(
+    catalog,
+    /Open official claim form|verified_official_form|controlling_document_verified/,
+  );
+});

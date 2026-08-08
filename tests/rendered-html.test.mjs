@@ -24,7 +24,7 @@ test("public product is standalone and catalog-driven", async () => {
   assert.match(client, /Possible match ≠ eligibility decision/);
   assert.match(client, /This service is not a law firm/);
   assert.doesNotMatch(adapter, /rawCatalog|data\/catalog\.json/);
-  assert.match(adapter, /controlling_document_verified/);
+  assert.match(adapter, /official_settlement_site_checked/);
 });
 
 test("coverage claims remain bounded and source health is visible", async () => {

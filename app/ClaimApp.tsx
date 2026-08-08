@@ -244,21 +244,21 @@ function kindLabel(kind: CatalogKind) {
 }
 
 function sourceLevelLabel(item: CatalogCase) {
-  if (item.verificationState === "controlling_document_verified") return "Official claim site checked";
+  if (item.verificationState === "official_settlement_site_checked") return "Official settlement site checked";
   if (item.verificationState === "agency_source_only") return "Official agency page";
   if (item.verificationState === "court_docket_metadata") return "Federal docket metadata";
   return "Secondary discovery source";
 }
 
 function sourceDetailHeading(item: CatalogCase) {
-  if (item.verificationState === "controlling_document_verified") return "Official claim destination checked";
+  if (item.verificationState === "official_settlement_site_checked") return "Official settlement site checked";
   if (item.verificationState === "agency_source_only") return "Official agency program page";
   if (item.verificationState === "court_docket_metadata") return "Federal docket metadata";
   return "Discovery source only";
 }
 
 function sourceDetailText(item: CatalogCase) {
-  if (item.verificationState === "controlling_document_verified") {
+  if (item.verificationState === "official_settlement_site_checked") {
     return `${item.administrator} maintains the linked claim information.`;
   }
   if (item.verificationState === "agency_source_only") {
@@ -687,7 +687,7 @@ export default function ClaimApp({
       return;
     }
     const activityType =
-      item.actionRole === "verified_official_form"
+      item.actionRole === "verified_official_settlement_site"
         ? "official_site_opened"
         : item.actionRole === "legal_intake"
           ? "legal_intake_opened"
@@ -1430,7 +1430,7 @@ export default function ClaimApp({
               {coverage.sources.map((source) => (
                 <div className="coverage-row" role="row" key={source.id}><span><a href={source.url} target="_blank" rel="noreferrer">{source.label} <ExternalLink size={11} /></a></span><span>{source.recordCount.toLocaleString()} records checked</span><span>Daily</span><b className={source.status === "ok" ? "status-live" : source.status === "partial" ? "status-partial" : "status-hold"}>{source.status === "ok" ? "Current" : source.status === "partial" ? "Partial backfill" : "Failed"}</b></div>
               ))}
-              <div className="coverage-row" role="row"><span>Individually checked claim destinations</span><span>{allCases.filter((item) => item.verificationState === "controlling_document_verified").length} hand-reviewed claim sites</span><span>On material change</span><b className="status-partial">Partial</b></div>
+              <div className="coverage-row" role="row"><span>Individually checked settlement sites</span><span>{allCases.filter((item) => item.verificationState === "official_settlement_site_checked").length} hand-reviewed sites</span><span>On material change</span><b className="status-partial">Partial</b></div>
               <div className="coverage-row" role="row"><span>Federal duration benchmark</span><span>{defaultDurationCohort.recordCounts.included.toLocaleString()} unique FJC dockets; snapshot {durationBenchmarks.source.snapshotDate}</span><span>Quarterly</span><b className="status-partial">Medium confidence</b></div>
               <div className="coverage-row" role="row"><span>State courts</span><span>Partial; no complete national feed</span><span>Daily</span><b className="status-hold">Coverage gap</b></div>
               <div className="coverage-row" role="row"><span>Personal claim status</span><span>{storageMode === "supabase" ? "Account-bound private records" : "Browser-stored, user-recorded activity"}</span><span>On change</span><b className={storageMode === "supabase" ? "status-live" : "status-partial"}>{storageMode === "supabase" ? "Connected" : "Browser only"}</b></div>
@@ -1488,7 +1488,7 @@ export default function ClaimApp({
               <aside className="modal-side">
                 {activeCase.freshness === "stale" && <div className="stale-modal-warning" role="alert"><Info size={18} /><div><strong>Action link paused</strong><span>This record was retained after its source could not be refreshed. Use the source record below to verify the latest deadline and instructions.</span></div></div>}
                 <div className="official-box"><ShieldCheck size={21} /><h3>{sourceDetailHeading(activeCase)}</h3><p>{sourceDetailText(activeCase)}</p><a href={activeCase.sourceUrl} target="_blank" rel="noreferrer">View source record <ExternalLink size={14} /></a>{activeCase.sourceNote && <span className="source-change"><Info size={14} /> {activeCase.sourceNote}</span>}</div>
-                {!persistenceDisabled && activeCase.actionRole !== "source_only" && activeCase.actionRole !== "agency_program" && <div className="field-preview"><div><h3>Reusable profile</h3><span>{profileSaved ? "Ready" : "Not complete"}</span></div><p>Copy common contact fields, then review every answer on the external form.</p><button onClick={() => void copyProfileSummary()}><Copy size={15} /> {profileSaved ? "Copy contact fields" : "Set up profile"}</button></div>}
+                {!persistenceDisabled && activeCase.actionRole !== "source_only" && activeCase.actionRole !== "agency_program" && <div className="field-preview"><div><h3>Reusable profile</h3><span>{profileSaved ? "Ready" : "Not complete"}</span></div><p>Copy common contact fields, then follow the official instructions and review every form answer.</p><button onClick={() => void copyProfileSummary()}><Copy size={15} /> {profileSaved ? "Copy contact fields" : "Set up profile"}</button></div>}
                 <button className="official-cta" disabled={activeCase.freshness === "stale"} onClick={() => continueToClaim(activeCase)}>{activeCase.freshness === "stale" ? "Action paused until source is rechecked" : activeCase.actionLabel} {activeCase.freshness !== "stale" && <ExternalLink size={16} />}</button>
                 <small className="handoff-note">{activeCase.freshness === "stale" ? "Open the source record above and verify the current information before taking action." : <>You will leave Verdue. {activeCase.actionRole === "source_only" || activeCase.actionRole === "agency_program" ? "Opening this source is not recorded as an application." : "Opening a destination is recorded as a handoff, never as a submitted or accepted claim."}</>}</small>
               </aside>
