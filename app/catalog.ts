@@ -41,7 +41,7 @@ export type CatalogCase = {
   actionUrl: string;
   actionLabel: string;
   actionRole:
-    | "verified_official_form"
+    | "verified_official_settlement_site"
     | "publisher_labeled_destination"
     | "legal_intake"
     | "source_only"
@@ -69,7 +69,7 @@ export type CatalogCase = {
   firstSeenAt: string;
   lastChangedAt: string;
   verificationState:
-    | "controlling_document_verified"
+    | "official_settlement_site_checked"
     | "secondary_source_only"
     | "court_docket_metadata"
     | "agency_source_only";
@@ -333,15 +333,15 @@ const curatedOnlyCases: CatalogCase[] = curatedCases
     ...item,
     sourceRecordId: `manual-${item.id}`,
     actionUrl: item.claimUrl,
-    actionLabel: "Open official claim form",
-    actionRole: "verified_official_form",
+    actionLabel: "Open official settlement site",
+    actionRole: "verified_official_settlement_site",
     kind: "settlement_claims_open",
     participationMode: "claim_form_required",
     windowStatus: "open",
     freshness: "current",
     firstSeenAt: item.verifiedAt,
     lastChangedAt: item.verifiedAt,
-    verificationState: "controlling_document_verified",
+    verificationState: "official_settlement_site_checked",
     verificationNote: "This destination was manually checked against the settlement website.",
     officialDestinationVerified: true,
     discoverySourceName: "Manual official-source review",
