@@ -1,0 +1,46 @@
+{
+  "name": "verdue-public-web",
+  "version": "0.1.0",
+  "private": true,
+  "engines": {
+    "node": ">=22.13.0"
+  },
+  "scripts": {
+    "dev": "vite --config vite.public.config.ts",
+    "build": "node scripts/prepare-public-data.mjs && vite build --config vite.public.config.ts",
+    "build:public": "node scripts/prepare-public-data.mjs && vite build --config vite.public.config.ts",
+    "duration:refresh": "node scripts/duration/build-benchmarks.mjs",
+    "federal:refresh": "node scripts/federal/refresh.mjs",
+    "government:refresh": "node scripts/government/refresh.mjs",
+    "start": "vite preview --config vite.public.config.ts --host 0.0.0.0",
+    "test": "npm run test:all",
+    "test:all": "npm run lint && npm run build && node --test tests/*.test.mjs",
+    "test:duration": "node --test tests/duration-benchmarks.test.mjs",
+    "test:federal": "node --test tests/federal-cases.test.mjs",
+    "test:government": "node --test tests/government-redress.test.mjs",
+    "lint": "eslint . --ignore-pattern dist-public"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.112.2",
+    "lucide-react": "^0.468.0",
+    "react": "19.2.6",
+    "react-dom": "19.2.6"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.4",
+    "@types/node": "22.19.19",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@vitejs/plugin-react": "6.0.2",
+    "cheerio": "^1.2.0",
+    "eslint": "9.39.4",
+    "eslint-plugin-jsx-a11y": "6.10.2",
+    "eslint-plugin-react": "7.37.5",
+    "eslint-plugin-react-hooks": "7.1.1",
+    "globals": "16.4.0",
+    "typescript": "5.9.3",
+    "typescript-eslint": "8.59.3",
+    "vite": "^8.2.1"
+  },
+  "type": "module"
+}

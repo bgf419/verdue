@@ -1,0 +1,79 @@
+name: Refresh catalog and deploy public site
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+  schedule:
+    - cron: "17 6 * * *"
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "verdue-pages"
+  cancel-in-progress: false
+
+jobs:
+  refresh-build-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      VITE_BASE_PATH: /verdue/
+      VITE_PUBLIC_ORIGIN: https://bgf419.github.io/verdue/
+      VITE_PERSISTENCE_MODE: supabase
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+    steps:
+      - name: Check out source and catalog history
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Refresh monitored sources
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: |
+          npm run government:refresh
+          npm run federal:refresh -- --mode incremental --max-requests 10 || \
+            echo "Federal source was throttled or unavailable; retained checkpoint is marked degraded"
+
+      - name: Validate, test, and build
+        run: npm run test:all
+
+      - name: Save material catalog changes
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: |
+          if git diff --quiet -- data; then
+            echo "No generated catalog changes"
+          else
+            git config user.name "verdue-catalog-bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/*.json
+            git commit -m "chore: refresh monitored catalog [skip ci]"
+            git push
+          fi
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload public build
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-public
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
