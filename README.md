@@ -1,100 +1,59 @@
-# vinext-starter
+# Verdue
 
-A clean full-stack starter running on
-[vinext](https://github.com/cloudflare/vinext), with optional Cloudflare D1 and
-Drizzle support.
+Verdue is a standalone public website for discovering verified class-action claim windows, separating those opportunities from government redress programs and proposed federal cases, and keeping a provenance-labeled personal claim history.
 
-## Prerequisites
+Public site: <https://bgf419.github.io/verdue/>
 
-- Node.js `>=22.13.0`
+## What the catalog means
 
-## Quick Start
+The catalog does **not** claim to contain every U.S. class action. No single source covers all federal and state courts. Every record identifies its source authority and participation mode:
+
+- `settlement_claims_open`: a settlement administrator site was individually reviewed and currently publishes a claim destination.
+- `government_redress`: a first-party agency page lists an ongoing redress or payment program; no public action is implied unless the agency explicitly states one.
+- `potential_class_case`: federal docket metadata showing a putative class complaint; tracking only, with no apply CTA.
+
+The production catalog does not reproduce a third-party publisher's listings. Its scheduled feeds are first-party agency pages and public federal docket metadata; the smaller claim-window set is manually checked against official settlement websites.
+
+## Local development
+
+Requirements: Node.js 22.13 or newer.
 
 ```bash
 npm install
-npm run dev
-npm run build
+npm run government:refresh
+npm run build:public
+npm run test:all
 ```
 
-This starter does not use `wrangler.jsonc`.
+Run the public build locally:
 
-## Included Shape
-
-- edit site code under `app/`
-- `.openai/hosting.json` declares optional Sites D1 and R2 bindings
-- `vite.config.ts` simulates declared bindings for local development
-- `db/schema.ts` starts intentionally empty
-- `examples/d1/` contains an optional D1 example surface
-- `drizzle.config.ts` supports local migration generation when needed
-
-## Workspace Auth Headers
-
-Signed-in visitors receive both `oai-authenticated-user-id` and `oai-authenticated-user-email`. Private Sites require every visitor to sign in; public Sites may also have anonymous visitors, for whom neither header is present.
-
-The user ID is stable for the same user on the same Site and different across Sites. Email and name are intended for display or contact purposes.
-
-SIWC-authenticated workspace sites may also receive
-`oai-authenticated-user-full-name` when the user's SIWC profile has a non-empty
-`name` claim. The full-name value is percent-encoded UTF-8 and is accompanied by
-`oai-authenticated-user-full-name-encoding: percent-encoded-utf-8`.
-
-Treat the full name as optional and fall back to email when it is absent:
-
-```tsx
-import { headers } from "next/headers";
-
-export default async function Home() {
-  const requestHeaders = await headers();
-  const userId = requestHeaders.get("oai-authenticated-user-id");
-  const email = requestHeaders.get("oai-authenticated-user-email");
-  const encodedFullName = requestHeaders.get("oai-authenticated-user-full-name");
-  const fullName =
-    encodedFullName &&
-    requestHeaders.get("oai-authenticated-user-full-name-encoding") ===
-      "percent-encoded-utf-8"
-      ? decodeURIComponent(encodedFullName)
-      : null;
-
-  const displayName = fullName ?? email;
-  // ...
-}
+```bash
+npx vite preview --config vite.public.config.ts --host 127.0.0.1 --port 4173
 ```
 
-## Optional Dispatch-Owned ChatGPT Sign-In
+Then open <http://127.0.0.1:4173/verdue/>.
 
-Import the ready-to-use helpers from `app/chatgpt-auth.ts` when the site needs
-optional or required ChatGPT sign-in:
+## Data pipeline
 
-- Use `getChatGPTUser()` for optional signed-in UI.
-- Use `requireChatGPTUser(returnTo)` for server-rendered pages that should send
-  anonymous visitors through Sign in with ChatGPT.
-- Use `chatGPTSignInPath(returnTo)` and `chatGPTSignOutPath(returnTo)` for
-  browser links or actions.
-- Pass a same-origin relative `returnTo` path for the destination after sign-in
-  or sign-out. The helper validates and safely encodes it.
-- Mark protected pages with `export const dynamic = "force-dynamic"` because
-  they depend on per-request identity headers.
+- `scripts/federal/` maintains the CourtListener federal putative-case feed.
+- `scripts/government/` monitors first-party FTC, CFPB, and SEC redress pages and retains last-good data when a source blocks or fails.
+- `scripts/duration/` builds Federal Judicial Center duration cohorts using right-censored survival analysis.
+- `scripts/prepare-public-data.mjs` emits a compact, lazy-loaded federal index so the provenance-rich raw feed does not inflate the initial browser bundle.
+- `.github/workflows/refresh-and-deploy.yml` refreshes, validates, and deploys the catalog daily. `.github/workflows/refresh-duration.yml` follows the quarterly FJC source cadence.
 
-Dispatch owns `/signin-with-chatgpt`, `/signout-with-chatgpt`, `/callback`, the
-OAuth cookies, and identity header injection. Do not implement app routes for
-those reserved paths. Routes that do not import and call the helper remain
-anonymous-compatible.
+Failed source checks retain the last known records as stale rather than falsely removing them. Title similarity never automatically merges two legal matters.
 
-SIWC establishes identity only; it does not prove workspace membership. Use the
-Sites hosting platform's access policy controls for workspace-wide restrictions,
-or enforce explicit server-side membership or allowlist checks.
+## Personal data
 
-Use SIWC for account pages, user-specific dashboards, saved records, and write
-actions tied to the current ChatGPT user. Leave public content anonymous.
+The public catalog is anonymous. A dedicated Supabase project stores authenticated profiles, bookmarks, claim history, claim events, and outcomes. The schema under `supabase/migrations/` enables row-level security so every private row is restricted to its owner. Visitors sign in with a user-chosen Account ID and password; the public GitHub Pages build keeps the session in memory only, so users sign in again after a reload or new visit and no auth token is shared through origin-wide browser storage.
 
-## Useful Commands
+Deployments enable signed-in sync with these build variables:
 
-- `npm run dev`: start local development
-- `npm run build`: verify the vinext build output
-- `npm test`: build the starter and verify its rendered loading skeleton
-- `npm run db:generate`: generate Drizzle migrations after schema changes
+- `VITE_SUPABASE_URL`
+- `VITE_SUPABASE_ANON_KEY`
 
-## Learn More
+The anon key is intentionally public; row-level security is the authorization boundary. Do not expose a service-role key to the browser.
 
-- [vinext Documentation](https://github.com/cloudflare/vinext)
-- [Drizzle D1 Guide](https://orm.drizzle.team/docs/get-started/d1-new)
+## Legal boundary
+
+Verdue is not a law firm. A possible match is not an eligibility decision. Courts, agencies, settlement administrators, and counsel control legal status, claim validity, and payment.

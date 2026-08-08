@@ -1,0 +1,389 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-08-08T17:33:03.889Z",
+  "title": "Federal FJC IDB class-action duration benchmarks",
+  "scope": {
+    "jurisdiction": "United States federal district courts",
+    "sourceSystem": "Federal Judicial Center Integrated Database (FJC IDB)",
+    "statement": "These are federal docket-duration estimates. They do not represent all U.S. class actions, state-court cases, an open-claim inventory, or time from claim filing to payment."
+  },
+  "source": {
+    "provider": "Federal Judicial Center",
+    "landingPageUrl": "https://www.fjc.gov/research/idb",
+    "datasetPageUrl": "https://www.fjc.gov/research/idb/civil-cases-filed-terminated-and-pending-sy-1988-present",
+    "downloadUrl": "https://www.fjc.gov/sites/default/files/idb/textfiles/cv88on_0.zip",
+    "codebookUrl": "https://www.fjc.gov/sites/default/files/idb/codebooks/Civil%20Codebook%201988%20Forward%2010252023.pdf",
+    "researchGuideUrl": "https://www.fjc.gov/sites/default/files/IDB-Research-Guide.pdf",
+    "format": "ZIP containing a tab-delimited text file",
+    "snapshotDate": "2026-03-31",
+    "updateCadence": "Quarterly source snapshots; publication lag varies.",
+    "coverageLabel": "Cases terminated in SY 1988 through March 31, 2026 and cases pending as of March 31, 2026",
+    "inputMode": "remote_stream",
+    "extractor": "funzip",
+    "http": {
+      "etag": "\"1378b7df-651b130012013\"",
+      "lastModified": "Wed, 13 May 2026 11:21:56 GMT",
+      "contentLength": 326678495
+    }
+  },
+  "methodology": {
+    "estimator": "Kaplan-Meier product-limit estimator with right censoring",
+    "durationUnit": "calendar days",
+    "caseKey": "CIRCUIT + DISTRICT + OFFICE + DOCKET",
+    "observationUnit": "Unique federal docket identifier. Reinstated/reopened IDB rows sharing that identifier are collapsed into one lifecycle.",
+    "defaultPopulation": "CLASSACT=1",
+    "defaultCohortId": "class_alleged_excluding_mdl_transfer_origins",
+    "dateFields": "FILEDATE and TERMDATE are used for elapsed time. FDATEUSE and TDATEUSE are AO reporting-cohort dates and are not duration endpoints.",
+    "mdlRule": "ORIGIN 6 and 13 are reported separately and excluded from the recommended default cohort.",
+    "classActionQuality": "CLASSACT records a plaintiff allegation that Rule 23 prerequisites are met; it is not proof of certification. FJC says this field has no quality-control checks and can change as records are updated.",
+    "settlementQuality": "DISP=13 is a federal case disposition marked settled. It does not prove a court-approved class settlement, an open claim window, claimant eligibility, payment, or recovery amount.",
+    "pendingRule": "STATUSCD=S or TAPEYEAR=2099 identifies a pending record. The cumulative tab export currently places 01/01/1900 in TERMDATE for those rows; that sentinel is ignored and the row is censored at the source snapshot date.",
+    "reopenRule": "Repeated docket identifiers, commonly ORIGIN 4 or 8-12 reopen records, are collapsed. The lifecycle starts at the earliest CLASSACT=1 FILEDATE and ends at the latest TERMDATE, unless any record is currently pending.",
+    "censoring": "Pending dockets are censored at source.snapshotDate. In the recorded-settlement clock, a docket with no DISP=13 is censored at its final endpoint and treated as a competing non-settlement closure."
+  },
+  "quality": {
+    "rowsRead": 10857396,
+    "classActionRows": 191143,
+    "explicitPendingClassActionRows": 12384,
+    "pendingTerminationDateSentinelRows": 12384,
+    "repeatedDocketIdentifierRowsCollapsed": 13066,
+    "invalidFilingDateRowsSkipped": 0,
+    "invalidTerminationDateRowsSkipped": 0,
+    "ambiguousEndpointRowsSkipped": 2,
+    "negativeOrPostSnapshotDurationRowsSkipped": 0
+  },
+  "cohorts": [
+    {
+      "id": "class_alleged_all_origins",
+      "label": "Federal cases alleging a Rule 23 class action — all origins",
+      "populationFilter": "CLASSACT=1",
+      "mdlHandling": "Includes ORIGIN 6 and 13 MDL-transfer/originating records.",
+      "highPrecisionTerminationSignal": false,
+      "interpretation": "Right-censored federal docket-lifecycle estimate for dockets with at least one record marked CLASSACT=1.",
+      "recordCounts": {
+        "included": 178075,
+        "terminated": 165691,
+        "pendingAtSnapshot": 12384,
+        "mdlDocketPresent": 6717,
+        "terminationDispositions": {
+          "0": 6115,
+          "1": 4131,
+          "2": 3514,
+          "3": 1467,
+          "4": 916,
+          "5": 2502,
+          "6": 15977,
+          "7": 531,
+          "8": 42,
+          "9": 455,
+          "10": 5863,
+          "11": 160,
+          "12": 37042,
+          "13": 51687,
+          "14": 20226,
+          "15": 43,
+          "16": 217,
+          "17": 7460,
+          "18": 7203,
+          "19": 107,
+          "20": 33
+        }
+      },
+      "clocks": {
+        "allTermination": {
+          "label": "Federal docket lifecycle: earliest class-coded filing to final recorded termination",
+          "start": "Earliest FILEDATE among records for the docket with CLASSACT=1",
+          "event": "Latest valid TERMDATE when the docket has no current pending record",
+          "censoring": "Any current STATUSCD=S/TAPEYEAR=2099 record: right-censored on the FJC snapshot date",
+          "n": 178075,
+          "events": 165691,
+          "censored": 12384,
+          "censorReasons": {
+            "pending_at_snapshot": 12384
+          },
+          "quantiles": {
+            "p25": {
+              "days": 113,
+              "months": 3.7
+            },
+            "median": {
+              "days": 323,
+              "months": 10.6
+            },
+            "p75": {
+              "days": 879,
+              "months": 28.9
+            }
+          },
+          "lastObservedFollowUp": {
+            "days": 16961,
+            "months": 557.3
+          },
+          "lastEventTime": {
+            "days": 16961,
+            "months": 557.3
+          },
+          "survivalAtLastObservedTime": 0,
+          "quantileRule": "First observed day where the Kaplan-Meier survival estimate is at or below the corresponding survival threshold."
+        },
+        "recordedSettlement": {
+          "label": "Time from earliest class-coded filing to first recorded settlement disposition",
+          "start": "Earliest FILEDATE among records for the docket with CLASSACT=1",
+          "event": "Earliest TERMDATE with FJC DISP=13 (settled)",
+          "censoring": "Dockets without DISP=13 are censored on the snapshot date if pending, otherwise on their final TERMDATE.",
+          "competingRiskCaveat": "This is a cause-specific Kaplan-Meier view, not a cumulative-incidence estimate; non-settlement closures are informative competing events.",
+          "n": 178075,
+          "events": 52235,
+          "censored": 125840,
+          "censorReasons": {
+            "other_termination_disposition": 113510,
+            "pending_at_snapshot": 12330
+          },
+          "quantiles": {
+            "p25": {
+              "days": 545,
+              "months": 17.9
+            },
+            "median": {
+              "days": 1207,
+              "months": 39.7
+            },
+            "p75": {
+              "days": 3204,
+              "months": 105.3
+            }
+          },
+          "lastObservedFollowUp": {
+            "days": 16961,
+            "months": 557.3
+          },
+          "lastEventTime": {
+            "days": 11614,
+            "months": 381.6
+          },
+          "survivalAtLastObservedTime": 0.09977,
+          "quantileRule": "First observed day where the Kaplan-Meier survival estimate is at or below the corresponding survival threshold."
+        }
+      }
+    },
+    {
+      "id": "class_alleged_excluding_mdl_transfer_origins",
+      "label": "Federal cases alleging a Rule 23 class action — excluding MDL transfer origins",
+      "populationFilter": "CLASSACT=1",
+      "mdlHandling": "Excludes ORIGIN 6 and 13 to reduce MDL member-case distortion.",
+      "highPrecisionTerminationSignal": false,
+      "interpretation": "Right-censored federal docket-lifecycle estimate for dockets with at least one record marked CLASSACT=1.",
+      "recordCounts": {
+        "included": 169912,
+        "terminated": 158591,
+        "pendingAtSnapshot": 11321,
+        "mdlDocketPresent": 3107,
+        "terminationDispositions": {
+          "0": 6063,
+          "1": 4093,
+          "2": 3144,
+          "3": 1403,
+          "4": 872,
+          "5": 2409,
+          "6": 14896,
+          "7": 529,
+          "8": 42,
+          "9": 454,
+          "10": 5799,
+          "11": 159,
+          "12": 36119,
+          "13": 49342,
+          "14": 19115,
+          "15": 43,
+          "16": 212,
+          "17": 7155,
+          "18": 6602,
+          "19": 107,
+          "20": 33
+        }
+      },
+      "clocks": {
+        "allTermination": {
+          "label": "Federal docket lifecycle: earliest class-coded filing to final recorded termination",
+          "start": "Earliest FILEDATE among records for the docket with CLASSACT=1",
+          "event": "Latest valid TERMDATE when the docket has no current pending record",
+          "censoring": "Any current STATUSCD=S/TAPEYEAR=2099 record: right-censored on the FJC snapshot date",
+          "n": 169912,
+          "events": 158591,
+          "censored": 11321,
+          "censorReasons": {
+            "pending_at_snapshot": 11321
+          },
+          "quantiles": {
+            "p25": {
+              "days": 110,
+              "months": 3.6
+            },
+            "median": {
+              "days": 301,
+              "months": 9.9
+            },
+            "p75": {
+              "days": 807,
+              "months": 26.5
+            }
+          },
+          "lastObservedFollowUp": {
+            "days": 16961,
+            "months": 557.3
+          },
+          "lastEventTime": {
+            "days": 16961,
+            "months": 557.3
+          },
+          "survivalAtLastObservedTime": 0,
+          "quantileRule": "First observed day where the Kaplan-Meier survival estimate is at or below the corresponding survival threshold."
+        },
+        "recordedSettlement": {
+          "label": "Time from earliest class-coded filing to first recorded settlement disposition",
+          "start": "Earliest FILEDATE among records for the docket with CLASSACT=1",
+          "event": "Earliest TERMDATE with FJC DISP=13 (settled)",
+          "censoring": "Dockets without DISP=13 are censored on the snapshot date if pending, otherwise on their final TERMDATE.",
+          "competingRiskCaveat": "This is a cause-specific Kaplan-Meier view, not a cumulative-incidence estimate; non-settlement closures are informative competing events.",
+          "n": 169912,
+          "events": 49883,
+          "censored": 120029,
+          "censorReasons": {
+            "other_termination_disposition": 108762,
+            "pending_at_snapshot": 11267
+          },
+          "quantiles": {
+            "p25": {
+              "days": 511,
+              "months": 16.8
+            },
+            "median": {
+              "days": 1169,
+              "months": 38.4
+            },
+            "p75": {
+              "days": 2818,
+              "months": 92.6
+            }
+          },
+          "lastObservedFollowUp": {
+            "days": 16961,
+            "months": 557.3
+          },
+          "lastEventTime": {
+            "days": 11614,
+            "months": 381.6
+          },
+          "survivalAtLastObservedTime": 0.089082,
+          "quantileRule": "First observed day where the Kaplan-Meier survival estimate is at or below the corresponding survival threshold."
+        }
+      }
+    },
+    {
+      "id": "class_alleged_mdl_transfer_origins",
+      "label": "Federal cases alleging a Rule 23 class action — MDL transfer origins only",
+      "populationFilter": "CLASSACT=1",
+      "mdlHandling": "Includes only ORIGIN 6 and 13 as a separate stratum.",
+      "highPrecisionTerminationSignal": false,
+      "interpretation": "Right-censored federal docket-lifecycle estimate for dockets with at least one record marked CLASSACT=1.",
+      "recordCounts": {
+        "included": 8163,
+        "terminated": 7100,
+        "pendingAtSnapshot": 1063,
+        "mdlDocketPresent": 3610,
+        "terminationDispositions": {
+          "0": 52,
+          "1": 38,
+          "2": 370,
+          "3": 64,
+          "4": 44,
+          "5": 93,
+          "6": 1081,
+          "7": 2,
+          "9": 1,
+          "10": 64,
+          "11": 1,
+          "12": 923,
+          "13": 2345,
+          "14": 1111,
+          "16": 5,
+          "17": 305,
+          "18": 601
+        }
+      },
+      "clocks": {
+        "allTermination": {
+          "label": "Federal docket lifecycle: earliest class-coded filing to final recorded termination",
+          "start": "Earliest FILEDATE among records for the docket with CLASSACT=1",
+          "event": "Latest valid TERMDATE when the docket has no current pending record",
+          "censoring": "Any current STATUSCD=S/TAPEYEAR=2099 record: right-censored on the FJC snapshot date",
+          "n": 8163,
+          "events": 7100,
+          "censored": 1063,
+          "censorReasons": {
+            "pending_at_snapshot": 1063
+          },
+          "quantiles": {
+            "p25": {
+              "days": 607,
+              "months": 19.9
+            },
+            "median": {
+              "days": 1182,
+              "months": 38.8
+            },
+            "p75": {
+              "days": 2109,
+              "months": 69.3
+            }
+          },
+          "lastObservedFollowUp": {
+            "days": 10758,
+            "months": 353.5
+          },
+          "lastEventTime": {
+            "days": 6366,
+            "months": 209.2
+          },
+          "survivalAtLastObservedTime": 0.006392,
+          "quantileRule": "First observed day where the Kaplan-Meier survival estimate is at or below the corresponding survival threshold."
+        },
+        "recordedSettlement": {
+          "label": "Time from earliest class-coded filing to first recorded settlement disposition",
+          "start": "Earliest FILEDATE among records for the docket with CLASSACT=1",
+          "event": "Earliest TERMDATE with FJC DISP=13 (settled)",
+          "censoring": "Dockets without DISP=13 are censored on the snapshot date if pending, otherwise on their final TERMDATE.",
+          "competingRiskCaveat": "This is a cause-specific Kaplan-Meier view, not a cumulative-incidence estimate; non-settlement closures are informative competing events.",
+          "n": 8163,
+          "events": 2352,
+          "censored": 5811,
+          "censorReasons": {
+            "other_termination_disposition": 4748,
+            "pending_at_snapshot": 1063
+          },
+          "quantiles": {
+            "p25": {
+              "days": 1192,
+              "months": 39.2
+            },
+            "median": {
+              "days": 3224,
+              "months": 105.9
+            },
+            "p75": null
+          },
+          "lastObservedFollowUp": {
+            "days": 10758,
+            "months": 353.5
+          },
+          "lastEventTime": {
+            "days": 4961,
+            "months": 163
+          },
+          "survivalAtLastObservedTime": 0.282302,
+          "quantileRule": "First observed day where the Kaplan-Meier survival estimate is at or below the corresponding survival threshold."
+        }
+      }
+    }
+  ]
+}

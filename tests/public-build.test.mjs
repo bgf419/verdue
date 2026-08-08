@@ -9,8 +9,13 @@ test("public build is standalone and points to the normal public URL", async () 
   assert.doesNotMatch(html, /chatgpt\.site|signin-with-chatgpt/i);
 });
 
-test("public entry uses browser-local persistence instead of platform auth", async () => {
-  const source = await readFile(new URL("../static-site/main.tsx", import.meta.url), "utf8");
-  assert.match(source, /storageMode="local"/);
-  assert.doesNotMatch(source, /signInPath|ChatGPT/i);
+test("public entry has no platform-owned authentication", async () => {
+  const [source, wrapper] = await Promise.all([
+    readFile(new URL("../static-site/main.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../static-site/PublicApp.tsx", import.meta.url), "utf8"),
+  ]);
+  assert.doesNotMatch(source, /signInPath|ChatGPT|oai-authenticated/i);
+  assert.match(wrapper, /VITE_SUPABASE_URL/);
+  assert.match(wrapper, /storageMode="local"/);
+  assert.match(wrapper, /storageMode="supabase"/);
 });

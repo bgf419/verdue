@@ -1,0 +1,72 @@
+name: Refresh federal duration benchmark
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "27 7 15 2,5,8,11 *"
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "verdue-pages"
+  cancel-in-progress: false
+
+jobs:
+  refresh-duration-build-deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    env:
+      VITE_BASE_PATH: /verdue/
+      VITE_PUBLIC_ORIGIN: https://bgf419.github.io/verdue/
+      VITE_PERSISTENCE_MODE: supabase
+      VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
+      VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+    steps:
+      - name: Check out source
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Refresh official FJC snapshot
+        run: npm run duration:refresh
+
+      - name: Validate, test, and build
+        run: npm run test:all
+
+      - name: Save benchmark change
+        run: |
+          if git diff --quiet -- data/duration-benchmarks.json; then
+            echo "No benchmark change"
+          else
+            git config user.name "verdue-catalog-bot"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add data/duration-benchmarks.json
+            git commit -m "chore: refresh federal duration benchmark [skip ci]"
+            git push
+          fi
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload public build
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist-public
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

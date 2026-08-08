@@ -2,55 +2,67 @@ import assert from "node:assert/strict";
 import { access, readFile } from "node:fs/promises";
 import test from "node:test";
 
-async function render() {
-  const workerUrl = new URL("../dist/server/index.js", import.meta.url);
-  workerUrl.searchParams.set("test", `${process.pid}-${Date.now()}`);
-  const { default: worker } = await import(workerUrl.href);
-
-  return worker.fetch(
-    new Request("http://localhost/", {
-      headers: { accept: "text/html", host: "localhost" },
-    }),
-    {
-      ASSETS: { fetch: async () => new Response("Not found", { status: 404 }) },
-    },
-    { waitUntil() {}, passThroughOnException() {} },
-  );
-}
-
-test("server-renders the standalone Verdue product", async () => {
-  const response = await render();
-  assert.equal(response.status, 200);
-  assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
-
-  const html = await response.text();
-  assert.match(html, /<title>Verdue — Verified claim discovery &amp; tracking<\/title>/i);
-  assert.match(html, /Find claims you may qualify for/);
-  assert.match(html, /Track what happens next/);
-  assert.match(html, /Official form/);
-  assert.match(html, /Possible match ≠ eligibility decision/);
-  assert.match(html, /This service is not a law firm/);
-  assert.doesNotMatch(html, />\s*ChatGPT\s*</i);
-  assert.doesNotMatch(html, /chat interface|Your site is taking shape/i);
-});
-
-test("removes starter assets and keeps coverage claims bounded", async () => {
-  const [page, layout, client, cases, packageJson] = await Promise.all([
-    readFile(new URL("../app/page.tsx", import.meta.url), "utf8"),
-    readFile(new URL("../app/layout.tsx", import.meta.url), "utf8"),
+test("public product is standalone and catalog-driven", async () => {
+  const [html, client, adapter, curatedSource, federal, government] = await Promise.all([
+    readFile(new URL("../dist-public/index.html", import.meta.url), "utf8"),
     readFile(new URL("../app/ClaimApp.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/catalog.ts", import.meta.url), "utf8"),
     readFile(new URL("../app/cases.ts", import.meta.url), "utf8"),
-    readFile(new URL("../package.json", import.meta.url), "utf8"),
+    readFile(new URL("../data/federal-summary.json", import.meta.url), "utf8").then(JSON.parse),
+    readFile(new URL("../data/government-redress.json", import.meta.url), "utf8").then(JSON.parse),
   ]);
 
-  await assert.rejects(access(new URL("../app/_sites-preview/SkeletonPreview.tsx", import.meta.url)));
-  assert.doesNotMatch(packageJson, /react-loading-skeleton/);
-  assert.doesNotMatch(page + layout, /codex-preview|Starter Project|SkeletonPreview/);
-  assert.match(client, /not a complete live index/i);
-  assert.match(client, /scheduled worker not connected/i);
-  assert.doesNotMatch(client, /all current (class actions|lawsuits)/i);
-  assert.match(cases, /sourceUrl:/);
+  assert.match(html, /<title>Verdue — class-action discovery and tracking<\/title>/i);
+  assert.doesNotMatch(html + client + adapter, /chatgpt\.site|signin-with-chatgpt|oai-authenticated/i);
+  assert.equal((curatedSource.match(/^ {4}id:\s*"/gm) ?? []).length, 9);
+  assert.ok(federal.recordCount >= 100);
+  assert.ok(government.activeRecordCount >= 1);
+  assert.match(client, /Find claim windows/);
+  assert.match(client, /Government redress/);
+  assert.match(client, /Federal dockets indexed/);
+  assert.match(client, /no termination reported · not confirmed active/i);
+  assert.match(client, /Possible match ≠ eligibility decision/);
+  assert.match(client, /This service is not a law firm/);
+  assert.doesNotMatch(adapter, /rawCatalog|data\/catalog\.json/);
+  assert.match(adapter, /controlling_document_verified/);
+});
+
+test("coverage claims remain bounded and source health is visible", async () => {
+  const [client, catalogSource, federal, government, duration, workflow] = await Promise.all([
+    readFile(new URL("../app/ClaimApp.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/catalog.ts", import.meta.url), "utf8"),
+    readFile(new URL("../data/federal-summary.json", import.meta.url), "utf8").then(JSON.parse),
+    readFile(new URL("../data/government-redress.json", import.meta.url), "utf8").then(JSON.parse),
+    readFile(new URL("../data/duration-benchmarks.json", import.meta.url), "utf8").then(JSON.parse),
+    readFile(new URL("../.github/workflows/refresh-and-deploy.yml", import.meta.url), "utf8"),
+  ]);
+
+  assert.doesNotMatch(client + catalogSource, /all current (class actions|lawsuits)/i);
+  assert.match(client, /not every U\.S\. court or settlement/i);
+  assert.ok(federal.recordCount >= 100, "federal checkpoint should be materially larger than the old demo");
+  assert.ok(federal.coverage.checkedAt && federal.coverage.searchUrl);
+  assert.ok(government.activeRecordCount >= 1);
+  assert.ok(["complete", "degraded"].includes(government.coverage.overallStatus));
+  assert.ok(government.coverage.sources.every((source) => source.checkedAt && source.url));
+  const defaultDuration = duration.cohorts.find((cohort) => cohort.id.includes("excluding_mdl"));
+  assert.ok(defaultDuration.recordCounts.included >= 100000);
+  assert.ok(defaultDuration.clocks.allTermination.quantiles.median.days > 0);
+  assert.match(workflow, /cron: "17 6 \* \* \*"/);
+  assert.match(workflow, /npm run government:refresh/);
+  assert.match(workflow, /npm run federal:refresh/);
+  assert.doesNotMatch(workflow, /npm run ingest/);
   await access(new URL("../public/og.png", import.meta.url));
-  await access(new URL("../drizzle/0000_smooth_yellow_claw.sql", import.meta.url));
-  await access(new URL("../.openai/hosting.json", import.meta.url));
+  await access(new URL("../dist-public/robots.txt", import.meta.url));
+  await access(new URL("../dist-public/sitemap.xml", import.meta.url));
+});
+
+test("public federal projection is complete for every active raw docket checkpoint", async () => {
+  const [raw, projected] = await Promise.all([
+    readFile(new URL("../data/federal-cases.json", import.meta.url), "utf8").then(JSON.parse),
+    readFile(new URL("../dist-public/data/federal-cases.json", import.meta.url), "utf8").then(JSON.parse),
+  ]);
+  const active = raw.records.filter((record) => record.active);
+  assert.equal(projected.recordCount, active.length);
+  assert.equal(projected.records.length, active.length);
+  assert.ok(projected.records.every((record) => record.action.allowsParticipation === false));
 });
