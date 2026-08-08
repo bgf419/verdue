@@ -48,7 +48,11 @@ jobs:
         run: |
           npm run government:refresh
           npm run federal:refresh -- --mode incremental --max-requests 10 || \
-            echo "Federal source was throttled or unavailable; retained checkpoint is marked degraded"
+            echo "Federal incremental source was throttled or unavailable; retained checkpoint is marked degraded"
+          if node -e 'const data=require("./data/federal-cases.json"); process.exit(data.coverage?.backfill?.status === "in_progress" ? 0 : 1)'; then
+            npm run federal:refresh -- --mode full --max-requests 10 || \
+              echo "Federal backfill source was throttled or unavailable; retained checkpoint is marked degraded"
+          fi
 
       - name: Validate, test, and build
         run: npm run test:all
