@@ -350,3 +350,20 @@ test("incremental merge retains old records, updates termination, and degrades w
   assert.equal(onDisk.recordCount, 2);
   assert.match(onDisk.coverage.error, /HTTP 429/);
 });
+
+test("daily deployment refreshes recent dockets and advances only an unfinished backfill", async () => {
+  const workflow = await readFile(
+    new URL("../.github/workflows/refresh-and-deploy.yml", import.meta.url),
+    "utf8",
+  );
+  const incremental = workflow.indexOf("--mode incremental --max-requests 10");
+  const full = workflow.indexOf("--mode full --max-requests 10");
+
+  assert.ok(incremental >= 0, "daily refresh must include recent federal dockets");
+  assert.ok(full > incremental, "bounded backfill should run after the recent-docket refresh");
+  assert.match(
+    workflow,
+    /coverage\?\.backfill\?\.status === "in_progress"/,
+    "a completed backfill must not restart from page one",
+  );
+});

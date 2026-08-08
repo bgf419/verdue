@@ -24,6 +24,8 @@ npm run federal:refresh
 
 Incremental mode searches the most recent seven days by default and merges by `docket_id`. Absence from an incremental response never deactivates an older record. A returned termination date is retained and is never cleared by a later null value.
 
+The scheduled deployment runs the incremental query first, then advances an unfinished full-backfill cursor with a separate bounded request budget. Once the backfill state is complete, scheduled runs stop restarting it.
+
 The source cache lives in `scripts/federal/.cache/` and expires after ten minutes. Network requests default to 13 seconds apart with bounded retry/backoff. Free Law Project recommends authenticated API access for deployed programmatic use; this implementation follows the requested unauthenticated public-access mode and reports throttling as degraded coverage without deleting prior records.
 
 Coverage is inherently incomplete. CourtListener documents the RECAP archive's sources and gaps at <https://www.courtlistener.com/help/coverage/recap/> and the search API at <https://wiki.free.law/c/courtlistener/help/api/rest/v4/search>.
