@@ -61,8 +61,24 @@ type StoredClaim = {
 
 type ClaimAppProps = {
   user: User;
-  signInPath: string;
+  signInPath?: string;
+  storageMode?: "server" | "local";
 };
+
+const LOCAL_USER_KEY = "verdue.local.user.v1";
+const LOCAL_PROFILE_KEY = "verdue.local.profile.v1";
+const LOCAL_CLAIMS_KEY = "verdue.local.claims.v1";
+const LOCAL_SAVED_KEY = "verdue.local.saved.v1";
+
+function readLocalValue<T>(key: string, fallback: T): T {
+  if (typeof window === "undefined") return fallback;
+  try {
+    const value = window.localStorage.getItem(key);
+    return value ? (JSON.parse(value) as T) : fallback;
+  } catch {
+    return fallback;
+  }
+}
 
 const categories: CaseCategory[] = [
   "Privacy",
@@ -130,7 +146,14 @@ function relativeVerified(verifiedAt: string) {
   return `${Math.floor(mins / 60)}h ago`;
 }
 
-export default function ClaimApp({ user, signInPath }: ClaimAppProps) {
+export default function ClaimApp({
+  user: initialUser,
+  signInPath = "/",
+  storageMode = "server",
+}: ClaimAppProps) {
+  const [user, setUser] = useState<User>(() =>
+    storageMode === "local" ? readLocalValue<User>(LOCAL_USER_KEY, null) : initialUser,
+  );
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState<CaseCategory | "All">("All");
   const [geography, setGeography] = useState<"All" | "Nationwide" | "State-specific">("All");
@@ -139,22 +162,32 @@ export default function ClaimApp({ user, signInPath }: ClaimAppProps) {
   const [sort, setSort] = useState("deadline");
   const [view, setView] = useState<"grid" | "list">("grid");
   const [activeCase, setActiveCase] = useState<ClaimCase | null>(null);
-  const [saved, setSaved] = useState<string[]>([]);
+  const [saved, setSaved] = useState<string[]>(() =>
+    storageMode === "local" ? readLocalValue<string[]>(LOCAL_SAVED_KEY, []) : [],
+  );
   const [page, setPage] = useState<"discover" | "claims" | "method">("discover");
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [toast, setToast] = useState("");
-  const [profileSaved, setProfileSaved] = useState(false);
-  const [storedClaims, setStoredClaims] = useState<StoredClaim[]>([]);
-  const [profile, setProfile] = useState<Profile>({
-    fullName: user?.displayName ?? "",
-    email: user?.email ?? "",
-    phone: "",
-    address: "",
-    city: "",
-    state: "",
-    zip: "",
+  const [profileSaved, setProfileSaved] = useState(() =>
+    storageMode === "local" && readLocalValue<Profile | null>(LOCAL_PROFILE_KEY, null) !== null,
+  );
+  const [storedClaims, setStoredClaims] = useState<StoredClaim[]>(() =>
+    storageMode === "local" ? readLocalValue<StoredClaim[]>(LOCAL_CLAIMS_KEY, []) : [],
+  );
+  const [accountDraft, setAccountDraft] = useState({ fullName: "", email: "" });
+  const [profile, setProfile] = useState<Profile>(() => {
+    const fallback = {
+      fullName: initialUser?.displayName ?? "",
+      email: initialUser?.email ?? "",
+      phone: "",
+      address: "",
+      city: "",
+      state: "",
+      zip: "",
+    };
+    return storageMode === "local" ? readLocalValue<Profile>(LOCAL_PROFILE_KEY, fallback) : fallback;
   });
 
   useEffect(() => {
@@ -176,7 +209,17 @@ export default function ClaimApp({ user, signInPath }: ClaimAppProps) {
   }, []);
 
   useEffect(() => {
-    if (!user) return;
+    if (storageMode !== "local" || !user) return;
+    window.localStorage.setItem(LOCAL_CLAIMS_KEY, JSON.stringify(storedClaims));
+  }, [storageMode, storedClaims, user]);
+
+  useEffect(() => {
+    if (storageMode !== "local" || !user) return;
+    window.localStorage.setItem(LOCAL_SAVED_KEY, JSON.stringify(saved));
+  }, [saved, storageMode, user]);
+
+  useEffect(() => {
+    if (!user || storageMode === "local") return;
     let cancelled = false;
     Promise.all([
       fetch("/api/profile").then((response) => (response.ok ? response.json() : null)),
@@ -202,7 +245,7 @@ export default function ClaimApp({ user, signInPath }: ClaimAppProps) {
     return () => {
       cancelled = true;
     };
-  }, [user]);
+  }, [storageMode, user]);
 
   const filteredCases = useMemo(() => {
     const normalized = query.trim().toLowerCase();
@@ -265,7 +308,26 @@ export default function ClaimApp({ user, signInPath }: ClaimAppProps) {
   };
 
   const continueToClaim = (item: ClaimCase) => {
-    if (user) {
+    if (user && storageMode === "local") {
+      const now = new Date().toISOString();
+      setStoredClaims((current) => {
+        const existing = current.find((claim) => claim.caseId === item.id);
+        const claim: StoredClaim = {
+          id: existing?.id ?? crypto.randomUUID(),
+          caseId: item.id,
+          personalStatus: "continued_to_official_site",
+          statusProvenance: "user_action",
+          confirmationNumber: existing?.confirmationNumber ?? null,
+          submittedAt: existing?.submittedAt ?? null,
+          approvedAmountCents: existing?.approvedAmountCents ?? null,
+          receivedAmountCents: existing?.receivedAmountCents ?? null,
+          amountSource: existing?.amountSource ?? null,
+          createdAt: existing?.createdAt ?? now,
+          updatedAt: now,
+        };
+        return [claim, ...current.filter((entry) => entry.caseId !== item.id)];
+      });
+    } else if (user) {
       void fetch("/api/applications", {
         method: "POST",
         headers: { "content-type": "application/json" },
@@ -288,6 +350,17 @@ export default function ClaimApp({ user, signInPath }: ClaimAppProps) {
   const saveProfile = async (event: React.FormEvent) => {
     event.preventDefault();
     if (!user) return;
+    if (storageMode === "local") {
+      window.localStorage.setItem(LOCAL_PROFILE_KEY, JSON.stringify(profile));
+      setUser({ displayName: profile.fullName, email: profile.email });
+      window.localStorage.setItem(
+        LOCAL_USER_KEY,
+        JSON.stringify({ displayName: profile.fullName, email: profile.email }),
+      );
+      setProfileSaved(true);
+      setToast("Profile saved in this browser");
+      return;
+    }
     try {
       const response = await fetch("/api/profile", {
         method: "PUT",
@@ -300,6 +373,32 @@ export default function ClaimApp({ user, signInPath }: ClaimAppProps) {
     } catch {
       setToast("Profile could not be saved yet");
     }
+  };
+
+  const createLocalAccount = (event: React.FormEvent) => {
+    event.preventDefault();
+    const displayName = accountDraft.fullName.trim();
+    const email = accountDraft.email.trim();
+    if (!displayName || !email) return;
+
+    const localUser = { displayName, email };
+    window.localStorage.setItem(LOCAL_USER_KEY, JSON.stringify(localUser));
+    setUser(localUser);
+    setProfile((current) => ({ ...current, fullName: displayName, email }));
+    setToast("Private browser workspace created");
+  };
+
+  const deleteLocalWorkspace = () => {
+    [LOCAL_USER_KEY, LOCAL_PROFILE_KEY, LOCAL_CLAIMS_KEY, LOCAL_SAVED_KEY].forEach((key) =>
+      window.localStorage.removeItem(key),
+    );
+    setUser(null);
+    setSaved([]);
+    setStoredClaims([]);
+    setProfile({ fullName: "", email: "", phone: "", address: "", city: "", state: "", zip: "" });
+    setProfileSaved(false);
+    setAccountOpen(false);
+    setToast("Browser workspace deleted");
   };
 
   return (
@@ -716,15 +815,28 @@ export default function ClaimApp({ user, signInPath }: ClaimAppProps) {
           <section className="account-modal" role="dialog" aria-modal="true" aria-labelledby="account-title">
             <button className="modal-close" onClick={() => setAccountOpen(false)} aria-label="Close account panel"><X size={20} /></button>
             {!user ? (
-              <div className="account-gate">
+              <form className="account-gate" onSubmit={storageMode === "local" ? createLocalAccount : undefined}>
                 <span className="account-illustration"><LockKeyhole size={27} /></span>
                 <span className="section-kicker">Private claim workspace</span>
                 <h2 id="account-title">Create one profile. Reuse only what you choose.</h2>
                 <p>Save contact details, application confirmations, reminders, and real payment outcomes. Sensitive identifiers are never general profile fields.</p>
                 <div className="account-benefits"><span><CheckCircle2 size={16} /> Prepare common contact fields</span><span><CheckCircle2 size={16} /> Keep a provenance-labeled claim history</span><span><CheckCircle2 size={16} /> Get deadline and status-change reminders</span></div>
-                <a className="sign-in-cta" href={signInPath}>Create secure account <ArrowRight size={16} /></a>
-                <small>Secure platform sign-in is required for persistent personal records.</small>
-              </div>
+                {storageMode === "local" ? (
+                  <>
+                    <div className="profile-field-grid account-create-fields">
+                      <label className="wide"><span>Full name</span><input value={accountDraft.fullName} onChange={(event) => setAccountDraft({ ...accountDraft, fullName: event.target.value })} required autoComplete="name" /></label>
+                      <label className="wide"><span>Email</span><input type="email" value={accountDraft.email} onChange={(event) => setAccountDraft({ ...accountDraft, email: event.target.value })} required autoComplete="email" /></label>
+                    </div>
+                    <button className="sign-in-cta" type="submit">Create browser workspace <ArrowRight size={16} /></button>
+                    <small>Your profile and claim history stay on this device. This public preview does not yet sync across devices.</small>
+                  </>
+                ) : (
+                  <>
+                    <a className="sign-in-cta" href={signInPath}>Create secure account <ArrowRight size={16} /></a>
+                    <small>Secure platform sign-in is required for persistent personal records.</small>
+                  </>
+                )}
+              </form>
             ) : (
               <form className="profile-form" onSubmit={saveProfile}>
                 <span className="section-kicker">Reusable claim profile</span>
@@ -740,7 +852,13 @@ export default function ClaimApp({ user, signInPath }: ClaimAppProps) {
                   <label><span>ZIP code</span><input inputMode="numeric" value={profile.zip} onChange={(event) => setProfile({ ...profile, zip: event.target.value })} /></label>
                 </div>
                 <div className="sensitive-note"><ShieldCheck size={17} /><span><strong>Deliberately excluded:</strong> SSN, bank credentials, tax IDs, health details, and information about minors.</span></div>
-                <button className="profile-save" type="submit">Save private profile <ArrowRight size={16} /></button>
+                <button className="profile-save" type="submit">{storageMode === "local" ? "Save profile on this device" : "Save private profile"} <ArrowRight size={16} /></button>
+                {storageMode === "local" && (
+                  <div className="local-workspace-controls">
+                    <span>Browser-only storage · no cross-device sync</span>
+                    <button type="button" onClick={deleteLocalWorkspace}>Delete this workspace</button>
+                  </div>
+                )}
               </form>
             )}
           </section>

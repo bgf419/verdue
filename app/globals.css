@@ -2304,6 +2304,11 @@ footer button {
   color: #8a958f;
   text-align: center;
   font-size: 8px;
+  line-height: 1.45;
+}
+
+.account-create-fields {
+  margin-top: 0;
 }
 
 .profile-field-grid {
@@ -2366,6 +2371,27 @@ footer button {
   min-height: 48px;
   margin-top: 16px;
   border-radius: 9px;
+}
+
+.local-workspace-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 13px;
+  color: #7b8882;
+  font-size: 8px;
+}
+
+.local-workspace-controls button {
+  border: 0;
+  background: transparent;
+  color: #9a4338;
+  font: inherit;
+  font-weight: 750;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
 }
 
 .toast {
