@@ -20,6 +20,7 @@ import {
   List,
   LockKeyhole,
   Menu,
+  MessageCircle,
   Search,
   ShieldCheck,
   SlidersHorizontal,
@@ -28,6 +29,7 @@ import {
   X,
 } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
+import CaseFinder from "./CaseFinder";
 import {
   cases as baseCases,
   catalogGeneratedAt,
@@ -1118,7 +1120,7 @@ export default function ClaimApp({
               <button className="match-cta" disabled={persistenceDisabled} onClick={() => setAccountOpen(true)}>
                 {persistenceDisabled ? "Personal storage disabled" : user ? "Complete your profile" : "Create a private profile"} {!persistenceDisabled && <ArrowRight size={16} />}
               </button>
-              <p><ShieldCheck size={13} /> Verdue does not calculate matches or submit forms. You review eligibility and every external destination yourself.</p>
+              <p><ShieldCheck size={13} /> Verdue ranks catalog signals but does not determine eligibility or submit forms. You review every external destination yourself.</p>
             </aside>
           </section>
 
@@ -1448,6 +1450,7 @@ export default function ClaimApp({
           </div>
           <div className="method-grid privacy-grid">
             <article className="method-card"><ShieldCheck size={24} /><h2>Anonymous catalog browsing</h2><p>Browsing, searching, sorting, and filtering the public catalog do not require an account. The site does not ask for an SSN, bank credentials, tax ID, health details, or information about minors in the reusable profile.</p></article>
+            <article className="method-card"><MessageCircle size={24} /><h2>Case Finder answers</h2><p>The Case Finder keeps quiz and chat answers only in the current browser tab. It does not send them to a model, save them to a profile, or reuse private workspace data. Refreshing or closing the tab clears them.</p></article>
             <article className="method-card"><LockKeyhole size={24} /><h2>Private workspace data</h2><p>A profile can contain name, contact information, and address. Claim history can contain case IDs, user-reported status, confirmation numbers, dates, amounts, and private notes. The site never treats those entries as court-verified facts.</p></article>
             <article className="method-card"><Fingerprint size={24} /><h2>Where records live</h2><p>{storageMode === "supabase" ? "Signed-in records are stored in an account-bound database with row-level access controls." : persistenceDisabled ? "This deployment does not create accounts or retain profiles, saved cases, or personal claim history." : "On this deployment, workspace records stay in this browser's local storage and do not sync across devices."} Public catalog records and source links are not personal data.</p></article>
             <article className="method-card"><ExternalLink size={24} /><h2>External destinations</h2><p>Claim forms, court dockets, agency pages, and attorney sites are operated by third parties with their own privacy terms. Verdue opens those pages but does not receive the answers you submit there.</p></article>
@@ -1622,6 +1625,14 @@ export default function ClaimApp({
             )}
           </section>
         </div>
+      )}
+
+      {page === "discover" && (
+        <CaseFinder
+          cases={allCases}
+          catalogLoading={federalLoadStatus === "loading"}
+          onReviewCase={setActiveCase}
+        />
       )}
 
       {toast && <div className="toast" role="status"><CheckCircle2 size={17} /> {toast}</div>}

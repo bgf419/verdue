@@ -5,6 +5,23 @@ export type CaseCategory =
   | "Employment"
   | "Healthcare";
 
+export type FinderIssueType =
+  | "consumer"
+  | "privacy"
+  | "communications"
+  | "employment"
+  | "healthcare"
+  | "finance";
+
+export type FinderCriteria = {
+  aliases: string[];
+  issueTypes: FinderIssueType[];
+  eligibleStates: string[] | null;
+  coveredPeriodStart: string | null;
+  coveredPeriodEnd: string | null;
+  noticeMentioned: boolean | null;
+};
+
 export type ClaimCase = {
   id: string;
   company: string;
@@ -34,6 +51,7 @@ export type ClaimCase = {
   verifiedLabel: string;
   verifiedAt: string;
   sourceNote?: string;
+  finderCriteria: FinderCriteria;
   accent: "cobalt" | "coral" | "mint" | "violet" | "amber";
   checklist: string[];
   timeline: {
@@ -74,6 +92,14 @@ export const cases: ClaimCase[] = [
     administrator: "Verita",
     verifiedLabel: "Verified today",
     verifiedAt: "2026-08-08T10:32:00-04:00",
+    finderCriteria: {
+      aliases: ["costco", "costco wholesale", "commercial email"],
+      issueTypes: ["consumer", "communications"],
+      eligibleStates: ["washington"],
+      coveredPeriodStart: "2021-06-02",
+      coveredPeriodEnd: "2026-07-07",
+      noticeMentioned: null,
+    },
     accent: "coral",
     checklist: [
       "Washington residency during the email period",
@@ -116,6 +142,14 @@ export const cases: ClaimCase[] = [
     administrator: "Angeion Group",
     verifiedLabel: "Verified today",
     verifiedAt: "2026-08-08T10:28:00-04:00",
+    finderCriteria: {
+      aliases: ["google", "google assistant", "google home", "assistant device"],
+      issueTypes: ["consumer", "privacy"],
+      eligibleStates: null,
+      coveredPeriodStart: "2016-05-18",
+      coveredPeriodEnd: "2026-03-19",
+      noticeMentioned: null,
+    },
     accent: "cobalt",
     checklist: [
       "Choose the purchaser or privacy subclass that may apply",
@@ -158,6 +192,14 @@ export const cases: ClaimCase[] = [
     administrator: "Kroll Settlement Administration",
     verifiedLabel: "Verified today",
     verifiedAt: "2026-08-08T10:20:00-04:00",
+    finderCriteria: {
+      aliases: ["banner health", "banner patient account", "banner patient portal"],
+      issueTypes: ["healthcare", "privacy"],
+      eligibleStates: null,
+      coveredPeriodStart: "2020-06-01",
+      coveredPeriodEnd: "2023-11-22",
+      noticeMentioned: null,
+    },
     accent: "mint",
     checklist: [
       "Banner Health Patient Account during the class period",
@@ -201,6 +243,14 @@ export const cases: ClaimCase[] = [
     verifiedLabel: "Deadline re-verified",
     verifiedAt: "2026-08-08T10:14:00-04:00",
     sourceNote: "Official site now shows Sep 14 after a deadline extension.",
+    finderCriteria: {
+      aliases: ["comcast", "xfinity", "comcast data breach"],
+      issueTypes: ["consumer", "privacy"],
+      eligibleStates: null,
+      coveredPeriodStart: null,
+      coveredPeriodEnd: null,
+      noticeMentioned: true,
+    },
     accent: "violet",
     checklist: [
       "Comcast breach notice or class member ID",
@@ -242,6 +292,14 @@ export const cases: ClaimCase[] = [
     administrator: "Simpluris",
     verifiedLabel: "Verified Aug 8",
     verifiedAt: "2026-08-08T10:08:00-04:00",
+    finderCriteria: {
+      aliases: ["refresco", "refresco beverages", "job posting", "pay transparency"],
+      issueTypes: ["employment"],
+      eligibleStates: ["washington"],
+      coveredPeriodStart: "2023-01-01",
+      coveredPeriodEnd: "2026-06-05",
+      noticeMentioned: null,
+    },
     accent: "amber",
     checklist: [
       "Applied to a covered Washington job posting",
@@ -283,6 +341,14 @@ export const cases: ClaimCase[] = [
     administrator: "Simpluris",
     verifiedLabel: "Verified Aug 8",
     verifiedAt: "2026-08-08T09:58:00-04:00",
+    finderCriteria: {
+      aliases: ["accc", "american consumer credit counseling"],
+      issueTypes: ["finance", "privacy"],
+      eligibleStates: null,
+      coveredPeriodStart: null,
+      coveredPeriodEnd: null,
+      noticeMentioned: true,
+    },
     accent: "cobalt",
     checklist: [
       "Notice that your data may have been affected",
@@ -324,6 +390,14 @@ export const cases: ClaimCase[] = [
     administrator: "P&N Class Action",
     verifiedLabel: "Verified Aug 8",
     verifiedAt: "2026-08-08T09:52:00-04:00",
+    finderCriteria: {
+      aliases: ["abc legal", "abc legal services"],
+      issueTypes: ["consumer", "privacy"],
+      eligibleStates: null,
+      coveredPeriodStart: null,
+      coveredPeriodEnd: null,
+      noticeMentioned: null,
+    },
     accent: "mint",
     checklist: [
       "U.S. residency",
@@ -366,6 +440,14 @@ export const cases: ClaimCase[] = [
     administrator: "Angeion Group",
     verifiedLabel: "Verified Aug 8",
     verifiedAt: "2026-08-08T09:44:00-04:00",
+    finderCriteria: {
+      aliases: ["lifestance", "lifestance health", "online booking", "tracking pixel"],
+      issueTypes: ["healthcare", "privacy"],
+      eligibleStates: null,
+      coveredPeriodStart: null,
+      coveredPeriodEnd: null,
+      noticeMentioned: null,
+    },
     accent: "violet",
     checklist: [
       "Determine which settlement subclass may apply",
@@ -408,6 +490,14 @@ export const cases: ClaimCase[] = [
     administrator: "Verita",
     verifiedLabel: "Verified Aug 8",
     verifiedAt: "2026-08-08T09:38:00-04:00",
+    finderCriteria: {
+      aliases: ["eisneramper", "eisner advisory group", "eisner"],
+      issueTypes: ["finance", "privacy"],
+      eligibleStates: null,
+      coveredPeriodStart: "2023-09-04",
+      coveredPeriodEnd: "2023-09-09",
+      noticeMentioned: null,
+    },
     accent: "amber",
     checklist: [
       "Affected by the September 2023 data incident",

@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { access, readFile } from "node:fs/promises";
+import { access, readFile, readdir } from "node:fs/promises";
 import test from "node:test";
 
 test("public product is standalone and catalog-driven", async () => {
@@ -65,4 +65,19 @@ test("public federal projection is complete for every active raw docket checkpoi
   assert.equal(projected.recordCount, active.length);
   assert.equal(projected.records.length, active.length);
   assert.ok(projected.records.every((record) => record.action.allowsParticipation === false));
+});
+
+test("public bundle includes the guided case finder and quiz", async () => {
+  const assets = await readdir(new URL("../dist-public/assets/", import.meta.url));
+  const javascript = await Promise.all(
+    assets
+      .filter((name) => name.endsWith(".js"))
+      .map((name) => readFile(new URL(`../dist-public/assets/${name}`, import.meta.url), "utf8")),
+  ).then((parts) => parts.join("\n"));
+
+  assert.match(javascript, /Verdue Case Finder/);
+  assert.match(javascript, /Quick quiz/);
+  assert.match(javascript, /Answers stay in this browser tab/);
+  assert.match(javascript, /Open claims to review/);
+  assert.doesNotMatch(javascript, /api\.openai\.com|api\.anthropic\.com/i);
 });

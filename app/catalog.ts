@@ -1,6 +1,6 @@
 import rawFederalSummary from "../data/federal-summary.json";
 import rawGovernmentRedress from "../data/government-redress.json";
-import { cases as curatedCases } from "./cases";
+import { cases as curatedCases, type FinderCriteria } from "./cases";
 
 export type CatalogKind =
   | "settlement_claims_open"
@@ -77,6 +77,7 @@ export type CatalogCase = {
   officialDestinationVerified: boolean;
   discoverySourceName: string;
   discoverySourceUrl: string;
+  finderCriteria?: FinderCriteria;
 };
 
 export type RawFederalRecord = {

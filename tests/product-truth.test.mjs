@@ -6,6 +6,13 @@ async function claimAppSource() {
   return readFile(new URL("../app/ClaimApp.tsx", import.meta.url), "utf8");
 }
 
+async function finderSources() {
+  return Promise.all([
+    readFile(new URL("../app/CaseFinder.tsx", import.meta.url), "utf8"),
+    readFile(new URL("../app/case-finder.ts", import.meta.url), "utf8"),
+  ]).then((parts) => parts.join("\n"));
+}
+
 test("claim workspace copy describes implemented behavior only", async () => {
   const source = await claimAppSource();
 
@@ -51,4 +58,18 @@ test("curated destinations are not overclaimed as direct claim forms", async () 
     catalog,
     /Open official claim form|verified_official_form|controlling_document_verified/,
   );
+});
+
+test("case finder is ephemeral, catalog-bound, and separates source layers", async () => {
+  const source = await finderSources();
+
+  assert.match(source, /Open claims to review/);
+  assert.match(source, /Related agency or court records/);
+  assert.match(source, /possible leads—not eligibility decisions/i);
+  assert.match(source, /sensitiveFinderInputReason/);
+  assert.match(source, /role="dialog"/);
+  assert.match(source, /role="log"/);
+  assert.match(source, /aria-expanded/);
+  assert.doesNotMatch(source, /\bfetch\s*\(|localStorage|sessionStorage|supabase/i);
+  assert.doesNotMatch(source, /you (?:qualify|are eligible)|\d+% match/i);
 });
