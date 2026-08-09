@@ -1,5 +1,5 @@
 import type { CatalogCase, CatalogKind, ProofLevel } from "./catalog";
-import type { FinderIssueType } from "./cases";
+import type { FinderIssueType, FinderSituation } from "./cases";
 
 export type FinderGoal = "open_claims" | "government_redress" | "watch_cases" | "explore";
 export type FinderExperience = FinderIssueType;
@@ -16,10 +16,75 @@ export type FinderPreferences = {
 export type FinderMatch = {
   item: CatalogCase;
   score: number;
-  signal: "Several details line up" | "Some details line up" | "Broad catalog suggestion";
+  signal:
+    | "Several details line up"
+    | "Some details line up"
+    | "Broad catalog suggestion"
+    | "Worth reviewing"
+    | "Needs confirmation";
   reasons: string[];
   questionsToConfirm: string[];
 };
+
+export type FinderScreenerAnswer = "yes" | "unsure" | "no";
+
+export type FinderScreenerAnswers = {
+  situations: FinderSituation[];
+  recognizedCaseIds: string[];
+  candidateAnswers: Record<string, FinderScreenerAnswer>;
+};
+
+export const EMPTY_SCREENER_ANSWERS: FinderScreenerAnswers = {
+  situations: [],
+  recognizedCaseIds: [],
+  candidateAnswers: {},
+};
+
+export const FINDER_SITUATIONS: Array<{
+  id: FinderSituation;
+  label: string;
+  detail: string;
+}> = [
+  {
+    id: "breach_notice",
+    label: "I received a data-breach or security notice",
+    detail: "A letter or email said personal information may have been exposed.",
+  },
+  {
+    id: "healthcare_tool",
+    label: "I used a patient portal or online healthcare booking",
+    detail: "A hospital, patient-account, therapy, or appointment website or app.",
+  },
+  {
+    id: "voice_assistant",
+    label: "I or someone in my household used a voice assistant",
+    detail: "A smart speaker or Assistant device, including an unexpected activation.",
+  },
+  {
+    id: "washington_job",
+    label: "I applied for a job located in Washington",
+    detail: "Especially if the posting did not show pay or benefit information.",
+  },
+  {
+    id: "marketing_email",
+    label: "I received retail marketing emails while living in Washington",
+    detail: "Promotional or commercial email from a retailer.",
+  },
+  {
+    id: "professional_services",
+    label: "I used or interacted with credit-counseling, accounting, or legal services",
+    detail: "This includes providers you hired and services that contacted or served you.",
+  },
+  {
+    id: "not_sure",
+    label: "I’m not sure — show me the possibilities",
+    detail: "The next step will supply names and descriptions to jog your memory.",
+  },
+];
+
+const SITUATION_LABELS = Object.fromEntries(
+  FINDER_SITUATIONS.map((situation) => [situation.id, situation.label]),
+) as Record<FinderSituation, string>;
 
 export const FINDER_GOALS: Array<{ id: FinderGoal; label: string; detail: string }> = [
   {
@@ -234,7 +299,7 @@ function questionsFor(item: CatalogCase, preferences: FinderPreferences) {
     if (!/\b(?:19|20)\d{2}\b/.test(preferences.keywords) && criteria?.coveredPeriodStart) {
       questions.push("Did this happen during the official covered dates?");
     }
-    if (criteria?.noticeMentioned && preferences.proof !== "Notice or ID") {
+    if (criteria?.noticeRequired && preferences.proof !== "Notice or ID") {
       questions.push("Did you receive the notice described by the official settlement site?");
     }
     questions.push("Does the official class definition apply to you?");
@@ -253,6 +318,20 @@ function deadlineTime(item: CatalogCase) {
   if (!item.deadline) return Number.POSITIVE_INFINITY;
   const value = new Date(item.deadline).getTime();
   return Number.isFinite(value) ? value : Number.POSITIVE_INFINITY;
+}
+
+export function isReviewedOpenClaim(item: CatalogCase, now = Date.now()) {
+  if (
+    item.kind !== "settlement_claims_open" ||
+    item.windowStatus !== "open" ||
+    item.freshness !== "current" ||
+    !item.finderCriteria
+  ) {
+    return false;
+  }
+  if (!item.deadline) return true;
+  const deadline = new Date(item.deadline).getTime();
+  return !Number.isFinite(deadline) || deadline >= now;
 }
 
 function allowedByGoal(item: CatalogCase, preferences: FinderPreferences) {
@@ -348,7 +427,7 @@ export function rankCatalogCases(
           if (item.proof === preferences.proof) {
             score += 7;
             reasons.push(`Source summary says: ${item.proof.toLowerCase()}`);
-          } else if (preferences.proof === "Notice or ID" && criteria.noticeMentioned) {
+          } else if (preferences.proof === "Notice or ID" && criteria.noticeRequired) {
             score += 7;
             reasons.push("The reviewed class definition mentions a notice");
           } else if (preferences.proof === "No documents stated") {
@@ -390,4 +469,78 @@ export function rankCatalogCases(
       return a.item.id.localeCompare(b.item.id);
     })
     .slice(0, Math.max(1, limit));
+}
+
+function sortReviewedCandidates(items: CatalogCase[]) {
+  return [...items].sort((a, b) => {
+    const deadlineDifference = deadlineTime(a) - deadlineTime(b);
+    if (deadlineDifference !== 0) return deadlineDifference;
+    return a.id.localeCompare(b.id);
+  });
+}
+
+export function reviewedCandidatesForSituations(
+  cases: CatalogCase[],
+  situations: FinderSituation[],
+) {
+  const reviewed = cases.filter((item) => isReviewedOpenClaim(item));
+  if (situations.includes("not_sure")) return sortReviewedCandidates(reviewed);
+  if (situations.length === 0) return [];
+  return sortReviewedCandidates(reviewed.filter((item) =>
+    item.finderCriteria?.situations.some((situation) => situations.includes(situation)),
+  ));
+}
+
+export function candidateCasesForScreener(
+  cases: CatalogCase[],
+  answers: FinderScreenerAnswers,
+) {
+  const prompted = reviewedCandidatesForSituations(cases, answers.situations);
+  if (answers.recognizedCaseIds.length === 0) return prompted;
+  return prompted.filter((item) => answers.recognizedCaseIds.includes(item.id));
+}
+
+export function screenReviewedClaims(
+  cases: CatalogCase[],
+  answers: FinderScreenerAnswers,
+): FinderMatch[] {
+  return candidateCasesForScreener(cases, answers)
+    .flatMap((item): FinderMatch[] => {
+      const answer = answers.candidateAnswers[item.id];
+      if (!answer || answer === "no" || !item.finderCriteria) return [];
+
+      const recognized = answers.recognizedCaseIds.includes(item.id);
+      const matchingSituations = item.finderCriteria.situations.filter((situation) =>
+        answers.situations.includes(situation),
+      );
+      const reasons = [
+        recognized
+          ? `You recognized ${item.finderCriteria.recognitionLabel} from the prompted list`
+          : matchingSituations.length > 0
+            ? `You selected: ${matchingSituations.map((situation) => SITUATION_LABELS[situation].toLowerCase()).join("; ")}`
+            : "You asked to review every prompted possibility",
+        answer === "yes"
+          ? "You said the source-reviewed facts sound true"
+          : "You marked the source-reviewed facts as not sure",
+      ];
+
+      return [{
+        item,
+        score: (answer === "yes" ? 100 : 50) + (recognized ? 20 : 0),
+        signal: answer === "yes" ? "Worth reviewing" : "Needs confirmation",
+        reasons,
+        questionsToConfirm: answer === "unsure"
+          ? [
+              "Confirm each prompted fact against your own records and the official class definition.",
+              "The official administrator—not Verdue—decides eligibility.",
+            ]
+          : ["Review the complete official class definition before taking any action."],
+      }];
+    })
+    .sort((a, b) => {
+      if (b.score !== a.score) return b.score - a.score;
+      const deadlineDifference = deadlineTime(a.item) - deadlineTime(b.item);
+      if (deadlineDifference !== 0) return deadlineDifference;
+      return a.item.id.localeCompare(b.item.id);
+    });
 }

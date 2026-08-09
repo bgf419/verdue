@@ -329,25 +329,36 @@ function mapGovernmentRecord(record: RawGovernmentCatalog["records"][number]): C
 const governmentCases = governmentCatalog.records
   .filter((record) => record.active)
   .map(mapGovernmentRecord);
+
+function curatedDeadlinePassed(deadline?: string) {
+  if (!deadline) return false;
+  const timestamp = new Date(deadline).getTime();
+  return Number.isFinite(timestamp) && timestamp < Date.now();
+}
+
 const curatedOnlyCases: CatalogCase[] = curatedCases
-  .map((item) => ({
-    ...item,
-    sourceRecordId: `manual-${item.id}`,
-    actionUrl: item.claimUrl,
-    actionLabel: "Open official settlement site",
-    actionRole: "verified_official_settlement_site",
-    kind: "settlement_claims_open",
-    participationMode: "claim_form_required",
-    windowStatus: "open",
-    freshness: "current",
-    firstSeenAt: item.verifiedAt,
-    lastChangedAt: item.verifiedAt,
-    verificationState: "official_settlement_site_checked",
-    verificationNote: "This destination was manually checked against the settlement website.",
-    officialDestinationVerified: true,
-    discoverySourceName: "Manual official-source review",
-    discoverySourceUrl: item.sourceUrl,
-  }));
+  .map((item) => {
+    const deadlinePassed = curatedDeadlinePassed(item.deadline);
+    return {
+      ...item,
+      status: deadlinePassed ? "Listed deadline passed · source recheck required" : item.status,
+      sourceRecordId: `manual-${item.id}`,
+      actionUrl: item.claimUrl,
+      actionLabel: "Open official settlement site",
+      actionRole: "verified_official_settlement_site",
+      kind: "settlement_claims_open",
+      participationMode: "claim_form_required",
+      windowStatus: deadlinePassed ? "closed" : "open",
+      freshness: deadlinePassed ? "stale" : "current",
+      firstSeenAt: item.verifiedAt,
+      lastChangedAt: item.verifiedAt,
+      verificationState: "official_settlement_site_checked",
+      verificationNote: "This destination was manually checked against the settlement website.",
+      officialDestinationVerified: true,
+      discoverySourceName: "Manual official-source review",
+      discoverySourceUrl: item.sourceUrl,
+    };
+  });
 
 export const cases = [
   ...curatedOnlyCases,

@@ -13,13 +13,26 @@ export type FinderIssueType =
   | "healthcare"
   | "finance";
 
+export type FinderSituation =
+  | "breach_notice"
+  | "healthcare_tool"
+  | "voice_assistant"
+  | "washington_job"
+  | "marketing_email"
+  | "professional_services"
+  | "not_sure";
+
 export type FinderCriteria = {
   aliases: string[];
   issueTypes: FinderIssueType[];
+  situations: FinderSituation[];
+  recognitionLabel: string;
+  recognitionDetail: string;
+  essentialFacts: string[];
   eligibleStates: string[] | null;
   coveredPeriodStart: string | null;
   coveredPeriodEnd: string | null;
-  noticeMentioned: boolean | null;
+  noticeRequired: boolean;
 };
 
 export type ClaimCase = {
@@ -95,10 +108,17 @@ export const cases: ClaimCase[] = [
     finderCriteria: {
       aliases: ["costco", "costco wholesale", "commercial email"],
       issueTypes: ["consumer", "communications"],
+      situations: ["marketing_email"],
+      recognitionLabel: "Costco commercial emails",
+      recognitionDetail: "Retail membership and promotional or marketing emails",
+      essentialFacts: [
+        "You lived in Washington when the email arrived.",
+        "You received a qualifying Costco commercial email between June 2, 2021 and July 7, 2026.",
+      ],
       eligibleStates: ["washington"],
       coveredPeriodStart: "2021-06-02",
       coveredPeriodEnd: "2026-07-07",
-      noticeMentioned: null,
+      noticeRequired: false,
     },
     accent: "coral",
     checklist: [
@@ -145,10 +165,17 @@ export const cases: ClaimCase[] = [
     finderCriteria: {
       aliases: ["google", "google assistant", "google home", "assistant device"],
       issueTypes: ["consumer", "privacy"],
+      situations: ["voice_assistant"],
+      recognitionLabel: "Google Assistant or Google Home",
+      recognitionDetail: "A Google-made Assistant device, false activation, or household use",
+      essentialFacts: [
+        "In the U.S., you bought a covered Google-made Assistant device, or you used or lived with someone who used Google Assistant when a false activation may have captured communications.",
+        "That purchase or use was between May 18, 2016 and March 19, 2026.",
+      ],
       eligibleStates: null,
       coveredPeriodStart: "2016-05-18",
       coveredPeriodEnd: "2026-03-19",
-      noticeMentioned: null,
+      noticeRequired: false,
     },
     accent: "cobalt",
     checklist: [
@@ -195,10 +222,17 @@ export const cases: ClaimCase[] = [
     finderCriteria: {
       aliases: ["banner health", "banner patient account", "banner patient portal"],
       issueTypes: ["healthcare", "privacy"],
+      situations: ["healthcare_tool"],
+      recognitionLabel: "Banner Health Patient Account",
+      recognitionDetail: "A Banner patient portal, website, account, or app",
+      essentialFacts: [
+        "You had a Banner Health Patient Account.",
+        "You logged in through a covered Banner website or app between June 1, 2020 and November 22, 2023.",
+      ],
       eligibleStates: null,
       coveredPeriodStart: "2020-06-01",
       coveredPeriodEnd: "2023-11-22",
-      noticeMentioned: null,
+      noticeRequired: false,
     },
     accent: "mint",
     checklist: [
@@ -246,10 +280,16 @@ export const cases: ClaimCase[] = [
     finderCriteria: {
       aliases: ["comcast", "xfinity", "comcast data breach"],
       issueTypes: ["consumer", "privacy"],
+      situations: ["breach_notice"],
+      recognitionLabel: "Comcast or Xfinity",
+      recognitionDetail: "Internet or cable service and an October 2023 security incident",
+      essentialFacts: [
+        "Comcast or Xfinity sent you a notice saying your personal information may have been compromised in its October 2023 data breach.",
+      ],
       eligibleStates: null,
       coveredPeriodStart: null,
       coveredPeriodEnd: null,
-      noticeMentioned: true,
+      noticeRequired: true,
     },
     accent: "violet",
     checklist: [
@@ -295,10 +335,18 @@ export const cases: ClaimCase[] = [
     finderCriteria: {
       aliases: ["refresco", "refresco beverages", "job posting", "pay transparency"],
       issueTypes: ["employment"],
+      situations: ["washington_job"],
+      recognitionLabel: "Refresco or Refresco Beverages",
+      recognitionDetail: "A Washington job application or posting",
+      essentialFacts: [
+        "The job was located in Washington.",
+        "You applied between January 1, 2023 and June 5, 2026.",
+        "The posting omitted required pay or benefit information.",
+      ],
       eligibleStates: ["washington"],
       coveredPeriodStart: "2023-01-01",
       coveredPeriodEnd: "2026-06-05",
-      noticeMentioned: null,
+      noticeRequired: false,
     },
     accent: "amber",
     checklist: [
@@ -344,10 +392,16 @@ export const cases: ClaimCase[] = [
     finderCriteria: {
       aliases: ["accc", "american consumer credit counseling"],
       issueTypes: ["finance", "privacy"],
+      situations: ["breach_notice", "professional_services"],
+      recognitionLabel: "American Consumer Credit Counseling (ACCC)",
+      recognitionDetail: "Credit counseling or debt-management services",
+      essentialFacts: [
+        "ACCC sent you a notice saying your private information may have been affected by its January 2025 data incident.",
+      ],
       eligibleStates: null,
       coveredPeriodStart: null,
       coveredPeriodEnd: null,
-      noticeMentioned: true,
+      noticeRequired: true,
     },
     accent: "cobalt",
     checklist: [
@@ -393,10 +447,17 @@ export const cases: ClaimCase[] = [
     finderCriteria: {
       aliases: ["abc legal", "abc legal services"],
       issueTypes: ["consumer", "privacy"],
+      situations: ["breach_notice", "professional_services"],
+      recognitionLabel: "ABC Legal or ABC Legal Services",
+      recognitionDetail: "Legal-process or legal-services provider",
+      essentialFacts: [
+        "You were a U.S. resident at the time.",
+        "You were told, or otherwise have reason to believe, that your information may have been affected by ABC Legal's incident beginning around August 7, 2024.",
+      ],
       eligibleStates: null,
       coveredPeriodStart: null,
       coveredPeriodEnd: null,
-      noticeMentioned: null,
+      noticeRequired: false,
     },
     accent: "mint",
     checklist: [
@@ -443,10 +504,16 @@ export const cases: ClaimCase[] = [
     finderCriteria: {
       aliases: ["lifestance", "lifestance health", "online booking", "tracking pixel"],
       issueTypes: ["healthcare", "privacy"],
+      situations: ["healthcare_tool"],
+      recognitionLabel: "LifeStance Health",
+      recognitionDetail: "A mental-health website or online booking tool",
+      essentialFacts: [
+        "You used LifeStance's public website or online booking tools.",
+      ],
       eligibleStates: null,
       coveredPeriodStart: null,
       coveredPeriodEnd: null,
-      noticeMentioned: null,
+      noticeRequired: false,
     },
     accent: "violet",
     checklist: [
@@ -493,10 +560,16 @@ export const cases: ClaimCase[] = [
     finderCriteria: {
       aliases: ["eisneramper", "eisner advisory group", "eisner"],
       issueTypes: ["finance", "privacy"],
+      situations: ["breach_notice", "professional_services"],
+      recognitionLabel: "EisnerAmper or Eisner Advisory Group",
+      recognitionDetail: "Accounting, tax, or advisory services",
+      essentialFacts: [
+        "You were told, or otherwise have reason to believe, that your information was affected by the September 4–9, 2023 incident.",
+      ],
       eligibleStates: null,
       coveredPeriodStart: "2023-09-04",
       coveredPeriodEnd: "2023-09-09",
-      noticeMentioned: null,
+      noticeRequired: false,
     },
     accent: "amber",
     checklist: [

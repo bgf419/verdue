@@ -11,21 +11,27 @@ import {
   Sparkles,
   X,
 } from "lucide-react";
-import { type FormEvent, useEffect, useRef, useState } from "react";
+import { type FormEvent, type KeyboardEvent as ReactKeyboardEvent, useEffect, useRef, useState } from "react";
 import {
   EMPTY_FINDER_PREFERENCES,
-  FINDER_EXPERIENCES,
-  FINDER_GOALS,
+  EMPTY_SCREENER_ANSWERS,
+  FINDER_SITUATIONS,
   FINDER_SUGGESTIONS,
+  candidateCasesForScreener,
+  isReviewedOpenClaim,
   mergeFinderPreferences,
   parseFinderMessage,
   rankCatalogCases,
+  reviewedCandidatesForSituations,
+  screenReviewedClaims,
   sensitiveFinderInputReason,
-  type FinderExperience,
   type FinderMatch,
   type FinderPreferences,
+  type FinderScreenerAnswer,
+  type FinderScreenerAnswers,
 } from "./case-finder";
 import type { CatalogCase, CatalogKind } from "./catalog";
+import type { FinderSituation } from "./cases";
 
 type FinderMessage = {
   id: string;
@@ -42,15 +48,38 @@ type CaseFinderProps = {
 const INITIAL_MESSAGE: FinderMessage = {
   id: "finder-welcome",
   role: "assistant",
-  text: "Tell me a company, product, state, or what happened. I’ll search only Verdue’s catalog and explain why each result may be worth reviewing.",
+  text: "Tell me what happened in everyday words—or choose the Quick quiz. You do not need to know a lawsuit or company name.",
 };
 
-const PROOF_OPTIONS: Array<{ value: FinderPreferences["proof"]; label: string; detail: string }> = [
-  { value: "Any", label: "Any information level", detail: "Do not use this as a ranking signal." },
-  { value: "No documents stated", label: "No documents stated", detail: "Prioritize listings whose source summary does not state a document requirement." },
-  { value: "Notice or ID", label: "I have a notice or ID", detail: "Prioritize listings that mention a notice or identifier." },
-  { value: "Records may be requested", label: "I may have records", detail: "Receipts, statements, emails, or similar records may be available." },
+const SCREENER_ANSWERS: Array<{
+  value: FinderScreenerAnswer;
+  label: string;
+  detail: string;
+}> = [
+  {
+    value: "yes",
+    label: "Yes, all of that sounds true",
+    detail: "Keep this listing for review.",
+  },
+  {
+    value: "unsure",
+    label: "Maybe / I’m not sure",
+    detail: "Keep it as a weaker lead and show what needs confirmation.",
+  },
+  {
+    value: "no",
+    label: "No, at least one part is not true",
+    detail: "Remove this listing from the quiz results.",
+  },
 ];
+
+function freshScreenerAnswers(): FinderScreenerAnswers {
+  return {
+    situations: [...EMPTY_SCREENER_ANSWERS.situations],
+    recognizedCaseIds: [...EMPTY_SCREENER_ANSWERS.recognizedCaseIds],
+    candidateAnswers: {},
+  };
+}
 
 function finderKindLabel(kind: CatalogKind) {
   const labels: Record<CatalogKind, string> = {
@@ -76,14 +105,21 @@ function assistantSummary(matches: FinderMatch[], preferences: FinderPreferences
       !preferences.location &&
       preferences.proof === "Any"
     ) {
-      return "I’ve set the catalog layer. Now add a company, product, employer, state, issue, or rough year so I don’t make an arbitrary suggestion.";
+      return "Add what happened, a company or product if you remember it, a state, or a rough year so I do not make an arbitrary suggestion.";
     }
     if (preferences.goal === "open_claims") {
-      return "No listed open claim matched those catalog signals. That does not mean you are ineligible—Verdue’s reviewed coverage is incomplete. Try another company, state, issue, or year.";
+      return "No listed open claim matched those catalog signals. That does not mean you are ineligible—Verdue’s reviewed coverage is incomplete. Try another event, company, state, or year.";
     }
     return "No related record matched those catalog signals. That does not prove none exists—Verdue’s agency and court coverage is partial. Try a specific company or case name.";
   }
   return `I found ${matches.length} catalog ${matches.length === 1 ? "record" : "records"} worth checking. These are possible leads—not eligibility decisions.`;
+}
+
+function quizSummary(matches: FinderMatch[]) {
+  if (matches.length === 0) {
+    return "No reviewed listing survived those checks. That does not mean you are ineligible or that no case exists—Verdue’s reviewed open-claim coverage is incomplete.";
+  }
+  return `The quiz found ${matches.length} possible ${matches.length === 1 ? "listing" : "listings"} to review. This is not an eligibility decision.`;
 }
 
 function FinderResultCard({
@@ -109,7 +145,7 @@ function FinderResultCard({
       )}
       <div className="finder-result-footer">
         <small>{checkedDate(match.item.verifiedAt)}</small>
-        <button type="button" onClick={() => onReview(match.item)}>Review details <ArrowRight size={14} /></button>
+        <button type="button" onClick={() => onReview(match.item)}>Review listing details <ArrowRight size={14} /></button>
       </div>
     </article>
   );
@@ -122,11 +158,24 @@ export default function CaseFinder({ cases, catalogLoading, onReviewCase }: Case
   const [preferences, setPreferences] = useState<FinderPreferences>(EMPTY_FINDER_PREFERENCES);
   const [messages, setMessages] = useState<FinderMessage[]>([INITIAL_MESSAGE]);
   const [matches, setMatches] = useState<FinderMatch[]>([]);
+  const [screener, setScreener] = useState<FinderScreenerAnswers>(freshScreenerAnswers);
   const [quizStep, setQuizStep] = useState(0);
+  const [candidateIndex, setCandidateIndex] = useState(0);
+  const [namesAnswered, setNamesAnswered] = useState(false);
+  const [quizResultActive, setQuizResultActive] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
   const launcherRef = useRef<HTMLButtonElement>(null);
-  const panelRef = useRef<HTMLElement>(null);
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const questionLegendRef = useRef<HTMLLegendElement>(null);
+  const resultSummaryRef = useRef<HTMLDivElement>(null);
+  const focusQuizResultRef = useRef(false);
+
+  const recognitionCandidates = reviewedCandidatesForSituations(cases, screener.situations);
+  const quizCandidates = candidateCasesForScreener(cases, screener);
+  const currentCandidate = quizCandidates[candidateIndex];
+  const reviewedClaimCount = cases.filter((item) => isReviewedOpenClaim(item)).length;
+  const quizTotalSteps = 2 + Math.max(1, quizCandidates.length);
+  const quizProgressStep = quizStep < 2 ? quizStep + 1 : 3 + candidateIndex;
 
   const closeFinder = (restoreFocus = true) => {
     setOpen(false);
@@ -135,13 +184,23 @@ export default function CaseFinder({ cases, catalogLoading, onReviewCase }: Case
 
   useEffect(() => {
     if (!open || mode !== "chat") return;
+    if (focusQuizResultRef.current) {
+      focusQuizResultRef.current = false;
+      requestAnimationFrame(() => resultSummaryRef.current?.focus());
+      return;
+    }
     inputRef.current?.focus();
   }, [mode, open]);
 
   useEffect(() => {
-    if (!open || mode !== "chat") return;
+    if (!open || mode !== "quiz") return;
+    requestAnimationFrame(() => questionLegendRef.current?.focus());
+  }, [candidateIndex, mode, open, quizStep]);
+
+  useEffect(() => {
+    if (!open || mode !== "chat" || quizResultActive) return;
     requestAnimationFrame(() => chatEndRef.current?.scrollIntoView({ block: "end" }));
-  }, [matches, messages, mode, open]);
+  }, [matches, messages, mode, open, quizResultActive]);
 
   useEffect(() => {
     if (!open) return;
@@ -159,6 +218,7 @@ export default function CaseFinder({ cases, catalogLoading, onReviewCase }: Case
     const nextMatches = rankCatalogCases(cases, nextPreferences, 3);
     setPreferences(nextPreferences);
     setMatches(nextMatches);
+    setQuizResultActive(false);
     setMessages((current) => [
       ...current,
       ...(userText
@@ -175,12 +235,13 @@ export default function CaseFinder({ cases, catalogLoading, onReviewCase }: Case
   const rejectSensitiveInput = (reason: string) => {
     setDraft("");
     setMatches([]);
+    setQuizResultActive(false);
     setMessages((current) => [
       ...current,
       {
         id: crypto.randomUUID(),
         role: "assistant",
-        text: `I cleared that entry because it looked like it contained a ${reason}. Search with only a company, product, state, issue type, and rough year.`,
+        text: `I cleared that entry because it looked like it contained a ${reason}. Search with only what happened, a company or product, a state, and a rough year.`,
       },
     ]);
   };
@@ -209,38 +270,123 @@ export default function CaseFinder({ cases, catalogLoading, onReviewCase }: Case
     setMessages([INITIAL_MESSAGE]);
     setMatches([]);
     setDraft("");
+    setScreener(freshScreenerAnswers());
     setQuizStep(0);
+    setCandidateIndex(0);
+    setNamesAnswered(false);
+    setQuizResultActive(false);
     setMode("chat");
   };
 
-  const toggleExperience = (experience: FinderExperience) => {
-    setPreferences((current) => ({
+  const openQuiz = () => {
+    if (quizResultActive) {
+      setScreener(freshScreenerAnswers());
+      setQuizStep(0);
+      setCandidateIndex(0);
+      setNamesAnswered(false);
+      setMatches([]);
+      setQuizResultActive(false);
+    }
+    setMode("quiz");
+  };
+
+  const handleModeTabKeyDown = (event: ReactKeyboardEvent<HTMLButtonElement>) => {
+    if (!["ArrowLeft", "ArrowRight", "Home", "End"].includes(event.key)) return;
+    event.preventDefault();
+    const nextMode = event.key === "Home"
+      ? "chat"
+      : event.key === "End"
+        ? "quiz"
+        : mode === "chat"
+          ? "quiz"
+          : "chat";
+    if (nextMode === "quiz") {
+      openQuiz();
+    } else {
+      focusQuizResultRef.current = false;
+      setMode("chat");
+    }
+    requestAnimationFrame(() => document.getElementById(`finder-${nextMode}-tab`)?.focus());
+  };
+
+  const toggleSituation = (situation: FinderSituation) => {
+    setScreener((current) => {
+      const situations = situation === "not_sure"
+        ? ["not_sure" as const]
+        : current.situations.includes(situation)
+          ? current.situations.filter((item) => item !== situation)
+          : [...current.situations.filter((item) => item !== "not_sure"), situation];
+      return { situations, recognizedCaseIds: [], candidateAnswers: {} };
+    });
+    setNamesAnswered(false);
+    setCandidateIndex(0);
+  };
+
+  const toggleRecognizedCase = (caseId: string) => {
+    setScreener((current) => ({
       ...current,
-      experiences: current.experiences.includes(experience)
-        ? current.experiences.filter((item) => item !== experience)
-        : [...current.experiences, experience],
+      recognizedCaseIds: current.recognizedCaseIds.includes(caseId)
+        ? current.recognizedCaseIds.filter((id) => id !== caseId)
+        : [...current.recognizedCaseIds, caseId],
+      candidateAnswers: {},
+    }));
+    setNamesAnswered(true);
+    setCandidateIndex(0);
+  };
+
+  const clearRecognizedCases = () => {
+    setScreener((current) => ({ ...current, recognizedCaseIds: [], candidateAnswers: {} }));
+    setNamesAnswered(true);
+    setCandidateIndex(0);
+  };
+
+  const answerCandidate = (answer: FinderScreenerAnswer) => {
+    if (!currentCandidate) return;
+    setScreener((current) => ({
+      ...current,
+      candidateAnswers: { ...current.candidateAnswers, [currentCandidate.id]: answer },
     }));
   };
 
   const finishQuiz = () => {
-    const sensitiveReason = sensitiveFinderInputReason(`${preferences.keywords} ${preferences.location}`);
-    if (sensitiveReason) {
-      setPreferences((current) => ({ ...current, keywords: "", location: "" }));
-      rejectSensitiveInput(sensitiveReason);
-      setMode("chat");
-      return;
-    }
-    const nextMatches = rankCatalogCases(cases, preferences, 3);
+    const nextMatches = screenReviewedClaims(cases, screener);
     setMatches(nextMatches);
+    setQuizResultActive(true);
     setMessages((current) => [
       ...current,
       {
         id: crypto.randomUUID(),
         role: "assistant",
-        text: `${assistantSummary(nextMatches, preferences)} I used only the answers from this quiz.`,
+        text: `${quizSummary(nextMatches)} I used only the answers from this browser-tab quiz.`,
       },
     ]);
+    focusQuizResultRef.current = true;
     setMode("chat");
+  };
+
+  const goBackInQuiz = () => {
+    if (quizStep === 2 && candidateIndex > 0) {
+      setCandidateIndex((current) => current - 1);
+      return;
+    }
+    if (quizStep > 0) setQuizStep((current) => current - 1);
+  };
+
+  const goForwardInQuiz = () => {
+    if (quizStep < 2) {
+      if (quizStep === 1 && quizCandidates.length === 0) {
+        finishQuiz();
+        return;
+      }
+      setQuizStep((current) => current + 1);
+      if (quizStep === 1) setCandidateIndex(0);
+      return;
+    }
+    if (candidateIndex < quizCandidates.length - 1) {
+      setCandidateIndex((current) => current + 1);
+      return;
+    }
+    finishQuiz();
   };
 
   const reviewMatch = (item: CatalogCase) => {
@@ -250,6 +396,23 @@ export default function CaseFinder({ cases, catalogLoading, onReviewCase }: Case
 
   const openClaimMatches = matches.filter((match) => match.item.kind === "settlement_claims_open");
   const relatedSourceMatches = matches.filter((match) => match.item.kind !== "settlement_claims_open");
+  const currentCandidateAnswer = currentCandidate
+    ? screener.candidateAnswers[currentCandidate.id]
+    : undefined;
+  const nextDisabled = quizStep === 0
+    ? screener.situations.length === 0
+    : quizStep === 1
+      ? !namesAnswered
+      : !currentCandidate || !currentCandidateAnswer;
+  const nextLabel = quizStep === 0
+    ? "Show familiar names"
+    : quizStep === 1
+      ? quizCandidates.length === 0
+        ? "Show coverage message"
+        : `Check ${quizCandidates.length} ${quizCandidates.length === 1 ? "possibility" : "possibilities"}`
+      : candidateIndex < quizCandidates.length - 1
+        ? "Next possibility"
+        : "Show possible listings";
 
   return (
     <>
@@ -265,13 +428,12 @@ export default function CaseFinder({ cases, catalogLoading, onReviewCase }: Case
         tabIndex={open ? -1 : 0}
       >
         <span><Sparkles size={18} /></span>
-        <strong>Find my cases</strong>
-        <small>Private in-browser match</small>
+        <strong>Find relevant cases</strong>
+        <small>Guided quiz + catalog search</small>
       </button>
 
       {open && (
         <section
-          ref={panelRef}
           className="case-finder-panel"
           id="case-finder-panel"
           role="dialog"
@@ -294,12 +456,12 @@ export default function CaseFinder({ cases, catalogLoading, onReviewCase }: Case
 
           <div className="finder-privacy-note">
             <ShieldCheck size={16} />
-            <span>Answers stay in this browser tab and are not sent to a model or saved after refresh. Do not enter names, account numbers, claim IDs, health details, or information about minors.</span>
+            <span>Answers stay in this browser tab and are not sent to a model or saved after refresh. Do not enter your name, account or claim IDs, diagnoses, exact address, Social Security number, or payment details.</span>
           </div>
 
           <div className="finder-mode-tabs" role="tablist" aria-label="Case finder mode">
-            <button id="finder-chat-tab" type="button" role="tab" aria-controls="finder-chat-panel" aria-selected={mode === "chat"} className={mode === "chat" ? "active" : ""} onClick={() => setMode("chat")}><MessageCircle size={15} /> Ask the finder</button>
-            <button id="finder-quiz-tab" type="button" role="tab" aria-controls="finder-quiz-panel" aria-selected={mode === "quiz"} className={mode === "quiz" ? "active" : ""} onClick={() => setMode("quiz")}><Check size={15} /> Quick quiz</button>
+            <button id="finder-chat-tab" type="button" role="tab" tabIndex={mode === "chat" ? 0 : -1} aria-controls="finder-chat-panel" aria-selected={mode === "chat"} className={mode === "chat" ? "active" : ""} onKeyDown={handleModeTabKeyDown} onClick={() => { focusQuizResultRef.current = false; setMode("chat"); }}><MessageCircle size={15} /> Ask the finder</button>
+            <button id="finder-quiz-tab" type="button" role="tab" tabIndex={mode === "quiz" ? 0 : -1} aria-controls="finder-quiz-panel" aria-selected={mode === "quiz"} className={mode === "quiz" ? "active" : ""} onKeyDown={handleModeTabKeyDown} onClick={openQuiz}><Check size={15} /> Quick quiz</button>
           </div>
 
           {mode === "chat" ? (
@@ -314,6 +476,16 @@ export default function CaseFinder({ cases, catalogLoading, onReviewCase }: Case
                   ))}
                 </div>
 
+                {quizResultActive && (
+                  <div className="finder-quiz-result-summary" ref={resultSummaryRef} tabIndex={-1}>
+                    <div role="status">
+                      <strong>Quiz complete</strong>
+                      <span>{quizSummary(matches)}</span>
+                    </div>
+                    <button type="button" onClick={openQuiz}><RotateCcw size={14} /> Retake quiz</button>
+                  </div>
+                )}
+
                 <div className="finder-result-status" role="status">
                   {matches.length > 0 ? `${matches.length} possible catalog ${matches.length === 1 ? "record" : "records"} shown.` : ""}
                 </div>
@@ -322,8 +494,8 @@ export default function CaseFinder({ cases, catalogLoading, onReviewCase }: Case
                   <div className="finder-results" aria-label="Suggested catalog records">
                     {openClaimMatches.length > 0 && (
                       <div className="finder-result-group">
-                        <h2>Open claims to review</h2>
-                        <p>These have a listed claim window. The official administrator still decides eligibility.</p>
+                        <h2>Possible listings to review</h2>
+                        <p>Some answers overlap with these reviewed listings. The official administrator still decides eligibility.</p>
                         {openClaimMatches.map((match) => <FinderResultCard key={match.item.id} match={match} onReview={reviewMatch} />)}
                       </div>
                     )}
@@ -354,7 +526,7 @@ export default function CaseFinder({ cases, catalogLoading, onReviewCase }: Case
                   ref={inputRef}
                   value={draft}
                   onChange={(event) => setDraft(event.target.value)}
-                  placeholder="Example: I used Google in California"
+                  placeholder="Example: I received a breach notice"
                   aria-label="Ask the case finder"
                   maxLength={240}
                   autoComplete="off"
@@ -365,19 +537,26 @@ export default function CaseFinder({ cases, catalogLoading, onReviewCase }: Case
             </>
           ) : (
             <div className="finder-quiz" role="tabpanel" id="finder-quiz-panel" aria-labelledby="finder-quiz-tab">
+              {quizStep === 0 && (
+                <div className="finder-quiz-intro">
+                  <strong>No lawsuit knowledge needed.</strong>
+                  <span>Think about things you used, websites you visited, job applications, and privacy notices. This quiz checks only {reviewedClaimCount} hand-reviewed open claim windows.</span>
+                </div>
+              )}
+
               <div className="finder-quiz-progress">
-                <span>Question {quizStep + 1} of 5</span>
-                <div role="progressbar" aria-label="Quiz progress" aria-valuemin={1} aria-valuemax={5} aria-valuenow={quizStep + 1}><i style={{ width: `${((quizStep + 1) / 5) * 100}%` }} /></div>
+                <span>Step {quizProgressStep} of {quizTotalSteps}</span>
+                <div role="progressbar" aria-label="Quiz progress" aria-valuemin={1} aria-valuemax={quizTotalSteps} aria-valuenow={quizProgressStep}><i style={{ width: `${(quizProgressStep / quizTotalSteps) * 100}%` }} /></div>
               </div>
 
               {quizStep === 0 && (
                 <fieldset className="finder-question">
-                  <legend>What would you like to find?</legend>
-                  <p>This controls which catalog layer appears first.</p>
+                  <legend ref={questionLegendRef} tabIndex={-1}>Since 2016, has anything like this happened to you?</legend>
+                  <p>Select every situation that sounds familiar. You do not need to know whether it was connected to a lawsuit.</p>
                   <div className="finder-option-list">
-                    {FINDER_GOALS.map((goal) => (
-                      <button type="button" aria-pressed={preferences.goal === goal.id} className={preferences.goal === goal.id ? "selected" : ""} key={goal.id} onClick={() => setPreferences((current) => ({ ...current, goal: goal.id, goalExplicit: true }))}>
-                        <span>{goal.label}</span><small>{goal.detail}</small>
+                    {FINDER_SITUATIONS.map((situation) => (
+                      <button type="button" aria-pressed={screener.situations.includes(situation.id)} className={screener.situations.includes(situation.id) ? "selected" : ""} key={situation.id} onClick={() => toggleSituation(situation.id)}>
+                        <span>{situation.label}</span><small>{situation.detail}</small>
                       </button>
                     ))}
                   </div>
@@ -386,48 +565,39 @@ export default function CaseFinder({ cases, catalogLoading, onReviewCase }: Case
 
               {quizStep === 1 && (
                 <fieldset className="finder-question">
-                  <legend>Which experiences are relevant?</legend>
-                  <p>Choose any that apply. This is a search signal, not a legal conclusion.</p>
-                  <div className="finder-option-grid">
-                    {FINDER_EXPERIENCES.map((experience) => (
-                      <button type="button" aria-pressed={preferences.experiences.includes(experience.id)} className={preferences.experiences.includes(experience.id) ? "selected" : ""} key={experience.id} onClick={() => toggleExperience(experience.id)}>
-                        <span>{experience.label}</span><small>{experience.detail}</small>
+                  <legend ref={questionLegendRef} tabIndex={-1}>Which of these names or services sound familiar?</legend>
+                  <p>We are supplying names to jog your memory. Select every one you recognize from the situation—there is nothing to type.</p>
+                  <div className="finder-option-list">
+                    {recognitionCandidates.map((item) => (
+                      <button type="button" aria-pressed={screener.recognizedCaseIds.includes(item.id)} className={screener.recognizedCaseIds.includes(item.id) ? "selected" : ""} key={item.id} onClick={() => toggleRecognizedCase(item.id)}>
+                        <span>{item.finderCriteria?.recognitionLabel}</span><small>{item.finderCriteria?.recognitionDetail}</small>
                       </button>
                     ))}
+                    <button type="button" aria-pressed={namesAnswered && screener.recognizedCaseIds.length === 0} className={namesAnswered && screener.recognizedCaseIds.length === 0 ? "selected" : ""} onClick={clearRecognizedCases}>
+                      <span>None of these / I do not remember</span><small>The next step will still describe each possible situation.</small>
+                    </button>
                   </div>
+                  {recognitionCandidates.length === 0 && (
+                    <div className="finder-empty-quiz" role="status">There are no currently reviewed open claim windows for that situation. Continue for a bounded coverage message or go back and choose another situation.</div>
+                  )}
                 </fieldset>
               )}
 
-              {quizStep === 2 && (
-                <fieldset className="finder-question">
-                  <legend>Which companies, products, or employers?</legend>
-                  <p>Optional. Separate several names with commas. A rough year can help if it appears in the source summary.</p>
-                  <label className="finder-text-answer">
-                    <span>Brands or keywords</span>
-                    <input value={preferences.keywords} onChange={(event) => setPreferences((current) => ({ ...current, keywords: event.target.value }))} maxLength={160} placeholder="Google, Comcast, hospital portal, 2024" autoComplete="off" spellCheck={false} />
-                  </label>
-                </fieldset>
-              )}
-
-              {quizStep === 3 && (
-                <fieldset className="finder-question">
-                  <legend>Where did it happen?</legend>
-                  <p>Optional. A state can improve ranking when a source explicitly limits geography.</p>
-                  <label className="finder-text-answer">
-                    <span>State</span>
-                    <input value={preferences.location} onChange={(event) => setPreferences((current) => ({ ...current, location: event.target.value }))} maxLength={30} placeholder="New York or NY" autoComplete="off" spellCheck={false} />
-                  </label>
-                </fieldset>
-              )}
-
-              {quizStep === 4 && (
-                <fieldset className="finder-question">
-                  <legend>What information might you have?</legend>
-                  <p>Source summaries can be incomplete. Always confirm requirements on the official site.</p>
-                  <div className="finder-option-list">
-                    {PROOF_OPTIONS.map((option) => (
-                      <button type="button" aria-pressed={preferences.proof === option.value} className={preferences.proof === option.value ? "selected" : ""} key={option.value} onClick={() => setPreferences((current) => ({ ...current, proof: option.value }))}>
-                        <span>{option.label}</span><small>{option.detail}</small>
+              {quizStep === 2 && currentCandidate && (
+                <fieldset className="finder-question finder-candidate-question">
+                  <legend ref={questionLegendRef} tabIndex={-1}>Does this sound like your experience?</legend>
+                  <p>Check {candidateIndex + 1} of {quizCandidates.length}. Answer from memory; never paste a notice or identifier.</p>
+                  <article className="finder-candidate-check">
+                    <span>{currentCandidate.finderCriteria?.recognitionLabel}</span>
+                    <h2>Do all of these sound true?</h2>
+                    <ul>
+                      {currentCandidate.finderCriteria?.essentialFacts.map((fact) => <li key={fact}>{fact}</li>)}
+                    </ul>
+                  </article>
+                  <div className="finder-option-list finder-answer-list" role="group" aria-label={`Answer for ${currentCandidate.company}`}>
+                    {SCREENER_ANSWERS.map((answer) => (
+                      <button type="button" aria-pressed={currentCandidateAnswer === answer.value} className={currentCandidateAnswer === answer.value ? "selected" : ""} key={answer.value} onClick={() => answerCandidate(answer.value)}>
+                        <span>{answer.label}</span><small>{answer.detail}</small>
                       </button>
                     ))}
                   </div>
@@ -435,19 +605,15 @@ export default function CaseFinder({ cases, catalogLoading, onReviewCase }: Case
               )}
 
               <div className="finder-quiz-actions">
-                <button type="button" className="finder-back" disabled={quizStep === 0} onClick={() => setQuizStep((current) => Math.max(0, current - 1))}><ChevronLeft size={15} /> Back</button>
-                {quizStep < 4 ? (
-                  <button type="button" className="finder-next" onClick={() => { if (quizStep === 0) setPreferences((current) => ({ ...current, goalExplicit: true })); setQuizStep((current) => Math.min(4, current + 1)); }}>Next question <ArrowRight size={15} /></button>
-                ) : (
-                  <button type="button" className="finder-next" onClick={finishQuiz}>Show possible matches <Sparkles size={15} /></button>
-                )}
+                <button type="button" className="finder-back" disabled={quizStep === 0} onClick={goBackInQuiz}><ChevronLeft size={15} /> Back</button>
+                <button type="button" className="finder-next" disabled={nextDisabled} onClick={goForwardInQuiz}>{nextLabel} {quizStep === 2 && candidateIndex === quizCandidates.length - 1 ? <Sparkles size={15} /> : <ArrowRight size={15} />}</button>
               </div>
             </div>
           )}
 
           <footer className="finder-footer">
-            {catalogLoading ? <span className="finder-loading-dot" /> : <ShieldCheck size={13} />}
-            <span>{catalogLoading ? "Federal docket records are still loading; suggestions will expand." : `Searching ${cases.length.toLocaleString()} current catalog records.`} Administrators and courts decide eligibility.</span>
+            {mode === "quiz" ? <ShieldCheck size={13} /> : catalogLoading ? <span className="finder-loading-dot" /> : <ShieldCheck size={13} />}
+            <span>{mode === "quiz" ? `Quiz scope: ${reviewedClaimCount} hand-reviewed open claim windows.` : catalogLoading ? "Federal docket records are still loading; chat suggestions will expand." : `Chat searches ${cases.length.toLocaleString()} current catalog records.`} Administrators and courts decide eligibility.</span>
           </footer>
         </section>
       )}

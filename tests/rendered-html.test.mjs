@@ -78,6 +78,11 @@ test("public bundle includes the guided case finder and quiz", async () => {
   assert.match(javascript, /Verdue Case Finder/);
   assert.match(javascript, /Quick quiz/);
   assert.match(javascript, /Answers stay in this browser tab/);
-  assert.match(javascript, /Open claims to review/);
+  assert.match(javascript, /No lawsuit knowledge needed/);
+  assert.match(javascript, /Since 2016, has anything like this happened to you/);
+  assert.match(javascript, /Which of these names or services sound familiar/);
+  assert.match(javascript, /Does this sound like your experience/);
+  assert.match(javascript, /Possible listings to review/);
+  assert.doesNotMatch(javascript, /Which companies, products, or employers/);
   assert.doesNotMatch(javascript, /api\.openai\.com|api\.anthropic\.com/i);
 });

@@ -2863,8 +2863,8 @@ footer > div:last-child a {
 .finder-header-actions button {
   display: grid;
   place-items: center;
-  width: 34px;
-  height: 34px;
+  width: 44px;
+  height: 44px;
   border: 1px solid rgba(255, 255, 255, 0.13);
   border-radius: 50%;
   background: rgba(255, 255, 255, 0.07);
@@ -2901,7 +2901,7 @@ footer > div:last-child a {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  min-height: 34px;
+  min-height: 44px;
   border: 1px solid transparent;
   border-radius: 9px;
   background: transparent;
@@ -2945,6 +2945,48 @@ footer > div:last-child a {
   clip: rect(0 0 0 0);
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+.finder-quiz-result-summary {
+  display: grid;
+  gap: 3px;
+  padding: 11px 12px;
+  border: 1px solid #cbd7cc;
+  border-radius: 11px;
+  background: #edf6ef;
+  color: #365548;
+}
+
+.finder-quiz-result-summary > div {
+  display: grid;
+  gap: 3px;
+}
+
+.finder-quiz-result-summary strong {
+  font-size: 12px;
+}
+
+.finder-quiz-result-summary span {
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.finder-quiz-result-summary button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: fit-content;
+  min-height: 44px;
+  margin-top: 5px;
+  padding: 0 12px;
+  border: 1px solid #b9c9bc;
+  border-radius: 9px;
+  background: var(--white);
+  color: var(--ink);
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
 }
 
 .finder-message {
@@ -3188,6 +3230,26 @@ footer > div:last-child a {
   padding: 15px;
 }
 
+.finder-quiz-intro {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 14px;
+  padding: 12px;
+  border: 1px solid #cbd8cc;
+  border-radius: 11px;
+  background: #edf6ef;
+  color: #355648;
+}
+
+.finder-quiz-intro strong {
+  font-size: 13px;
+}
+
+.finder-quiz-intro span {
+  font-size: 12px;
+  line-height: 1.5;
+}
+
 .finder-quiz-progress {
   display: grid;
   gap: 6px;
@@ -3232,8 +3294,8 @@ footer > div:last-child a {
 
 .finder-question > p {
   margin: 6px 0 14px;
-  color: #75817b;
-  font-size: 11px;
+  color: #55635c;
+  font-size: 13px;
   line-height: 1.45;
 }
 
@@ -3251,6 +3313,7 @@ footer > div:last-child a {
 .finder-option-grid button {
   display: grid;
   gap: 3px;
+  min-height: 52px;
   padding: 10px 11px;
   border: 1px solid #d7dad3;
   border-radius: 10px;
@@ -3274,9 +3337,70 @@ footer > div:last-child a {
 
 .finder-option-list button small,
 .finder-option-grid button small {
-  color: #75817b;
-  font-size: 10.5px;
+  color: #55635c;
+  font-size: 12px;
   line-height: 1.35;
+}
+
+.finder-candidate-question {
+  margin-top: 18px;
+}
+
+.finder-candidate-check {
+  display: grid;
+  gap: 8px;
+  margin: 4px 0 14px;
+  padding: 14px;
+  border: 1px solid #d4d8d0;
+  border-radius: 13px;
+  background: var(--white);
+  box-shadow: 0 7px 20px rgba(16, 35, 28, 0.06);
+}
+
+.finder-candidate-check > span {
+  color: #3f654f;
+  font-size: 11px;
+  font-weight: 850;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+.finder-candidate-check h2 {
+  margin: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 20px;
+  line-height: 1.1;
+}
+
+.finder-candidate-check ul {
+  display: grid;
+  gap: 7px;
+  margin: 0;
+  padding-left: 18px;
+  color: #4a5e55;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+.finder-answer-list button:first-child.selected {
+  border-color: #397650;
+  background: #edf7f0;
+}
+
+.finder-answer-list button:last-child.selected {
+  border-color: #9c5c4f;
+  background: #fff1ed;
+}
+
+.finder-empty-quiz {
+  margin-top: 10px;
+  padding: 11px 12px;
+  border: 1px solid #d2d7cf;
+  border-radius: 10px;
+  background: #f2f0e9;
+  color: #4f5f57;
+  font-size: 12px;
+  line-height: 1.45;
 }
 
 .finder-text-answer {
@@ -3302,9 +3426,16 @@ footer > div:last-child a {
 }
 
 .finder-quiz-actions {
+  position: sticky;
+  bottom: -15px;
+  z-index: 3;
   justify-content: space-between;
   gap: 10px;
-  margin-top: 18px;
+  margin: 18px -15px -15px;
+  padding: 12px 15px calc(12px + env(safe-area-inset-bottom));
+  border-top: 1px solid var(--line);
+  background: rgba(248, 247, 242, 0.97);
+  backdrop-filter: blur(8px);
 }
 
 .finder-quiz-actions button {
@@ -3312,7 +3443,7 @@ footer > div:last-child a {
   align-items: center;
   justify-content: center;
   gap: 5px;
-  min-height: 39px;
+  min-height: 44px;
   padding: 0 12px;
   border-radius: 9px;
   font-size: 11px;
@@ -3330,6 +3461,11 @@ footer > div:last-child a {
   cursor: not-allowed;
 }
 
+.finder-next:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
 .finder-next {
   border: 0;
   background: var(--ink);
@@ -3338,12 +3474,12 @@ footer > div:last-child a {
 
 .finder-footer {
   gap: 6px;
-  min-height: 34px;
+  min-height: 44px;
   padding: 7px 12px;
   border-top: 1px solid var(--line);
   background: #f1efe9;
-  color: #738079;
-  font-size: 9.5px;
+  color: #55635c;
+  font-size: 11px;
   line-height: 1.35;
 }
 

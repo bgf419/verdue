@@ -63,9 +63,25 @@ test("curated destinations are not overclaimed as direct claim forms", async () 
 test("case finder is ephemeral, catalog-bound, and separates source layers", async () => {
   const source = await finderSources();
 
-  assert.match(source, /Open claims to review/);
+  assert.match(source, /Possible listings to review/);
   assert.match(source, /Related agency or court records/);
   assert.match(source, /possible leads—not eligibility decisions/i);
+  assert.match(source, /No lawsuit knowledge needed/);
+  assert.match(source, /Since 2016, has anything like this happened to you/);
+  assert.match(source, /Which of these names or services sound familiar/);
+  assert.match(source, /Does this sound like your experience/);
+  assert.match(source, /Yes, all of that sounds true/);
+  assert.match(source, /Maybe \/ I’m not sure/);
+  assert.match(source, /No, at least one part is not true/);
+  assert.match(source, /Review listing details/);
+  assert.doesNotMatch(source, /Review official details/);
+  assert.match(source, /Retake quiz/);
+  assert.match(source, /aria-modal="false"/);
+  assert.match(source, /Show coverage message/);
+  assert.doesNotMatch(source, /What would you like to find/);
+  assert.doesNotMatch(source, /Which companies, products, or employers/);
+  assert.doesNotMatch(source, /Brands or keywords/);
+  assert.doesNotMatch(source, /Any information level/);
   assert.match(source, /sensitiveFinderInputReason/);
   assert.match(source, /role="dialog"/);
   assert.match(source, /role="log"/);
