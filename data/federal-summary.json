@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-05T10:41:06.905Z",
+  "generatedAt": "2026-09-06T11:02:24.292Z",
   "recordCount": 3777,
   "coverage": {
     "sourceId": "courtlistener-recap-class-action-complaints",
@@ -14,14 +14,14 @@
     "status": "complete",
     "stale": false,
     "mode": "incremental",
-    "checkedAt": "2026-09-05T10:41:06.905Z",
-    "lastSuccessfulAt": "2026-09-05T10:41:06.905Z",
+    "checkedAt": "2026-09-06T11:02:24.292Z",
+    "lastSuccessfulAt": "2026-09-06T11:02:24.292Z",
     "queryCore": "description:(Class Action Complaint)",
-    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-08-29 TO 2026-09-05]",
-    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-08-29+TO+2026-09-05%5D",
+    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-08-30 TO 2026-09-06]",
+    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-08-30+TO+2026-09-06%5D",
     "dateRange": {
-      "startDate": "2026-08-29",
-      "endDate": "2026-09-05"
+      "startDate": "2026-08-30",
+      "endDate": "2026-09-06"
     },
     "resumedFromCursor": false,
     "restartRequested": false,
@@ -56,17 +56,17 @@
     },
     "incremental": {
       "status": "complete",
-      "startDate": "2026-08-29",
-      "endDate": "2026-09-05",
-      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-08-29 TO 2026-09-05]",
-      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-08-29+TO+2026-09-05%5D",
+      "startDate": "2026-08-30",
+      "endDate": "2026-09-06",
+      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-08-30 TO 2026-09-06]",
+      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-08-30+TO+2026-09-06%5D",
       "nextUrl": null,
       "incrementalDays": 7,
       "pagesFetchedTotal": 1,
       "rawResultsSeenTotal": 7,
       "acceptedResultsTotal": 7,
-      "lastAttemptAt": "2026-09-05T10:41:06.905Z",
-      "lastCompletedAt": "2026-09-05T10:41:06.905Z"
+      "lastAttemptAt": "2026-09-06T11:02:24.292Z",
+      "lastCompletedAt": "2026-09-06T11:02:24.292Z"
     }
   }
 }
