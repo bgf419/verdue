@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-09-20T11:30:53.162Z",
-  "recordCount": 3793,
+  "generatedAt": "2026-09-21T12:55:41.580Z",
+  "recordCount": 3794,
   "coverage": {
     "sourceId": "courtlistener-recap-class-action-complaints",
     "sourceLabel": "CourtListener RECAP federal class-action complaint search",
@@ -14,14 +14,14 @@
     "status": "complete",
     "stale": false,
     "mode": "incremental",
-    "checkedAt": "2026-09-20T11:30:53.162Z",
-    "lastSuccessfulAt": "2026-09-20T11:30:53.162Z",
+    "checkedAt": "2026-09-21T12:55:41.580Z",
+    "lastSuccessfulAt": "2026-09-21T12:55:41.580Z",
     "queryCore": "description:(Class Action Complaint)",
-    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-09-13 TO 2026-09-20]",
-    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-09-13+TO+2026-09-20%5D",
+    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-09-14 TO 2026-09-21]",
+    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-09-14+TO+2026-09-21%5D",
     "dateRange": {
-      "startDate": "2026-09-13",
-      "endDate": "2026-09-20"
+      "startDate": "2026-09-14",
+      "endDate": "2026-09-21"
     },
     "resumedFromCursor": false,
     "restartRequested": false,
@@ -31,10 +31,10 @@
     "cacheHits": 0,
     "retries": 0,
     "requestBudgetExhausted": false,
-    "rawResultsSeen": 4,
-    "approximateResultCount": 4,
+    "rawResultsSeen": 5,
+    "approximateResultCount": 5,
     "resultCountCaveat": "CourtListener says type=r counts use cardinality aggregation and may vary by about 6% when more than 2,000 results match.",
-    "observedThisRun": 4,
+    "observedThisRun": 5,
     "retainedFromPrevious": 6683,
     "error": null,
     "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/",
@@ -56,17 +56,17 @@
     },
     "incremental": {
       "status": "complete",
-      "startDate": "2026-09-13",
-      "endDate": "2026-09-20",
-      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-09-13 TO 2026-09-20]",
-      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-09-13+TO+2026-09-20%5D",
+      "startDate": "2026-09-14",
+      "endDate": "2026-09-21",
+      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-09-14 TO 2026-09-21]",
+      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-09-14+TO+2026-09-21%5D",
       "nextUrl": null,
       "incrementalDays": 7,
       "pagesFetchedTotal": 1,
-      "rawResultsSeenTotal": 4,
-      "acceptedResultsTotal": 4,
-      "lastAttemptAt": "2026-09-20T11:30:53.162Z",
-      "lastCompletedAt": "2026-09-20T11:30:53.162Z"
+      "rawResultsSeenTotal": 5,
+      "acceptedResultsTotal": 5,
+      "lastAttemptAt": "2026-09-21T12:55:41.580Z",
+      "lastCompletedAt": "2026-09-21T12:55:41.580Z"
     }
   }
 }
