@@ -4,8 +4,10 @@ An agent-based simulation of one day in Hoboken, NJ, in 3D. About 90,000 synthet
 their dogs, move through Hoboken's real streets and buildings. That's 59,149 residents plus
 commuters coming in to work or to Stevens, visitors, and NJ Transit riders changing trains at
 Hoboken Terminal. The Manhattan skyline stands across the river. The model is calibrated to Census
-and transit figures. Where each person goes can be decided by rules or by
-[Jev](https://docs.typesafe.ai/), TypeSafe AI's decision model. It runs entirely in the browser.
+and transit figures. Every decision in the day (whether people go out, when, how they travel,
+where they go, how long they stay, when the dog gets walked, which road drivers take and where
+they park) can be made by rules or by [Jev](https://docs.typesafe.ai/), TypeSafe AI's decision
+model. It runs in the browser, and the same day can be exported to Unreal Engine 5.
 
 This folder is self-contained. It doesn't touch the Verdue app, its build or its CI.
 
@@ -23,7 +25,7 @@ This folder is self-contained. It doesn't touch the Verdue app, its build or its
   commuting in, visitor). The 3D view shows only people outdoors: walking, cycling, driving, or in
   a park or dog run.
 - **Dogs:** 22% of households are assumed to have one (LOW confidence; see below). One adult walks
-  it two or three times a day to one of Hoboken's 8 dog runs or a nearby park. About 1,300 dogs
+  it two or three times a day to one of Hoboken's 8 dog runs or a nearby park. About 1,340 dogs
   are out at 7:30 am on a weekday.
 - **Cars and traffic:** drivers follow one-way streets from the four road crossings (Weehawken and
   Lincoln Tunnel, the 14th Street Viaduct, JC Heights, downtown Jersey City) to garages and homes.
@@ -49,50 +51,85 @@ node --test hoboken-sim/tests/*.test.mjs         # engine tests (also: npm run t
 
 ## Let Jev decide
 
-By default each person's venue choices are sampled from the eight likeliest nearby places,
-weighted by distance and popularity. That covers where they eat, drink, get coffee, shop, work out
-and walk the dog. `jev/run-jev.mjs` hands those choices to Jev instead, through the official
-`@typesafe-ai/sdk`. Each person becomes one System One request: the person is the `state`, and
-each choice is a `choice` question with the eight options described by name, type and walking
-distance. The script samples from Jev's returned probabilities, so similar people don't all pick
-the same café. It writes `web/data/jev-<day>.json`. The page then offers a **Rules | Jev** switch,
-and the bundler inlines the file.
+Every behavioural choice in the engine goes through one decision hook, about 910,000 decisions
+on a weekday and 1,050,000 on a Saturday:
+- **Whether:** work from home today, go to the gym, get coffee, go out to eat or drink, leave
+  Hoboken for a few hours.
+- **When:** leaving for work, class, the dog's walks, errands, nights out; which hour, with the
+  minute left to chance.
+- **How:** PATH, NJ Transit, light rail, ferry, bus, car, bike or on foot; which road crossing,
+  station, ferry terminal or garage.
+- **Where:** which of the eight likeliest nearby restaurants, bars, cafés, gyms, parks, dog runs or
+  shops.
+- **How long:** a short, medium or long stay; the length of a working day.
+
+By default the rules answer, sampling calibrated weights. `jev/run-jev.mjs` hands every one of
+these decisions to Jev through the official `@typesafe-ai/sdk`:
+- **Requests:** one person per request with up to 12 questions. The person (age, household,
+  employment, dog, street) is the `state`. Yes/no questions go as `noul` and the rest as `choice`,
+  with places described by name, type and walking distance. Jev is never shown what the rules
+  decided.
+- **Sampling:** the script samples each answer from Jev's probabilities, so similar people don't
+  all make the same choice.
+- **Rounds:** a different answer can open a branch the rules never took (Jev sends someone to
+  dinner whom the rules kept home), so later rounds ask about those. Against a stand-in API that
+  disagrees with the rules on purpose, the whole city settled in 6 rounds.
+- **Raking:** answers that set published totals are raked back to those totals: working from
+  home, trips out of town, travel modes and NJ Transit connections. Jev decides *who* takes the
+  PATH; the published counts decide *how many*. Everything else, such as timing, places, lengths
+  of stay and dogs, is Jev's own. `--raw` turns raking off.
+- **Output:** it writes `web/data/jev-<day>.json`, about 1.5 MB with the answers packed and
+  gzipped. The page then offers a **Rules | Jev** switch, and the inspector says how many of each
+  person's decisions Jev made.
+
+Who people are (ages, households, jobs, dogs), where they live and work, school hours and the
+exact street route between two points aren't decisions. They come from the Census, job counts,
+school timetables and the street graph.
 
 ```bash
 cd hoboken-sim && npm install
-node jev/run-jev.mjs --dry-run                                    # print one real request and the cost estimate; sends nothing
-TYPESAFE_API_KEY=... node jev/run-jev.mjs --people 2000           # a sample of 2,000 people
-TYPESAFE_API_KEY=... node jev/run-jev.mjs --people all --yes      # everyone (~47,000 people with choices on a weekday)
+node jev/run-jev.mjs --dry-run                                  # print a real request and the cost; sends nothing
+TYPESAFE_API_KEY=... node jev/run-jev.mjs --people 2000         # a sample of 2,000 people
+TYPESAFE_API_KEY=... node --max-old-space-size=8192 jev/run-jev.mjs --people all --yes              # everyone, weekday
+TYPESAFE_API_KEY=... node --max-old-space-size=8192 jev/run-jev.mjs --people all --yes --day weekend
 ```
 
-Cost, at TypeSafe's launch price of $42 per billion input tokens with output free (MEDIUM
-confidence; check your console): 2,000 people is about 860k input tokens, roughly $0.04. Everyone
-on a weekday is about 20M tokens, roughly $0.85. New accounts get $5 of credit. The script refuses
-runs estimated over 5M tokens unless you pass `--yes`.
+Cost is estimated at TypeSafe's launch price of $42 per billion input tokens, with output free
+(MEDIUM confidence; check your console):
+- **First round, everyone:** about 63M input tokens (~$2.66) on a weekday and 72M (~$3.01) on a
+  Saturday.
+- **Whole run:** later rounds add up to about 1.5× more; the contrarian stand-in needed 156M tokens
+  (~$6.54) for a weekday. Budget roughly $6–14 for both days.
+- **Sample:** 2,000 people costs about $0.06–0.15.
+- **Credit:** new accounts reportedly get $5 of credit.
+- **Guard:** the script refuses a first round estimated over 5M tokens unless you pass `--yes`.
 
-What Jev changes and what it doesn't:
+A full-city run is about 120,000–290,000 requests. Its speed depends on TypeSafe's latency and rate
+limits, which I haven't measured; `--concurrency` sets how many run at once (default 16). It uses
+about 3.5 GB of memory, hence the larger heap.
 
-- **Changes:** which specific place each chosen person picks.
-- **Doesn't change:** whether they go out, when, how they commute, or which gateway they use.
-  Those stay calibrated to the published figures.
-- **The effect stays contained:** each person plans from their own random stream, so a changed
-  decision can't reshuffle anyone else. The tests check this.
-- **It isn't more accurate by default:** Jev's picks reflect a model's judgment of what such a
-  person would choose. The script prints the station counts before and after so you can see any
-  drift.
+What to expect:
+- **Contained:** each person plans from their own random stream, so changing one person's
+  decisions can't reshuffle anyone else. The tests check this.
+- **Not automatically more accurate:** Jev's answers are a model's judgment of what such a person
+  would do. The raked totals stay on the published figures; the timing, places and habits are
+  Jev's. The script prints the station counts before and after.
+- **Untested against the live API:** the driver is tested end to end against a local stand-in that
+  follows the SDK's request and response types. It has never run against the real API, because
+  this build environment can't reach `api.typesafe.ai` and has no key.
 
-The driver is tested end to end against a local stand-in that follows the SDK's documented
-request and response types. It hasn't been run against the live API from this build environment,
-which can't reach `api.typesafe.ai`.
+## Unreal Engine 5
 
-## What about Unreal Engine?
+The post that prompted this showed San Francisco in Unreal Engine 5. Unreal can't run in the cloud
+container this was built in: there's no GPU, and the engine is a ~100 GB download behind an Epic
+login. Instead:
+- `scripts/export_unreal.mjs` writes the city and one simulated day, rules or Jev (`--jev`), as a
+  `.hday` file, plus a `.glb` of the city for Blender.
+- `unreal/HobokenSim` is an Unreal plugin that builds the city from that file and plays the day
+  with instanced people, dogs, bikes and cars.
 
-The post that prompted this ran San Francisco in Unreal Engine 5. That can't be built or run in the
-cloud container this was made in: there's no GPU, UE5 is a ~100 GB download behind an Epic login,
-and the network policy blocks it. The path to a UE version is to run Claude Code on a machine with
-UE5 installed and import the same data. `build_data.py` already produces the buildings with
-heights, the street graph, homes, places and gateways. The engine's day plans would drive the
-actors, and Jev's decisions would plug in the same way.
+The file reader at its core is plain C++ and is tested here against the browser engine. The
+Unreal-specific part hasn't been compiled. Setup and caveats: [unreal/README.md](unreal/README.md).
 
 ## Rebuild the data
 
@@ -113,8 +150,8 @@ python3 hoboken-sim/scripts/build_data.py                         # writes web/d
 | Employed residents | 39,700 | 39,700 (ACS 2024) | input |
 | Work from home | 36.7% | 36.7% (ACS 2024) | input |
 | Age mix (6 ACS groups) | within 0.1 point; median 32 | median 31.9 (ACS 2024) | input |
-| PATH entries at Hoboken | ~18,400 | ~17,200 derived from 4.99M in 2025 (range 15.5k–19k) | calibrated, within range |
-| NJ Transit rail boardings | ~8,000 | 7,790 (2025 average weekday) | calibrated, within 3% |
+| PATH entries at Hoboken | ~18,300 | ~17,200 derived from 4.99M in 2025 (range 15.5k–19k) | calibrated, within range |
+| NJ Transit rail boardings | ~7,960 | 7,790 (2025 average weekday) | calibrated, within 3% |
 | Light rail boardings, 3 stops | ~4,100 | 8,172 (2025 average weekday) | **under by ~50%** |
 
 The station counts are calibration targets, not independent validation: the transit shares were
@@ -159,12 +196,15 @@ place names.
 | `scripts/fetch_citibike.py` | Downloads Citi Bike Jersey City/Hoboken trip files |
 | `scripts/build_data.py` | Projects and simplifies geometry, builds the routable street graph, snaps homes/places/gateways/dog runs, writes `web/data/hoboken.json` |
 | `scripts/bundle.mjs` | Inlines everything into one HTML file |
-| `web/sim.js` | Simulation engine: synthetic population, dogs, day plans, the decision hook, routing, positions, statistics |
+| `web/sim.js` | Simulation engine: synthetic population, dogs, day plans, the decision hook and its answer sources, routing, positions, statistics |
 | `web/view3d.js` | 3D view: extruded buildings, skyline, day/night lighting, instanced people, dogs, bikes and cars |
 | `web/app.js`, `web/index.html` | Map view, charts, controls, inspector, Rules/Jev switch |
-| `jev/run-jev.mjs` | Sends each person's venue choices to Jev and writes the decision table |
+| `jev/run-jev.mjs` | Sends every decision in the day to Jev, rakes the published totals, packs the answers for the page |
+| `scripts/export_unreal.mjs` | Writes the city and a day as a `.hday` file for Unreal, plus a `.glb` of the city |
+| `unreal/HobokenSim` | Unreal Engine 5 plugin: `HobokenDay.h` reads the day file (plain C++), `HobokenCrowd` builds and plays it |
+| `unreal/tools/day_check.cpp` | Command-line check of `HobokenDay.h`, used by the tests |
 | `calibration.json` | Every input figure with source and confidence |
-| `tests/` | Engine invariants, calibration bands, dog walks, and the Jev driver against a local stand-in API |
+| `tests/` | Engine invariants, calibration bands, dog walks, the decision hook, the Jev driver against a local stand-in API, and the Unreal export against the browser engine |
 
 Map data © OpenStreetMap contributors and Overture Maps Foundation (ODbL / CDLA Permissive 2.0).
 Bike data: Citi Bike System Data (Lyft Bikes and Scooters, LLC).

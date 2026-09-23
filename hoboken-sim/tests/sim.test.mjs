@@ -105,6 +105,42 @@ test("positions are finite, stay on the map, and don't depend on how the clock g
   for (let i = 0; i < n; i++) if (s[i] !== H.STATE.HIDDEN) assert.ok(Math.abs(x[i] - x1[i]) < 0.01, `person ${i} moved after a seek`);
 });
 
+test("every kind of choice goes through the decision hook, and overriding one changes only that person", () => {
+  const log = new H.Simulation(world, { dayType: "weekday", recordDecisions: true }).decisionLog;
+  const families = new Set(log.map((d) => d.topic.split(".")[0]));
+  for (const f of ["work", "am", "lunch", "errand", "eve", "dog", "trip", "daycare", "class", "in", "stu", "visit", "xfer"]) {
+    assert.ok(families.has(f), `no ${f} decisions`);
+  }
+  for (const d of log) {
+    assert.ok(d.labels.length >= 2 && d.rule >= 0 && d.rule < d.labels.length, d.key);
+    assert.ok(Math.abs(d.prior.reduce((a, b) => a + b, 0) - 1) < 1e-6, d.key);
+  }
+  // Answer every decision of 400 people with an option the rules didn't pick.
+  const chosen = new Set();
+  for (let i = 0; i < weekday.n && chosen.size < 400; i += 211) chosen.add(i);
+  const table = {};
+  for (const d of log) if (chosen.has(d.person)) table[d.person + "|" + d.key] = d.labels[(d.rule + 1) % d.labels.length];
+  const other = new H.Simulation(world, { dayType: "weekday", decisions: H.tableSource(table), recordDecisions: true });
+  assert.ok(other.decisionStats.fromTable > 1000);
+  let changed = 0;
+  for (let i = 0; i < weekday.n; i++) {
+    const a = weekday.legEnd[i] - weekday.legStart[i];
+    let same = a === other.legEnd[i] - other.legStart[i];
+    for (let k = 0; same && k < a; k++) same = weekday.legs.t1[weekday.legStart[i] + k] === other.legs.t1[other.legStart[i] + k];
+    if (!same) {
+      changed++;
+      assert.ok(chosen.has(i), `person ${i} changed without an overridden decision`);
+    }
+  }
+  assert.ok(changed > 300, `only ${changed} of 400 days changed`);
+  // Packed the way the page ships Jev's answers, the same day comes back.
+  const packed = H.encodeSequence(other.decisionLog, (p) => chosen.has(p));
+  const again = new H.Simulation(world, { dayType: "weekday", decisions: H.sequenceSource(packed.topics, packed.bytes) });
+  assert.equal(again.decisionStats.fromTable, other.decisionStats.fromTable);
+  assert.equal(again.legs.n, other.legs.n);
+  for (let l = 0; l < other.legs.n; l++) assert.ok(again.legs.t1[l] === other.legs.t1[l] && again.legs.b[l] === other.legs.b[l]);
+});
+
 test("routes follow the street graph between every kind of anchor", () => {
   for (const [a, b] of [[world.gate.path, world.homeA0], [world.homeA0 + 100, world.placeA0 + 5], [world.gate.road_s, world.placeA0 + 40]]) {
     const r = world.walkRoute(a, b);

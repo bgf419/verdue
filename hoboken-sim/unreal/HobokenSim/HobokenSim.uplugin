@@ -1,0 +1,23 @@
+{
+  "FileVersion": 3,
+  "Version": 1,
+  "VersionName": "0.1",
+  "FriendlyName": "Hoboken Sim",
+  "Description": "Plays a simulated day of Hoboken, NJ (exported by hoboken-sim) on the real city: residents, commuters, visitors, dogs, bikes and cars.",
+  "Category": "Simulation",
+  "CreatedBy": "hoboken-sim",
+  "CanContainContent": false,
+  "Modules": [
+    {
+      "Name": "HobokenSim",
+      "Type": "Runtime",
+      "LoadingPhase": "Default"
+    }
+  ],
+  "Plugins": [
+    {
+      "Name": "ProceduralMeshComponent",
+      "Enabled": true
+    }
+  ]
+}

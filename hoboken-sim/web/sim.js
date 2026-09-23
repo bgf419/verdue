@@ -106,12 +106,6 @@
     return a + (b - a) * rng();
   }
 
-  /** Sample a clock time (seconds) from [[hour, weight], ...]; hours may exceed 24. */
-  function atHour(rng, table) {
-    const i = pick(rng, table.map((r) => r[1]));
-    return (table[i][0] + rng()) * HOUR;
-  }
-
   function minutes(m) {
     return m * 60;
   }
@@ -663,6 +657,7 @@
     const transfers = (this.transferBoardings = new Float64Array(CHANNELS.length));
     const personStream = () => {
       rng = rngFrom((baseSeed ^ Math.imul(agents.length + 1, 0x9e3779b1)) >>> 0);
+      topicsSeen = new Map();
     };
 
     // --- per-agent plan builder -------------------------------------------------
@@ -734,24 +729,110 @@
       return go(home, mode, arrive + stay, backAct);
     }
 
-    // --- decisions ------------------------------------------------------------------
-    // Every venue choice goes through choose(). By default it samples the distance-weighted
-    // pool. With recordDecisions the options are logged (for Jev to answer), and a decision
-    // table ({"person:k": anchor}) overrides the sampled pick when its answer is still an option.
-    const table = opt.decisions || null;
+    // --- decisions ---------------------------------------------------------------------
+    // Every behavioural choice in the day goes through decide(): whether someone does
+    // something, when, how they travel, where they go and how long they stay, for people,
+    // their dogs and their cars. The rules sample calibrated weights. A decision source
+    // (Jev's answers, written by jev/run-jev.mjs) overrides the sampled pick whenever its
+    // answer is still one of the options. Who people are (age, household, job, dog), where
+    // they live and work, school hours and street routes are not decisions: they come from
+    // the Census, job counts, school timetables and the street graph.
+    const source = opt.decisions || null;
     const recording = !!opt.recordDecisions;
+    const recordFor = typeof opt.recordDecisions === "function" ? opt.recordDecisions : null;
+    const tracking = recording || !!source;
     const log = (this.decisionLog = recording ? [] : null);
     const decided = (this.decisionStats = { points: 0, fromTable: 0 });
-    let kSerial = -1;
-    let kNext = 0;
-    function nextK() {
-      if (agents.length !== kSerial) {
-        kSerial = agents.length;
-        kNext = 0;
+    const perPerson = (this.decisionsByPerson = tracking ? [] : null);
+    let topicsSeen = new Map();
+
+    /**
+     * One decision; returns an index into `labels`. o.rule fixes the rule answer (otherwise it
+     * is sampled from `weights`), o.anchors marks a choice between places, o.when is the clock.
+     */
+    function decide(topic, question, labels, weights, o) {
+      let r = o.rule !== undefined ? o.rule : pick(rng, weights);
+      if (!tracking || labels.length < 2) return r;
+      const person = agents.length;
+      const seen = topicsSeen.get(topic) || 0;
+      topicsSeen.set(topic, seen + 1);
+      const key = seen ? topic + "#" + seen : topic;
+      const rule = r;
+      let fromTable = false;
+      if (source) {
+        const a = source.answer(person, key, labels, o.anchors);
+        if (a >= 0 && a < labels.length) {
+          r = a;
+          fromTable = true;
+        }
       }
-      return kNext++;
+      decided.points++;
+      const tally = perPerson[person] || (perPerson[person] = [0, 0]);
+      tally[0]++;
+      if (fromTable) {
+        decided.fromTable++;
+        tally[1]++;
+      }
+      if (log && (!recordFor || recordFor(person))) {
+        let total = 0;
+        for (const x of weights) total += x;
+        log.push({
+          person, key, topic, kind: o.kind || "choice", question: typeof question === "function" ? question() : question,
+          clock: o.when !== undefined ? o.when : cur && cur.agent && !cur.agent.legEnd && cur.t > DAY_START ? cur.t : null,
+          labels, texts: o.texts || null, anchors: o.anchors || null, from: o.from !== undefined ? o.from : null,
+          prior: weights.map((x) => x / (total || 1)), rule, answer: r, fromTable,
+        });
+      }
+      return r;
     }
-    const TOP = 8;
+    const YES_NO = ["yes", "no"];
+    /** A yes/no decision that the rules take with probability p. */
+    function yes(topic, question, p, when) {
+      const rule = rng() < p ? 0 : 1;
+      if (!tracking) return rule === 0;
+      return decide(topic, question, YES_NO, [p, 1 - p], { rule, kind: "yesno", when }) === 0;
+    }
+    /** One of the keys of `table` ({key: weight}); keys without weight aren't offered. */
+    function oneOf(topic, question, table, texts, when, ruleKey) {
+      const keys = [];
+      const weights = [];
+      for (const k in table) {
+        if (table[k] > 0) {
+          keys.push(k);
+          weights.push(table[k]);
+        }
+      }
+      const fixed = ruleKey === undefined ? -1 : keys.indexOf(String(ruleKey));
+      const rule = fixed >= 0 ? fixed : undefined;
+      if (!tracking) return keys[rule !== undefined ? rule : pick(rng, weights)];
+      return keys[decide(topic, question, keys, weights, { rule, when, texts: keys.map((k) => (texts && texts[k]) || k) })];
+    }
+    function hourText(h) {
+      const hh = h % 24;
+      const h12 = hh % 12 === 0 ? 12 : hh % 12;
+      return h12 + ":00–" + h12 + ":59 " + (hh < 12 ? "am" : "pm") + (h >= 24 ? " (after midnight)" : "");
+    }
+    /** A clock time from [[hour, weight], ...]: the hour is the decision, the minute within it isn't. */
+    function hourOf(topic, question, table, when) {
+      const weights = table.map((r) => r[1]);
+      const i = tracking
+        ? decide(topic, question, table.map((r) => "h" + r[0]), weights, { kind: "time", when, texts: table.map((r) => hourText(r[0])) })
+        : pick(rng, weights);
+      return (table[i][0] + rng()) * HOUR;
+    }
+    const LENGTHS = ["short", "medium", "long"];
+    const EVEN3 = [1, 1, 1];
+    function thirds(a, b, unit) {
+      const f = (v) => (unit === "h" ? Math.round(v * 2) / 2 + " h" : Math.round(v) + " min");
+      const s = (b - a) / 3;
+      return [0, 1, 2].map((i) => "about " + f(a + i * s) + " to " + f(a + (i + 1) * s));
+    }
+    /** A length of time between a and b ("min" or "h") as short, medium or long; returns seconds. */
+    function howLong(topic, question, a, b, unit, when) {
+      const i = tracking ? decide(topic, question, LENGTHS, EVEN3, { kind: "length", when, texts: thirds(a, b, unit) }) : pick(rng, EVEN3);
+      const v = a + ((i + rng()) * (b - a)) / 3;
+      return unit === "h" ? v * HOUR : v * 60;
+    }
 
     // --- place choice ---------------------------------------------------------------
     const G = w.G;
@@ -769,19 +850,24 @@
       return groupWeights[key];
     }
     /** A venue of `group`, favouring ones near `from` (distance decay `scale` metres). */
-    function nearby(group, from, scale, why, when) {
+    function nearby(topic, group, from, scale, question, when) {
       const { ids, ws } = weighted(group, "visit");
-      return choose(group, ids, ws, from, scale, why || group, when);
+      return choose(topic, group, ids, ws, from, scale, question, when);
     }
-    /** A dog run near `from`, or a stretch of park or waterfront when the runs are far. */
-    function dogSpot(from) {
+    const SPOTS = { run: 0.6, park: 0.4 };
+    const SPOT_TEXT = { run: "one of Hoboken's dog runs", park: "a park or the waterfront" };
+    /** A dog run near `from`, or a stretch of park or waterfront. */
+    function dogSpot(topic, from, when) {
       const runs = w.dogRunAnchors;
-      if (runs.length && rng() < 0.6) return choose("dogrun", runs, null, from, 350, "walking the dog");
-      return nearby("park", from, 400, "walking the dog");
+      const kind = runs.length ? oneOf(topic + ".spot", "Where does this person take the dog?", SPOTS, SPOT_TEXT, when) : "park";
+      if (kind === "run") return choose(topic + ".place", "dogrun", runs, null, from, 350, "Which dog run do they take the dog to?", when);
+      return nearby(topic + ".place", "park", from, 400, "Which park or stretch of waterfront do they walk the dog in?", when);
     }
-    // Distance-weighted pools cached per 150 m cell.
+    // Distance-weighted pools cached per 150 m cell; the eight likeliest options per pool too.
+    const TOP = 8;
     const poolCache = new Map();
-    function choose(poolKey, ids, ws, from, scale, why, when) {
+    const topCache = new Map();
+    function choose(topic, poolKey, ids, ws, from, scale, question, when) {
       if (!ids.length) return -1;
       const cx = Math.floor(w.aX[from] / 150);
       const cy = Math.floor(w.aY[from] / 150);
@@ -806,32 +892,34 @@
         if (cum[mid] < r) lo = mid + 1;
         else hi = mid;
       }
-      let pickd = ids[lo];
-      if (recording || table) {
-        const person = agents.length;
-        const k = nextK();
-        decided.points++;
-        const options = topOptions(cum, ids, pickd);
-        if (log) {
-          log.push({ person, k, why, clock: when !== undefined ? when : cur && cur.agent && !cur.agent.legEnd ? cur.t : null,
-            from, options, rule: pickd });
-        }
-        const answer = table && table[person + ":" + k];
-        if (answer !== undefined && options.indexOf(answer) >= 0) {
-          pickd = answer;
-          decided.fromTable++;
-        }
+      const sampled = ids[lo];
+      if (!tracking) return sampled;
+      let top = topCache.get(key);
+      if (!top) {
+        const scored = [];
+        for (let i = 0; i < ids.length; i++) scored.push([cum[i] - (i ? cum[i - 1] : 0), ids[i]]);
+        scored.sort((a, b) => b[0] - a[0]);
+        top = scored.slice(0, TOP);
+        topCache.set(key, top);
       }
-      return pickd;
+      const options = top.map((s) => s[1]);
+      const weights = top.map((s) => s[0]);
+      if (options.indexOf(sampled) < 0) {
+        options[options.length - 1] = sampled;
+        weights[weights.length - 1] = cum[lo] - (lo ? cum[lo - 1] : 0);
+      }
+      const i = decide(topic, question, options.map((a) => "p" + a), weights,
+        { kind: "place", rule: options.indexOf(sampled), anchors: options, from, when });
+      return options[i];
     }
-    /** The TOP most likely options from a cumulative pool, always including the sampled one. */
-    function topOptions(cum, ids, sampled) {
-      const scored = [];
-      for (let i = 0; i < ids.length; i++) scored.push([cum[i] - (i ? cum[i - 1] : 0), ids[i]]);
-      scored.sort((a, b) => b[0] - a[0]);
-      const out = scored.slice(0, TOP).map((x) => x[1]);
-      if (out.indexOf(sampled) < 0) out[out.length - 1] = sampled;
-      return out;
+    /** One of the few stations or garages nearest `from`; the rules take the nearest. */
+    function closeBy(topic, question, anchors, from, when, n) {
+      const ranked = anchors.map((a) => [w.distance(a, from), a]).sort((x, y) => x[0] - y[0]).slice(0, n);
+      if (!tracking) return ranked[0][1];
+      const options = ranked.map((r) => r[1]);
+      const i = decide(topic, question, options.map((a) => "p" + a), ranked.map((r) => Math.exp(-r[0] / 400)),
+        { kind: "place", rule: 0, anchors: options, from, when });
+      return options[i];
     }
     function nearest(anchors, from) {
       let best = anchors[0];
@@ -872,6 +960,21 @@
       return schools.ids[pick(rng, schools.ws.map((x) => x + 2))];
     }
 
+    // --- words for the questions ------------------------------------------------------
+    const MODE_TEXT = { path: "the PATH train", bus: "an NJ Transit bus", ferry: "the NY Waterway ferry",
+      hblr: "the Hudson-Bergen Light Rail", njtRail: "an NJ Transit train", drive: "drives", car: "drives",
+      walk: "walks", bike: "cycles", taxi: "a taxi or rideshare" };
+    const REGION_TEXT = { [R.midtown]: "Midtown Manhattan", [R.lower]: "Lower Manhattan", [R.jc]: "Jersey City",
+      [R.newark]: "Newark or western New Jersey", [R.nj]: "elsewhere in New Jersey", [R.bkq]: "Brooklyn or Queens",
+      [R.hoboken]: "Hoboken itself" };
+    const KIND_TEXT = { food: "a restaurant", nightlife: "a bar", cafe: "a café", park: "a park", retail: "the shops",
+      arts: "a museum, gallery or show", health: "a doctor or dentist", grocery: "a grocery store",
+      personal: "a salon, cleaner or other service", fitness: "a gym" };
+    const GATE_TEXT = {};
+    w.data.gateways.forEach((gw) => { GATE_TEXT[gw.id] = gw.label; });
+    const HOW_TEXT = { walk: "walk", bike: "cycle" };
+    const WALK_OR_BIKE = { walk: 0.92, bike: 0.08 };
+
     const gateIds = w.gate;
     const CAR_GATES = {
       [R.midtown]: { road_n: 0.7, road_s: 0.3 }, [R.lower]: { road_s: 0.9, road_n: 0.1 },
@@ -880,22 +983,25 @@
       [R.hoboken]: { road_s: 0.25, road_n: 0.25, road_w: 0.25, road_nw: 0.25 },
     };
     const FOOT_GATES = { road_s: 0.3, walk_s: 0.3, road_w: 0.2, road_nw: 0.08, road_n: 0.07, walk_n: 0.05 };
-    /** Gateway anchor for leaving by `ch` from anchor `from`. */
-    function gateFor(ch, from, region) {
+    /** Gateway anchor for crossing the city line by `ch` near anchor `from`. */
+    function gateFor(ch, from, region, topic, when) {
       switch (ch) {
         case CH.path: return gateIds.path;
         case CH.njtRail: return gateIds.njt;
-        case CH.hblr: return nearest(w.hblrAnchors, from);
-        case CH.ferry: return region === R.lower ? gateIds.ferry_term : nearest(w.ferryAnchors, from);
+        case CH.hblr: return closeBy(topic, "Which light rail station does this person use?", w.hblrAnchors, from, when, 3);
+        case CH.ferry:
+          return region === R.lower ? gateIds.ferry_term : closeBy(topic, "Which ferry terminal does this person use?", w.ferryAnchors, from, when, 2);
         case CH.bus: return nearest(w.stopAnchors, from);
-        case CH.car: return gateIds[pickKey(rng, CAR_GATES[region] || CAR_GATES[R.nj])];
-        default: return gateIds[pickKey(rng, FOOT_GATES)];
+        case CH.car:
+          return gateIds[oneOf(topic, "Which road does this person drive in or out of Hoboken on?", CAR_GATES[region] || CAR_GATES[R.nj], GATE_TEXT, when)];
+        default:
+          return gateIds[oneOf(topic, "Which way does this person walk or cycle across the city line?", FOOT_GATES, GATE_TEXT, when)];
       }
     }
     const MAP_MODE = [WALK, WALK, WALK, WALK, WALK, CAR, BIKE, WALK];
     const parking = w.byGroup[G.parking];
-    function parkingNear(anchor) {
-      return parking.length ? nearest(parking, anchor) : anchor;
+    function garageNear(topic, anchor, when) {
+      return parking.length ? closeBy(topic, "Which garage does this person park in?", parking, anchor, when, 4) : anchor;
     }
 
     // --- residents -------------------------------------------------------------------
@@ -951,7 +1057,7 @@
         }
         const spot = w.spotInBuilding(hb, rng, w.aX[h.home], w.aY[h.home]);
         const person = { kind: RESIDENT, age, home: h.home, hx: spot[0], hy: spot[1],
-          household: members, child: isKid, parent: !isKid && kids > 0 };
+          household: members, hhSize: h.size, kids, child: isKid, parent: !isKid && kids > 0 };
         if (age < 0) others.push(person);
         members.push(person);
         residents.push(person);
@@ -983,18 +1089,27 @@
       .slice(0, Math.min(this.params.employed, adults.length))
       .forEach(({ p }) => { p.worker = true; });
     const workers = adults.filter((p) => p.worker);
+    // The rules' work-from-home split is exact; Jev decides each worker's day on its own.
     const wfhCount = Math.round(this.params.wfhShare * workers.length);
     workers.map((p) => ({ p, k: rng() })).sort((x, y) => x.k - y.k).slice(0, wfhCount).forEach(({ p }) => { p.wfh = true; });
     // Stevens graduate students living in Hoboken (not in dorms).
     adults.filter((p) => p.age >= 22 && p.age <= 30).map((p) => ({ p, k: rng() })).sort((x, y) => x.k - y.k)
       .slice(0, 1200).forEach(({ p }) => { p.gradStudent = true; });
 
-    // Commute modes (ACS shares renormalised over people who do commute).
+    // Commute modes (ACS shares renormalised over people who do commute). Every worker gets one,
+    // so a worker who goes in on a day the rules would have them home still has a way there.
     const ms = obs.commuteModeShares.value;
     const rest = asm.residualCommuteModeShares.value;
     const commuteShares = { transit: ms.transit, drive: ms.droveAlone, walk: rest.walked, carpool: rest.carpool,
       bike: rest.bicycle, taxi: rest.taxiOther };
     const sub = asm.residentTransitSubmodes.value;
+    const subTotal = sub.path + sub.busToNYC + sub.ferry + sub.hblr + sub.njtRail;
+    const COMMUTE = {
+      path: (ms.transit * sub.path) / subTotal, bus: (ms.transit * sub.busToNYC) / subTotal,
+      ferry: (ms.transit * sub.ferry) / subTotal, hblr: (ms.transit * sub.hblr) / subTotal,
+      njtRail: (ms.transit * sub.njtRail) / subTotal, drive: ms.droveAlone + rest.carpool,
+      walk: rest.walked, bike: rest.bicycle, taxi: rest.taxiOther,
+    };
     const REGION_BY = {
       path: { [R.midtown]: 0.45, [R.lower]: 0.35, [R.jc]: 0.12, [R.newark]: 0.05, [R.bkq]: 0.03 },
       bus: { [R.midtown]: 1 },
@@ -1006,19 +1121,32 @@
       walk: { [R.hoboken]: 0.85, [R.jc]: 0.15 },
       bike: { [R.hoboken]: 0.6, [R.jc]: 0.4 },
     };
+    const CH_OF = { path: CH.path, bus: CH.bus, ferry: CH.ferry, hblr: CH.hblr, njtRail: CH.njtRail, drive: CH.car, car: CH.car,
+      taxi: CH.car, walk: CH.walk, bike: CH.bike };
     const COMMUTE_DEPART = [[5, 2], [6, 8], [7, 24], [8, 34], [9, 20], [10, 7], [11, 2], [12, 0.6], [13, 0.6],
       [14, 0.8], [15, 0.8], [16, 0.5], [17, 0.3], [18, 0.4], [19, 0.3], [20, 0.2]];
     for (const p of workers) {
-      if (p.wfh) continue;
       const m = pickKey(rng, commuteShares);
       let key = m;
       if (m === "transit") key = pickKey(rng, { path: sub.path, bus: sub.busToNYC, ferry: sub.ferry, hblr: sub.hblr, njtRail: sub.njtRail });
       if (m === "carpool") key = "drive";
       p.commute = key;
       p.region = Number(pickKey(rng, REGION_BY[key]));
-      p.ch = { path: CH.path, bus: CH.bus, ferry: CH.ferry, hblr: CH.hblr, njtRail: CH.njtRail, drive: CH.car, taxi: CH.car,
-        walk: CH.walk, bike: CH.bike }[key];
       if (p.region === R.hoboken) p.work = workplace();
+    }
+    // Length of a working day from leaving home to getting back, in bands.
+    const DAY_BANDS = [[6.5, 7.5], [7.5, 8.5], [8.5, 9.5], [9.5, 10.5], [10.5, 12]];
+    const DAY_LABELS = ["h6.5", "h7.5", "h8.5", "h9.5", "h10.5"];
+    const DAY_TEXT = DAY_BANDS.map(([a, b]) => a + " to " + b + " hours");
+    const DAY_USUAL = [0.012, 0.147, 0.44, 0.334, 0.067];
+    const DAY_LATE = [0.1, 0.8, 0.1, 0, 0];
+    function workingDay(dep) {
+      const prior = dep >= 11 * HOUR ? DAY_LATE : DAY_USUAL;
+      const i = tracking
+        ? decide("work.hours", "How long is this person away at work today, door to door?", DAY_LABELS, prior,
+          { kind: "length", when: dep, texts: DAY_TEXT })
+        : pick(rng, prior);
+      return DAY_BANDS[i][0] + (DAY_BANDS[i][1] - DAY_BANDS[i][0]) * rng();
     }
 
     // Dogs: a share of households keep one, walked by whoever is home in the daytime if anyone is.
@@ -1029,20 +1157,25 @@
       if (counted.has(p.household)) continue;
       counted.add(p.household);
       if (rng() >= dogShare) continue;
-      const adults = p.household.filter((q) => !q.child);
-      if (!adults.length) continue;
-      (adults.find((q) => !q.worker || q.wfh) || adults[0]).dog = true;
+      const grownUps = p.household.filter((q) => !q.child);
+      if (!grownUps.length) continue;
+      (grownUps.find((q) => !q.worker || q.wfh) || grownUps[0]).dog = true;
       dogs++;
     }
     this.dogs = dogs;
     /** Out and back from home with the dog: a dog run or a stretch of park, then home. */
-    const dogWalk = (p, dep, maxStay) => {
+    const dogWalk = (p, slot, dep, maxStay) => {
       if (!p.dog || dep > DAY_END - HOUR) return;
-      const spot = dogSpot(p.home);
+      const spot = dogSpot("dog." + slot, p.home, dep);
       if (spot < 0) return;
       const arrive = go(spot, WALK, dep, A.dogwalk);
-      go(p.home, WALK, arrive + minutes(between(rng, 3, maxStay)), A.dogwalk);
+      go(p.home, WALK, arrive + howLong("dog." + slot + ".len", "How long do they stay out with the dog?", 3, maxStay, "min", arrive), A.dogwalk);
       cur.act = A.home;
+    };
+    /** A dog walk in one of the hours of `table`, no earlier than `earliest`. */
+    const dogWalkAt = (p, slot, table, earliest, maxStay, question) => {
+      if (!p.dog) return;
+      dogWalk(p, slot, Math.max(earliest, hourOf("dog." + slot + ".when", question, table)), maxStay);
     };
 
     // School runs are decided first so the adult who walks a child can match the child's times.
@@ -1061,42 +1194,69 @@
 
     // --- resident day plans ----------------------------------------------------------
     const eveningOut = (p, earliest, chance) => {
-      if (rng() >= chance) return;
-      const late = p.age < 40 && rng() < 0.45;
-      const dep = Math.max(earliest + minutes(20), late ? atHour(rng, [[20, 3], [21, 4], [22, 3]]) : atHour(rng, [[18, 3], [19, 5], [20, 3]]));
+      if (!yes("eve.go", "Does this person go out this evening?", chance, earliest)) return;
+      const late = p.age < 40 && yes("eve.late", "Is it a late night out, heading out after 8 pm?", 0.45, earliest);
+      const dep = Math.max(earliest + minutes(20), late
+        ? hourOf("eve.when", "When do they head out for the night?", [[20, 3], [21, 4], [22, 3]], earliest)
+        : hourOf("eve.when", "When do they head out for the evening?", [[18, 3], [19, 5], [20, 3]], earliest));
       if (dep > DAY_END - HOUR) return;
-      const group = late ? "nightlife" : rng() < 0.7 ? "food" : "nightlife";
-      const place = nearby(group, cur.anchor, 700, late ? "a late night out" : group === "food" ? "dinner out" : "drinks after dinner time", dep);
+      const group = late ? "nightlife" : oneOf("eve.kind", "Dinner or drinks?", { food: 0.7, nightlife: 0.3 }, KIND_TEXT, dep);
+      const place = nearby("eve.place", group, cur.anchor, 700,
+        late ? "Which bar do they go to?" : group === "food" ? "Which restaurant do they go to for dinner?" : "Which bar do they go to?", dep);
       if (place < 0) return;
       const arrive = go(place, WALK, dep, late || group === "nightlife" ? A.drinks : A.eat);
-      let t = arrive + minutes(between(rng, 70, late ? 200 : 140));
-      if (late && rng() < 0.35) {
-        const next = nearby("nightlife", place, 250, "another bar", t);
-        t = go(next, WALK, t, A.drinks) + minutes(between(rng, 45, 120));
+      let t = arrive + howLong("eve.len", "How long do they stay at that first place tonight?", 70, late ? 200 : 140, "min", arrive);
+      if (late && yes("eve.more", "Do they move on to another bar?", 0.35, t)) {
+        const next = nearby("eve.more.place", "nightlife", place, 250, "Which bar do they move on to?", t);
+        t = go(next, WALK, t, A.drinks) + howLong("eve.more.len", "How long do they stay at the second bar?", 45, 120, "min", t);
       }
       go(p.home, WALK, Math.min(t, DAY_END - minutes(20)), A.home);
     };
-    const errands = (p, window, chance, group, act, stayMin, stayMax, scale) => {
-      if (rng() >= chance) return;
-      const dep = Math.max(cur.t + minutes(5), atHour(rng, window));
-      const place = nearby(group, p.home, scale || 600, ACT_LABELS[act].toLowerCase(), dep);
-      if (place < 0) return;
-      if (dep > DAY_END - HOUR) return;
-      const mode = rng() < 0.08 ? BIKE : WALK;
-      outing(place, mode, dep, minutes(between(rng, stayMin, stayMax)), act, A.home);
+    const ERRAND_TEXT = {
+      gym: "work out at a gym", coffee: "go out for coffee", doctor: "see a doctor or dentist", lunch: "go out for lunch",
+      park: "spend time in a park", shop: "go grocery shopping or run an errand", meal: "go out for a meal",
+      retail: "go shopping", groceries: "buy groceries", evening: "stop for groceries on the way home",
     };
+    const ERRAND_TO = {
+      gym: "to the gym", coffee: "for coffee", doctor: "to the doctor", lunch: "for lunch", park: "to the park",
+      shop: "on their errand", meal: "out to eat", retail: "shopping", groceries: "for groceries", evening: "for groceries",
+    };
+    const ERRAND_AT = {
+      gym: "at the gym", coffee: "over coffee", doctor: "at the doctor's", lunch: "at lunch", park: "in the park",
+      shop: "on the errand", meal: "at the meal", retail: "shopping", groceries: "buying groceries", evening: "buying groceries",
+    };
+    /** Maybe go out from home for `name`: whether, when, where, on foot or by bike, and for how long. */
+    const errands = (p, name, window, chance, group, act, stayMin, stayMax, scale) => {
+      const topic = "errand." + name;
+      if (!yes(topic, "Does this person " + ERRAND_TEXT[name] + " today?", chance)) return;
+      const dep = Math.max(cur.t + minutes(5), hourOf(topic + ".when", "When do they go " + ERRAND_TO[name] + "?", window));
+      if (dep > DAY_END - HOUR) return;
+      const g = typeof group === "string" ? group : oneOf(topic + ".kind", "What kind of place do they go to " + ERRAND_TO[name] + "?", group, KIND_TEXT, dep);
+      const place = nearby(topic + ".place", g, p.home, scale || 600, () => "Which " + (KIND_TEXT[g] || g).replace(/^(a|an|the) /, "") + " do they go to?", dep);
+      if (place < 0) return;
+      const mode = oneOf(topic + ".how", "Do they walk or cycle " + ERRAND_TO[name] + "?", WALK_OR_BIKE, HOW_TEXT, dep) === "bike" ? BIKE : WALK;
+      const stay = howLong(topic + ".len", "How long do they spend " + ERRAND_AT[name] + "?", stayMin, stayMax, "min", dep);
+      outing(place, mode, dep, stay, typeof act === "number" ? act : act[g], A.home);
+    };
+    const TRIP_HOW = { path: 55, ferry: 10, njtRail: 5, bus: 10, hblr: 5, car: 15 };
     const nycTrip = (p, chance) => {
-      if (rng() >= chance) return;
-      const ch = pick(rng, [55, 10, 5, 10, 5, 15]);
-      const channel = [CH.path, CH.ferry, CH.njtRail, CH.bus, CH.hblr, CH.car][ch];
-      const region = channel === CH.hblr ? R.jc : channel === CH.njtRail ? R.nj : channel === CH.car ? R.nj : rng() < 0.6 ? R.midtown : R.lower;
-      const dep = Math.max(cur.t + minutes(10), atHour(rng, [[10, 3], [11, 4], [12, 4], [13, 3], [14, 2], [15, 2], [17, 2], [19, 2]]));
-      const back = dep + between(rng, 3, 7) * HOUR;
+      if (!yes("trip.go", "Does this person leave Hoboken for part of the day (Manhattan, errands, visiting)?", chance)) return;
+      const how = oneOf("trip.how", "How do they travel out of Hoboken for this trip?", TRIP_HOW, MODE_TEXT);
+      const channel = CH_OF[how];
+      const region = channel === CH.hblr ? R.jc : channel === CH.njtRail ? R.nj : channel === CH.car ? R.nj
+        : Number(oneOf("trip.where", "Which part of Manhattan are they going to?", { [R.midtown]: 0.6, [R.lower]: 0.4 }, REGION_TEXT));
+      const dep = Math.max(cur.t + minutes(10),
+        hourOf("trip.when", "When do they leave Hoboken for this trip?", [[10, 3], [11, 4], [12, 4], [13, 3], [14, 2], [15, 2], [17, 2], [19, 2]]));
       if (dep > DAY_END - 2 * HOUR) return;
-      const gate = gateFor(channel, p.home, region);
+      const back = dep + howLong("trip.len", "How long are they away?", 3, 7, "h", dep);
+      const gate = gateFor(channel, p.home, region, "trip.gate", dep);
       away(gate, MAP_MODE[channel], channel, dep, back, region);
       go(p.home, MAP_MODE[channel], cur.t, A.home);
     };
+    const WFH_Q = "Is this person working from home today? (About " + Math.round(100 * this.params.wfhShare) +
+      "% of employed Hoboken residents work from home.)";
+    const MODE_Q = "How does this person get to work? (ACS: " + Math.round(100 * ms.transit) + "% of Hoboken workers take transit, " +
+      Math.round(100 * ms.droveAlone) + "% drive alone.)";
 
     yield 0.1;
     let done = 0;
@@ -1110,98 +1270,128 @@
           const arrive = go(p.school, WALK, p.schoolDep, A.school);
           go(p.home, WALK, Math.max(arrive + HOUR, p.pickup), A.home);
           eveningOut(p, cur.t, 0.08);
-        } else if (p.age < 5 && !weekend && rng() < 0.45) {
+        } else if (p.age < 5 && !weekend && yes("daycare.go", "Does this child go to daycare today?", 0.45)) {
           const care = school();
-          const t = go(care, WALK, atHour(rng, [[8, 5], [9, 2]]), A.daycare);
-          go(p.home, WALK, Math.max(t + 4 * HOUR, atHour(rng, [[16, 2], [17, 5], [18, 2]])), A.home);
+          const t = go(care, WALK, hourOf("daycare.drop", "When is daycare drop-off?", [[8, 5], [9, 2]]), A.daycare);
+          go(p.home, WALK, Math.max(t + 4 * HOUR, hourOf("daycare.pickup", "When is daycare pick-up?", [[16, 2], [17, 5], [18, 2]])), A.home);
         } else {
-          errands(p, [[10, 3], [11, 2], [15, 2], [16, 3]], 0.45, "park", A.park, 40, 100, 500);
-          if (weekend) errands(p, [[11, 3], [12, 2]], 0.3, "food", A.eat, 50, 80, 600);
+          errands(p, "park", [[10, 3], [11, 2], [15, 2], [16, 3]], 0.45, "park", A.park, 40, 100, 500);
+          if (weekend) errands(p, "meal", [[11, 3], [12, 2]], 0.3, "food", A.eat, 50, 80, 600);
         }
         finish();
         continue;
       }
 
-      const works = p.worker && (!weekend || rng() < 0.18);
+      // Whether they work today, from home or not, and how they get there.
+      let works = !!p.worker;
+      if (works && weekend) {
+        works = yes("work.today", "It's Saturday. Is this person working today?", 0.18);
+        if (!works) p.offToday = true;
+      }
+      if (works) {
+        p.wfh = decide("work.wfh", WFH_Q, YES_NO, [this.params.wfhShare, 1 - this.params.wfhShare], { rule: p.wfh ? 0 : 1, kind: "yesno" }) === 0;
+        if (!p.wfh) {
+          p.commute = oneOf("work.mode", MODE_Q, COMMUTE, MODE_TEXT, undefined, p.commute);
+          p.region = Number(oneOf("work.where", "Where is this person's job?", REGION_BY[p.commute], REGION_TEXT, undefined, p.region));
+          if (p.region === R.hoboken && p.work === undefined) p.work = workplace();
+          p.ch = CH_OF[p.commute];
+        }
+      }
+      if (!works || p.wfh) {
+        p.ch = undefined;
+        p.region = undefined;
+      }
+
       if (!weekend && p.gradStudent && !works) {
-        dogWalk(p, atHour(rng, [[7, 3], [8, 2]]), 15);
-        const c = go(classroom(), rng() < 0.15 ? BIKE : WALK, atHour(rng, [[9, 3], [10, 4], [11, 2]]), A.class);
-        const lunch = nearby(rng() < 0.6 ? "food" : "cafe", cur.anchor, 300, "lunch between classes");
-        let t = go(lunch, WALK, Math.max(c + HOUR, atHour(rng, [[12, 3], [13, 2]])), A.eat) + minutes(40);
-        t = go(classroom(), WALK, t, A.class) + between(rng, 2, 4) * HOUR;
+        dogWalkAt(p, "am", [[7, 3], [8, 2]], 0, 15, "When does this person take the dog out in the morning?");
+        const how = oneOf("class.how", "Do they walk or cycle to campus?", { walk: 0.85, bike: 0.15 }, HOW_TEXT);
+        const c = go(classroom(), how === "bike" ? BIKE : WALK, hourOf("class.when", "When do they head to campus?", [[9, 3], [10, 4], [11, 2]]), A.class);
+        const at = Math.max(c + HOUR, hourOf("lunch.when", "When do they have lunch?", [[12, 3], [13, 2]]));
+        const kind = oneOf("lunch.kind", "Lunch at a restaurant or a café?", { food: 0.6, cafe: 0.4 }, KIND_TEXT, at);
+        const lunch = nearby("lunch.place", kind, cur.anchor, 300, "Where do they get lunch between classes?", at);
+        let t = go(lunch, WALK, at, A.eat) + minutes(40);
+        t = go(classroom(), WALK, t, A.class);
+        t += howLong("class.len", "How long do they spend on campus in the afternoon?", 2, 4, "h", t);
         go(p.home, WALK, t, A.home);
-        dogWalk(p, Math.max(cur.t + minutes(15), atHour(rng, [[18, 3], [19, 3], [20, 2]])), 20);
+        dogWalkAt(p, "pm", [[18, 3], [19, 3], [20, 2]], cur.t + minutes(15), 20, "When does this person walk the dog in the evening?");
         eveningOut(p, cur.t, 0.3);
         finish();
         continue;
       }
 
-      if (works && !p.wfh && p.commute) {
-        let dep = atHour(rng, COMMUTE_DEPART);
-        if (weekend) dep = atHour(rng, [[7, 3], [8, 4], [9, 4], [10, 3], [11, 2], [15, 1], [16, 1]]);
-        const shift = dep >= 11 * HOUR ? between(rng, 7.5, 8.5) : Math.min(12, Math.max(6.5, 9.3 + 0.8 * gauss(rng)));
-        dogWalk(p, dep - minutes(between(rng, 50, 75)), 12);
-        if (!weekend && rng() < 0.1 && dep > 7 * HOUR) {
-          const gym = nearby("fitness", p.home, 600, "a workout before work", dep - minutes(85));
+      if (works && !p.wfh) {
+        const dep = weekend
+          ? hourOf("work.leave", "When does this person leave for work?", [[7, 3], [8, 4], [9, 4], [10, 3], [11, 2], [15, 1], [16, 1]])
+          : hourOf("work.leave", "When does this person leave for work?", COMMUTE_DEPART);
+        const shift = workingDay(dep);
+        if (p.dog) dogWalk(p, "am", dep - minutes(between(rng, 50, 75)), 12);
+        if (!weekend && dep > 7 * HOUR && yes("am.gym", "Does this person go to the gym before work?", 0.1, dep - minutes(85))) {
+          const gym = nearby("am.gym.place", "fitness", p.home, 600, "Which gym do they go to before work?", dep - minutes(85));
           if (gym >= 0) outing(gym, WALK, dep - minutes(85), minutes(55), A.gym, A.home);
         }
-        const coffee = rng() < 0.18 && p.ch !== CH.car ? nearby("cafe", p.home, 350, "coffee on the way to work", dep - minutes(10)) : -1;
+        const coffee = p.ch !== CH.car && yes("am.coffee", "Does this person stop for coffee on the way to work?", 0.18, dep - minutes(10))
+          ? nearby("am.coffee.place", "cafe", p.home, 350, "Which café do they stop at on the way to work?", dep - minutes(10)) : -1;
         if (coffee >= 0) go(coffee, WALK, dep - minutes(10), A.coffee);
         if (p.region === R.hoboken && p.work >= 0 && p.work !== undefined) {
           const mode = p.ch === CH.bike ? BIKE : p.ch === CH.car ? CAR : WALK;
           const t = go(p.work, mode === CAR ? WALK : mode, dep, A.work);
           const lunchT = t + between(rng, 3, 4.5) * HOUR;
           let end = t + shift * HOUR;
-          if (rng() < 0.35 && lunchT < end - HOUR) {
-            const lunch = nearby(rng() < 0.7 ? "food" : "cafe", p.work, 300, "lunch near work", lunchT);
-            if (lunch >= 0) end = Math.max(end, go(lunch, WALK, lunchT, A.eat) + minutes(35));
-            go(p.work, WALK, cur.t + minutes(35), A.work);
+          if (lunchT < end - HOUR && yes("lunch.go", "Does this person go out for lunch near work?", 0.35, lunchT)) {
+            const kind = oneOf("lunch.kind", "Lunch at a restaurant or a café?", { food: 0.7, cafe: 0.3 }, KIND_TEXT, lunchT);
+            const lunch = nearby("lunch.place", kind, p.work, 300, "Where do they get lunch near work?", lunchT);
+            if (lunch >= 0) {
+              end = Math.max(end, go(lunch, WALK, lunchT, A.eat) + minutes(35));
+              go(p.work, WALK, cur.t + minutes(35), A.work);
+            }
           }
           go(p.home, mode === CAR ? WALK : mode, end, A.home);
         } else {
-          const gate = gateFor(p.ch, p.home, p.region);
-          const back = dep + shift * HOUR;
-          away(gate, MAP_MODE[p.ch], p.ch, dep, back, p.region);
+          const gate = gateFor(p.ch, p.home, p.region, "work.gate", dep);
+          away(gate, MAP_MODE[p.ch], p.ch, dep, dep + shift * HOUR, p.region);
           go(p.home, MAP_MODE[p.ch], cur.t, A.home);
         }
-        dogWalk(p, cur.t + minutes(between(rng, 10, 40)), 20);
-        errands(p, [[18, 3], [19, 4], [20, 2]], 0.18, "grocery", A.groceries, 15, 35, 500);
+        if (p.dog) dogWalk(p, "pm", cur.t + minutes(between(rng, 10, 40)), 20);
+        errands(p, "evening", [[18, 3], [19, 4], [20, 2]], 0.18, "grocery", A.groceries, 15, 35, 500);
         eveningOut(p, cur.t, weekend ? 0.3 : 0.16);
         finish();
         continue;
       }
 
       // At home most of the day: people who work from home, don't work, or are off today.
-      dogWalk(p, weekend ? atHour(rng, [[7, 2], [8, 4], [9, 3]]) : atHour(rng, [[6, 3], [7, 4]]), weekend ? 35 : 15);
+      dogWalkAt(p, "am", weekend ? [[7, 2], [8, 4], [9, 3]] : [[6, 3], [7, 4]], 0, weekend ? 35 : 15,
+        "When does this person take the dog out in the morning?");
       if (p.escorting && !weekend) {
         const t = go(p.escorting.school, WALK, p.escorting.dep, A.school);
         go(p.home, WALK, t + minutes(6), A.home);
       }
       if (!weekend) {
-        errands(p, [[6, 2], [7, 3], [17, 3], [18, 2]], p.age < 60 ? 0.14 : 0.05, "fitness", A.gym, 55, 80, 700);
-        errands(p, [[7, 3], [8, 4], [9, 3], [10, 2]], p.age < 65 ? 0.3 : 0.22, "cafe", A.coffee, 10, 30, 400);
-        errands(p, [[10, 2], [11, 2], [13, 2], [14, 2], [15, 1]], p.age >= 65 ? 0.12 : 0.04, "health", A.doctor, 40, 90, 1200);
-        errands(p, [[11, 2], [12, 5], [13, 3]], 0.26, rng() < 0.7 ? "food" : "cafe", A.eat, 35, 60, 500);
-        if (rng() < 0.6) dogWalk(p, Math.max(cur.t + minutes(10), atHour(rng, [[12, 2], [13, 3], [14, 2]])), 15);
+        errands(p, "gym", [[6, 2], [7, 3], [17, 3], [18, 2]], p.age < 60 ? 0.14 : 0.05, "fitness", A.gym, 55, 80, 700);
+        errands(p, "coffee", [[7, 3], [8, 4], [9, 3], [10, 2]], p.age < 65 ? 0.3 : 0.22, "cafe", A.coffee, 10, 30, 400);
+        errands(p, "doctor", [[10, 2], [11, 2], [13, 2], [14, 2], [15, 1]], p.age >= 65 ? 0.12 : 0.04, "health", A.doctor, 40, 90, 1200);
+        errands(p, "lunch", [[11, 2], [12, 5], [13, 3]], 0.26, { food: 0.7, cafe: 0.3 }, A.eat, 35, 60, 500);
+        if (p.dog && yes("dog.noon.go", "Does this person take the dog out around midday?", 0.6)) {
+          dogWalkAt(p, "noon", [[12, 2], [13, 3], [14, 2]], cur.t + minutes(10), 15, "When is the midday dog walk?");
+        }
         if (p.escorting) {
           const walk = w.travelTime(p.home, p.escorting.school, WALK, p.escorting.pickup);
           go(p.escorting.school, WALK, p.escorting.pickup - walk - minutes(3), A.school);
           go(p.home, WALK, p.escorting.pickup, A.home);
         }
-        errands(p, [[10, 2], [14, 2], [15, 2], [16, 3], [17, 3]], p.age >= 65 ? 0.4 : 0.22, "park", A.park, 30, 80, 800);
-        errands(p, [[15, 2], [16, 3], [17, 4], [18, 4], [19, 2]], 0.3, rng() < 0.75 ? "grocery" : rng() < 0.5 ? "retail" : "personal",
-          A.groceries, 15, 40, 500);
+        errands(p, "park", [[10, 2], [14, 2], [15, 2], [16, 3], [17, 3]], p.age >= 65 ? 0.4 : 0.22, "park", A.park, 30, 80, 800);
+        errands(p, "shop", [[15, 2], [16, 3], [17, 4], [18, 4], [19, 2]], 0.3, { grocery: 0.75, retail: 0.125, personal: 0.125 },
+          { grocery: A.groceries, retail: A.shopping, personal: A.errand }, 15, 40, 500);
         nycTrip(p, 0.05);
-        dogWalk(p, Math.max(cur.t + minutes(10), atHour(rng, [[17, 2], [18, 4], [19, 3], [20, 2]])), 25);
+        dogWalkAt(p, "pm", [[17, 2], [18, 4], [19, 3], [20, 2]], cur.t + minutes(10), 25, "When does this person walk the dog in the evening?");
         eveningOut(p, cur.t, p.age < 40 ? 0.2 : 0.12);
       } else {
-        errands(p, [[8, 2], [9, 3], [10, 3], [16, 2], [17, 2]], 0.24, "fitness", A.gym, 55, 90, 700);
-        errands(p, [[10, 3], [11, 5], [12, 5], [13, 3]], 0.35, "food", A.eat, 60, 100, 700);
-        errands(p, [[11, 2], [13, 3], [14, 3], [15, 3], [16, 2]], 0.4, "park", A.park, 45, 120, 900);
-        errands(p, [[11, 2], [12, 2], [14, 3], [15, 3], [16, 2]], 0.2, "retail", A.shopping, 30, 80, 800);
-        errands(p, [[10, 2], [12, 2], [15, 3], [17, 3], [18, 2]], 0.33, "grocery", A.groceries, 20, 40, 500);
+        errands(p, "gym", [[8, 2], [9, 3], [10, 3], [16, 2], [17, 2]], 0.24, "fitness", A.gym, 55, 90, 700);
+        errands(p, "meal", [[10, 3], [11, 5], [12, 5], [13, 3]], 0.35, "food", A.eat, 60, 100, 700);
+        errands(p, "park", [[11, 2], [13, 3], [14, 3], [15, 3], [16, 2]], 0.4, "park", A.park, 45, 120, 900);
+        errands(p, "retail", [[11, 2], [12, 2], [14, 3], [15, 3], [16, 2]], 0.2, "retail", A.shopping, 30, 80, 800);
+        errands(p, "groceries", [[10, 2], [12, 2], [15, 3], [17, 3], [18, 2]], 0.33, "grocery", A.groceries, 20, 40, 500);
         nycTrip(p, 0.12);
-        dogWalk(p, Math.max(cur.t + minutes(10), atHour(rng, [[17, 2], [18, 4], [19, 3], [20, 2]])), 30);
+        dogWalkAt(p, "pm", [[17, 2], [18, 4], [19, 3], [20, 2]], cur.t + minutes(10), 30, "When does this person walk the dog in the evening?");
         eveningOut(p, cur.t, p.age < 40 ? 0.42 : 0.25);
       }
       finish();
@@ -1216,15 +1406,34 @@
         const p = { kind: DORM, age: 18 + Math.floor(rng() * 5), home: anchor, hx: spot[0], hy: spot[1] };
         begin(p, anchor, DAY_START, A.home);
         if (!weekend) {
-          if (rng() < 0.8) outing(classroom(), WALK, atHour(rng, [[8, 2], [9, 5], [10, 3]]), minutes(between(rng, 75, 140)), A.class, A.home);
-          if (rng() < 0.6) outing(nearby(rng() < 0.6 ? "food" : "cafe", anchor, 350, "lunch"), WALK, atHour(rng, [[12, 4], [13, 3]]),
-            minutes(between(rng, 30, 60)), A.eat, A.home);
-          if (rng() < 0.7) outing(classroom(), WALK, atHour(rng, [[13, 2], [14, 4], [15, 2]]), minutes(between(rng, 75, 150)), A.class, A.home);
-          if (rng() < 0.3) outing(nearby("fitness", anchor, 250, "a workout"), WALK, atHour(rng, [[16, 2], [17, 3], [18, 2]]), minutes(60), A.gym, A.home);
+          if (yes("class.am.go", "Does this student have a morning class today?", 0.8)) {
+            const at = hourOf("class.am.when", "When does the morning class start?", [[8, 2], [9, 5], [10, 3]]);
+            outing(classroom(), WALK, at, howLong("class.am.len", "How long is the morning on campus?", 75, 140, "min", at), A.class, A.home);
+          }
+          if (yes("lunch.go", "Does this student go out for lunch?", 0.6)) {
+            const at = hourOf("lunch.when", "When do they have lunch?", [[12, 4], [13, 3]]);
+            const kind = oneOf("lunch.kind", "Lunch at a restaurant or a café?", { food: 0.6, cafe: 0.4 }, KIND_TEXT, at);
+            const place = nearby("lunch.place", kind, anchor, 350, "Where do they get lunch?", at);
+            outing(place, WALK, at, howLong("lunch.len", "How long is lunch?", 30, 60, "min", at), A.eat, A.home);
+          }
+          if (yes("class.pm.go", "Does this student have an afternoon class?", 0.7)) {
+            const at = hourOf("class.pm.when", "When does the afternoon class start?", [[13, 2], [14, 4], [15, 2]]);
+            outing(classroom(), WALK, at, howLong("class.pm.len", "How long is the afternoon on campus?", 75, 150, "min", at), A.class, A.home);
+          }
+          if (yes("errand.gym", "Does this student work out today?", 0.3)) {
+            const at = hourOf("errand.gym.when", "When do they work out?", [[16, 2], [17, 3], [18, 2]]);
+            outing(nearby("errand.gym.place", "fitness", anchor, 250, "Which gym do they go to?", at), WALK, at, minutes(60), A.gym, A.home);
+          }
           eveningOut(p, cur.t, 0.35);
         } else {
-          if (rng() < 0.45) outing(nearby("food", anchor, 700, "a weekend lunch"), WALK, atHour(rng, [[11, 3], [12, 3], [13, 2]]), minutes(70), A.eat, A.home);
-          if (rng() < 0.35) outing(nearby("park", anchor, 900, "time outdoors"), WALK, atHour(rng, [[13, 2], [14, 3], [15, 2]]), minutes(80), A.park, A.home);
+          if (yes("errand.meal", "Does this student go out for lunch?", 0.45)) {
+            const at = hourOf("errand.meal.when", "When do they go out for lunch?", [[11, 3], [12, 3], [13, 2]]);
+            outing(nearby("errand.meal.place", "food", anchor, 700, "Which restaurant?", at), WALK, at, minutes(70), A.eat, A.home);
+          }
+          if (yes("errand.park", "Does this student spend time outdoors today?", 0.35)) {
+            const at = hourOf("errand.park.when", "When do they head outdoors?", [[13, 2], [14, 3], [15, 2]]);
+            outing(nearby("errand.park.place", "park", anchor, 900, "Which park or stretch of waterfront?", at), WALK, at, minutes(80), A.park, A.home);
+          }
           nycTrip(p, 0.2);
           eveningOut(p, cur.t, 0.55);
         }
@@ -1242,6 +1451,16 @@
       hotel: [[[6, 3], [14, 3], [22, 1]], 8], transit: [[[5, 2], [6, 3], [13, 2]], 8], parking: [[[6, 2], [14, 2]], 8],
     };
     const OFFICE = [[[7, 2], [8, 6], [9, 5], [10, 1]], 8.8];
+    const SHIFT_LABELS = ["shorter", "usual", "longer"];
+    const SHIFT_PRIOR = [0.2, 0.6, 0.2];
+    function shiftLength(hours, start) {
+      const bands = [[hours - 1.5, hours - 0.5], [hours - 0.5, hours + 0.5], [hours + 0.5, hours + 1.5]];
+      const i = tracking
+        ? decide("in.hours", "How long is this person's shift today?", SHIFT_LABELS, SHIFT_PRIOR,
+          { kind: "length", when: start, texts: bands.map(([a, b]) => a + " to " + b + " hours") })
+        : pick(rng, SHIFT_PRIOR);
+      return (bands[i][0] + (bands[i][1] - bands[i][0]) * rng()) * HOUR;
+    }
     yield 0.72;
     for (let i = 0; i < this.params.inboundWorkers; i++) {
       if (i % 4000 === 3999) yield 0.72 + 0.12 * (i / this.params.inboundWorkers);
@@ -1250,34 +1469,35 @@
       const work = (p.work = workplace());
       const group = w.groups[w.placeOf(work)[2]];
       const [window, hours] = SHIFT[group] || OFFICE;
-      const start = atHour(rng, window) + (weekend ? HOUR * 0.5 : 0);
-      const key = pickKey(rng, inShares);
-      const ch = { car: CH.car, path: CH.path, njtRail: CH.njtRail, hblr: CH.hblr, bus: CH.bus, walk: CH.walk, bike: CH.bike, ferry: CH.ferry }[key];
-      p.ch = ch;
-      p.region = ch === CH.path ? (rng() < 0.6 ? R.midtown : R.jc) : ch === CH.njtRail ? R.nj : ch === CH.hblr ? R.jc
-        : ch === CH.ferry ? R.midtown : ch === CH.walk || ch === CH.bike ? R.jc : ch === CH.bus ? R.jc : R.nj;
-      const gate = gateFor(ch, work, p.region);
+      const start = hourOf("in.start", "When does this person start work in Hoboken?", window) + (weekend ? HOUR * 0.5 : 0);
+      const ch = (p.ch = CH_OF[oneOf("in.mode", "How does this person get to work in Hoboken?", inShares, MODE_TEXT)]);
+      p.region = ch === CH.path ? Number(oneOf("in.from", "Where does this person come from?", { [R.midtown]: 0.6, [R.jc]: 0.4 }, REGION_TEXT))
+        : ch === CH.njtRail ? R.nj : ch === CH.hblr ? R.jc : ch === CH.ferry ? R.midtown : ch === CH.walk || ch === CH.bike ? R.jc
+          : ch === CH.bus ? R.jc : R.nj;
+      const gate = gateFor(ch, work, p.region, "in.gate", start);
       const mode = MAP_MODE[ch];
       const lead = w.travelTime(gate, work, mode, start);
       arriveFromOutside(p, gate, ch, Math.max(DAY_START + 60, start - lead));
+      const garage = ch === CH.car ? garageNear("in.garage", work, start) : -1;
       if (ch === CH.car) {
-        const garage = parkingNear(work);
         go(garage, CAR, cur.t, A.station);
         go(work, WALK, cur.t, A.work);
       } else {
         go(work, mode, cur.t, A.work);
       }
-      let end = Math.min(DAY_END - minutes(30), start + (hours + 0.6 * gauss(rng)) * HOUR);
-      if ((group === "office" || group === "health" || group === "civic" || group === "university") && rng() < 0.3) {
-        const lunch = nearby(rng() < 0.7 ? "food" : "cafe", work, 300, "lunch near work", start + 3.5 * HOUR);
+      const end = Math.min(DAY_END - minutes(30), start + shiftLength(hours, start));
+      if (group === "office" || group === "health" || group === "civic" || group === "university") {
         const lt = start + between(rng, 3, 4.5) * HOUR;
-        if (lunch >= 0 && lt < end - HOUR) {
-          go(lunch, WALK, lt, A.eat);
-          go(work, WALK, cur.t + minutes(30), A.work);
+        if (lt < end - HOUR && yes("lunch.go", "Does this person go out for lunch?", 0.3, lt)) {
+          const kind = oneOf("lunch.kind", "Lunch at a restaurant or a café?", { food: 0.7, cafe: 0.3 }, KIND_TEXT, lt);
+          const lunch = nearby("lunch.place", kind, work, 300, "Where do they get lunch near work?", lt);
+          if (lunch >= 0) {
+            go(lunch, WALK, lt, A.eat);
+            go(work, WALK, cur.t + minutes(30), A.work);
+          }
         }
       }
       if (ch === CH.car) {
-        const garage = parkingNear(work);
         go(garage, WALK, end, A.station);
         leaveForGood(gate, CAR, ch, cur.t + minutes(3));
       } else {
@@ -1291,22 +1511,24 @@
     for (let i = 0; i < this.params.inboundStudents; i++) {
       personStream();
       const p = { kind: STUDENT_IN, age: 20 + Math.floor(rng() * 10) };
-      const ch = [CH.path, CH.hblr, CH.njtRail, CH.bus, CH.car][pick(rng, [45, 20, 10, 15, 10])];
-      p.ch = ch;
+      const ch = (p.ch = CH_OF[oneOf("stu.mode", "How does this student get to Stevens?", { path: 45, hblr: 20, njtRail: 10, bus: 15, car: 10 }, MODE_TEXT)]);
       p.region = ch === CH.path ? R.midtown : ch === CH.hblr ? R.jc : R.nj;
       const cls = classroom();
-      const gate = gateFor(ch, cls, p.region);
-      const start = atHour(rng, [[8, 3], [9, 4], [10, 3], [13, 2], [17, 1]]);
+      const start = hourOf("stu.start", "When does this student's first class start?", [[8, 3], [9, 4], [10, 3], [13, 2], [17, 1]]);
+      const gate = gateFor(ch, cls, p.region, "stu.gate", start);
       arriveFromOutside(p, gate, ch, start);
-      if (ch === CH.car) go(parkingNear(cls), CAR, cur.t, A.station);
+      const garage = ch === CH.car ? garageNear("stu.garage", cls, start) : -1;
+      if (ch === CH.car) go(garage, CAR, cur.t, A.station);
       go(cls, ch === CH.car ? WALK : MAP_MODE[ch], cur.t, A.class);
-      let t = cur.t + between(rng, 1.5, 3) * HOUR;
-      if (rng() < 0.6) {
-        go(nearby(rng() < 0.6 ? "food" : "cafe", cls, 300, "lunch between classes", t), WALK, t, A.eat);
-        t = go(classroom(), WALK, cur.t + minutes(35), A.class) + between(rng, 1.2, 2.5) * HOUR;
+      let t = cur.t + howLong("class.len", "How long is their first block of classes?", 1.5, 3, "h", cur.t);
+      if (yes("lunch.go", "Does this student go out for lunch?", 0.6, t)) {
+        const kind = oneOf("lunch.kind", "Lunch at a restaurant or a café?", { food: 0.6, cafe: 0.4 }, KIND_TEXT, t);
+        go(nearby("lunch.place", kind, cls, 300, "Where do they get lunch between classes?", t), WALK, t, A.eat);
+        t = go(classroom(), WALK, cur.t + minutes(35), A.class);
+        t += howLong("class.pm.len", "How long is the afternoon block of classes?", 1.2, 2.5, "h", t);
       }
       if (ch === CH.car) {
-        go(parkingNear(cls), WALK, t, A.station);
+        go(garage, WALK, t, A.station);
         leaveForGood(gate, CAR, ch, cur.t);
       } else {
         leaveForGood(ch === CH.bus ? nearest(w.stopAnchors, cls) : gate, MAP_MODE[ch], ch, t);
@@ -1319,45 +1541,51 @@
     const V_ARRIVE = weekend
       ? [[9, 2], [10, 6], [11, 9], [12, 10], [13, 9], [14, 8], [15, 7], [16, 6], [17, 6], [18, 7], [19, 8], [20, 8], [21, 7], [22, 5], [23, 3]]
       : [[10, 3], [11, 5], [12, 7], [13, 5], [14, 4], [15, 4], [16, 5], [17, 9], [18, 13], [19, 13], [20, 10], [21, 8], [22, 6], [23, 4], [24, 2]];
+    /** Why a visitor comes, given when they arrive. */
+    function visitReasons(clock) {
+      if (clock >= 21) return { nightlife: 0.7, food: 0.3 };
+      if (clock >= 16) return { food: 55, nightlife: 30, park: 8, arts: 7 };
+      if (weekend) return { food: 45, park: 25, retail: 18, cafe: 7, arts: 5 };
+      return { health: 12, food: 35.2, cafe: 13.2, park: 17.6, retail: 17.6, arts: 4.4 };
+    }
+    const actOf = { food: A.eat, nightlife: A.drinks, park: A.park, arts: A.sightseeing, retail: A.shopping, cafe: A.coffee, health: A.doctor };
+    const stayOf = { food: [55, 110], nightlife: [80, 180], park: [40, 110], arts: [60, 120], retail: [30, 75], cafe: [25, 50], health: [45, 110] };
+    const STOPS_TEXT = { 0: "none, they head home", 1: "one more", 2: "two more" };
     yield 0.86;
     for (let i = 0; i < this.params.visitors; i++) {
       if (i % 4000 === 3999) yield 0.86 + 0.08 * (i / this.params.visitors);
       personStream();
       const p = { kind: VISITOR, age: 18 + Math.floor(rng() * 55) };
-      const key = pickKey(rng, vShares);
-      const ch = { path: CH.path, car: CH.car, walk: CH.walk, bike: CH.bike, hblr: CH.hblr, bus: CH.bus, ferry: CH.ferry }[key];
-      p.ch = ch;
-      p.region = ch === CH.path || ch === CH.ferry ? (rng() < 0.7 ? R.midtown : R.lower) : ch === CH.car ? R.nj : R.jc;
-      const arrive = atHour(rng, V_ARRIVE);
-      const clock = arrive / HOUR;
-      let group;
-      if (!weekend && clock < 16 && rng() < 0.12) group = "health";
-      else if (clock >= 21) group = rng() < 0.7 ? "nightlife" : "food";
-      else if (clock >= 16) group = pickKey(rng, { food: 55, nightlife: 30, park: 8, arts: 7 });
-      else group = pickKey(rng, weekend ? { food: 45, park: 25, retail: 18, cafe: 7, arts: 5 } : { food: 40, cafe: 15, park: 20, retail: 20, arts: 5 });
-      const first = nearby(group, w.gate.path, 1500, "the first stop of a visit to Hoboken (" + group + ")", arrive);
-      if (first < 0) continue;
-      const gate = gateFor(ch, first, p.region);
+      const ch = (p.ch = CH_OF[oneOf("visit.mode", "How does this visitor get to Hoboken?", vShares, MODE_TEXT)]);
+      p.region = ch === CH.path || ch === CH.ferry
+        ? Number(oneOf("visit.from", "Where is this visitor coming from?", { [R.midtown]: 0.7, [R.lower]: 0.3 }, REGION_TEXT))
+        : ch === CH.car ? R.nj : R.jc;
+      const arrive = hourOf("visit.arrive", "When does this visitor arrive?", V_ARRIVE);
+      const group = oneOf("visit.why", "What brings this visitor to Hoboken first?", visitReasons(arrive / HOUR), KIND_TEXT, arrive);
+      const first = nearby("visit.first", group, w.gate.path, 1500, () => "Which " + KIND_TEXT[group].replace(/^(a|an|the) /, "") + " is their first stop?", arrive);
+      if (first < 0) throw new Error("No " + group + " venues to visit");
+      const gate = gateFor(ch, first, p.region, "visit.gate", arrive);
       arriveFromOutside(p, gate, ch, arrive);
-      if (ch === CH.car) go(parkingNear(first), CAR, cur.t, A.station);
-      const actOf = { food: A.eat, nightlife: A.drinks, park: A.park, arts: A.sightseeing, retail: A.shopping, cafe: A.coffee, health: A.doctor };
-      const stayOf = { food: [55, 110], nightlife: [80, 180], park: [40, 110], arts: [60, 120], retail: [30, 75], cafe: [25, 50], health: [45, 110] };
+      const garage = ch === CH.car ? garageNear("visit.garage", first, arrive) : -1;
+      if (ch === CH.car) go(garage, CAR, cur.t, A.station);
       let t = go(first, ch === CH.car ? WALK : MAP_MODE[ch], cur.t, actOf[group]);
-      t += minutes(between(rng, stayOf[group][0], stayOf[group][1]));
-      const stops = rng() < 0.5 ? 0 : rng() < 0.7 ? 1 : 2;
+      t += howLong("visit.len", "How long do they stay at their first stop?", stayOf[group][0], stayOf[group][1], "min", t);
+      const stops = Number(oneOf("visit.stops", "How many more places do they go to before leaving?", { 0: 0.5, 1: 0.35, 2: 0.15 }, STOPS_TEXT, t));
       let at = first;
       for (let s = 0; s < stops && t < DAY_END - 2 * HOUR; s++) {
-        const next = t / HOUR >= 20 ? "nightlife" : pickKey(rng, { food: 3, cafe: 2, park: 2, retail: 2, nightlife: t / HOUR > 17 ? 3 : 0 });
-        const place = nearby(next, at, 400, "the next stop of the visit (" + next + ")", t);
+        const next = t / HOUR >= 20 ? "nightlife"
+          : oneOf("visit.next", "What kind of place do they go to next?", { food: 3, cafe: 2, park: 2, retail: 2, nightlife: t / HOUR > 17 ? 3 : 0 }, KIND_TEXT, t);
+        const place = nearby("visit.next.place", next, at, 400, () => "Which " + KIND_TEXT[next].replace(/^(a|an|the) /, "") + " next?", t);
         if (place < 0) break;
-        t = go(place, WALK, t, actOf[next]) + minutes(between(rng, stayOf[next][0], stayOf[next][1]));
+        t = go(place, WALK, t, actOf[next]);
+        t += howLong("visit.next.len", "How long do they stay at that next stop?", stayOf[next][0], stayOf[next][1], "min", t);
         at = place;
       }
       if (ch === CH.car) {
-        go(parkingNear(first), WALK, t, A.station);
+        go(garage, WALK, t, A.station);
         leaveForGood(gate, CAR, ch, cur.t);
       } else {
-        const out = ch === CH.bus ? nearest(w.stopAnchors, at) : ch === CH.walk || ch === CH.bike ? gate : gateFor(ch, at, p.region);
+        const out = ch === CH.bus ? nearest(w.stopAnchors, at) : ch === CH.walk || ch === CH.bike ? gate : gateFor(ch, at, p.region, "visit.gateOut", t);
         leaveForGood(out, MAP_MODE[ch], ch, Math.min(t, DAY_END - minutes(15)));
       }
       finish();
@@ -1365,19 +1593,26 @@
 
     // --- NJ Transit riders changing to PATH, ferry, light rail or bus inside the terminal ---------------
     const terminalStop = nearest(w.stopAnchors, w.gate.njt);
-    const TRANSFER_TO = [[CH.path, w.gate.path, 70], [CH.ferry, w.gate.ferry_term, 18], [CH.hblr, w.gate.hblr_term, 7], [CH.bus, terminalStop, 5]];
+    const TRANSFER_TO = { path: [CH.path, w.gate.path], ferry: [CH.ferry, w.gate.ferry_term], hblr: [CH.hblr, w.gate.hblr_term], bus: [CH.bus, terminalStop] };
+    const TRANSFER_TEXT = { path: "the PATH to Manhattan", ferry: "a ferry to Manhattan", hblr: "the light rail", bus: "a bus" };
     for (let i = 0; i < this.params.transfers; i++) {
       personStream();
       const p = { kind: TRANSFER, age: 22 + Math.floor(rng() * 45) };
-      const [ch, target] = TRANSFER_TO[pick(rng, TRANSFER_TO.map((x) => x[2]))];
+      const to = oneOf("xfer.to", "This rider's NJ Transit train has just arrived at Hoboken Terminal. What do they change to?",
+        { path: 70, ferry: 18, hblr: 7, bus: 5 }, TRANSFER_TEXT);
+      const [ch, target] = TRANSFER_TO[to];
       p.ch = ch;
-      const am = weekend ? atHour(rng, [[9, 3], [10, 3], [11, 2], [12, 2]]) : atHour(rng, [[6, 2], [7, 5], [8, 6], [9, 2]]);
+      const am = weekend
+        ? hourOf("xfer.am", "When does their train get in?", [[9, 3], [10, 3], [11, 2], [12, 2]])
+        : hourOf("xfer.am", "When does their train get in?", [[6, 2], [7, 5], [8, 6], [9, 2]]);
       p.legStart = legs.n;
       legs.push(AWAY, 0, A.away, DAY_START, am, w.gate.njt, w.gate.njt, CH.njtRail);
       cur = { agent: p, anchor: w.gate.njt, t: am, act: A.station };
       go(target, WALK, am, A.station);
       transfers[ch] += 1;
-      const pm = Math.max(cur.t + 4 * HOUR, weekend ? atHour(rng, [[16, 3], [18, 3], [20, 2]]) : atHour(rng, [[16, 3], [17, 6], [18, 5], [19, 2]]));
+      const pm = Math.max(cur.t + 4 * HOUR, weekend
+        ? hourOf("xfer.pm", "When do they come back through the terminal for the train home?", [[16, 3], [18, 3], [20, 2]])
+        : hourOf("xfer.pm", "When do they come back through the terminal for the train home?", [[16, 3], [17, 6], [18, 5], [19, 2]]));
       legs.push(AWAY, 0, A.away, cur.t, pm, target, target, ch);
       cur.anchor = target;
       cur.t = pm;
@@ -1730,13 +1965,39 @@
     facts.push(KIND_LABELS[p.kind]);
     if (p.age !== undefined) facts.push("age " + p.age);
     if (p.kind === RESIDENT) {
-      facts.push(p.child ? (p.age < 3 ? "toddler" : p.age < 5 ? "preschooler" : "school-age") : p.worker ? (p.wfh ? "works from home" : "commutes") : p.gradStudent ? "Stevens grad student" : p.age >= 65 ? "retired" : "not working today");
+      facts.push(p.child ? (p.age < 3 ? "toddler" : p.age < 5 ? "preschooler" : "school-age")
+        : p.worker ? (p.offToday ? "off work today" : p.wfh ? "works from home today" : "commutes")
+          : p.gradStudent ? "Stevens grad student" : p.age >= 65 ? "retired" : "not working today");
     }
     if (p.region !== undefined && p.kind === RESIDENT && p.worker && !p.wfh) facts.push("works in " + REGIONS[p.region]);
     if (p.work !== undefined && p.work >= 0 && (p.kind === WORKER_IN || p.region === R.hoboken)) facts.push("job: " + w.anchorName(p.work));
     if (p.ch !== undefined) facts.push("by " + CHANNEL_LABELS[p.ch]);
     if (p.dog) facts.push("walks the family dog");
-    return { id: i, kind: KIND_LABELS[p.kind], facts, items, home: p.home !== undefined ? w.anchorName(p.home) : null };
+    const tally = this.decisionsByPerson && this.decisionsByPerson[i];
+    const jev = tally && this.options.decisions ? { decisions: tally[0], fromJev: tally[1] } : null;
+    return { id: i, kind: KIND_LABELS[p.kind], facts, items, jev, home: p.home !== undefined ? w.anchorName(p.home) : null };
+  };
+
+  /**
+   * Who person i is, without anything their day's decisions settled (commute mode, working
+   * from home today...), so a decision model isn't handed the rules' answers.
+   */
+  Simulation.prototype.profileFacts = function (i) {
+    const w = this.world;
+    const p = this.profile[i];
+    const facts = [KIND_LABELS[p.kind], "age " + p.age];
+    if (p.kind === RESIDENT) {
+      if (p.child) facts.push(p.age < 3 ? "toddler" : p.age < 5 ? "preschooler" : "school-age child");
+      else {
+        facts.push(p.worker ? "employed" + (p.gradStudent ? " and a Stevens graduate student" : "")
+          : p.gradStudent ? "Stevens graduate student" : p.age >= 65 ? "retired" : "not employed");
+        facts.push(p.hhSize > 1 ? "lives with " + (p.hhSize - 1) + (p.hhSize === 2 ? " other person" : " others") : "lives alone");
+        if (p.kids) facts.push(p.kids + (p.kids === 1 ? " child" : " children") + " at home");
+      }
+    }
+    if (p.kind === WORKER_IN && p.work >= 0) facts.push("works at " + w.anchorName(p.work) + " (" + w.groups[w.placeGroup[w.aRef[p.work]]] + ")");
+    if (p.dog) facts.push("has a dog");
+    return facts;
   };
 
   function cap(s) {
@@ -1751,9 +2012,107 @@
     return hh + ":" + mm + (h < 12 ? " am" : " pm");
   }
 
+  // ------------------------------------------------------------------ decision sources
+  // A decision source answers decide() calls: answer(person, key, labels, anchors) returns an
+  // index into labels, or -1 to let the rules decide.
+
+  /** Answers keyed "person|key" -> label: the Jev driver's working table. */
+  function tableSource(table) {
+    return {
+      answer(person, key, labels) {
+        const a = table[person + "|" + key];
+        return a === undefined ? -1 : labels.indexOf(a);
+      },
+    };
+  }
+
+  /**
+   * Jev's answers packed in the order a day asks for them, which is how the page ships them.
+   * Layout (little-endian): u32 P; P x u32 person; P x u32 count; then one u16 topic code and
+   * one u16 value per decision, in two runs. A value is an option index, the anchor of a
+   * chosen place, or 0xffff where the rules decided.
+   */
+  function encodeSequence(log, include) {
+    const topics = [];
+    const codes = new Map();
+    const byPerson = new Map();
+    for (const d of log) {
+      if (include && !include(d.person)) continue;
+      let list = byPerson.get(d.person);
+      if (!list) byPerson.set(d.person, (list = []));
+      let c = codes.get(d.key);
+      if (c === undefined) {
+        c = topics.length;
+        codes.set(d.key, c);
+        topics.push(d.key);
+      }
+      list.push(c, d.fromTable ? (d.anchors ? d.anchors[d.answer] : d.answer) : 0xffff);
+    }
+    if (topics.length >= 0xffff) throw new Error("too many decision topics to pack");
+    const people = [...byPerson.keys()].filter((p) => byPerson.get(p).some((v, i) => i % 2 === 1 && v !== 0xffff)).sort((a, b) => a - b);
+    let total = 0;
+    for (const p of people) total += byPerson.get(p).length / 2;
+    const bytes = new Uint8Array(4 + 8 * people.length + 4 * total);
+    const dv = new DataView(bytes.buffer);
+    let o = 0;
+    dv.setUint32(o, people.length, true);
+    o += 4;
+    for (const p of people) {
+      dv.setUint32(o, p, true);
+      o += 4;
+    }
+    for (const p of people) {
+      dv.setUint32(o, byPerson.get(p).length / 2, true);
+      o += 4;
+    }
+    for (const part of [0, 1]) {
+      for (const p of people) {
+        const list = byPerson.get(p);
+        for (let i = part; i < list.length; i += 2) {
+          dv.setUint16(o, list[i], true);
+          o += 2;
+        }
+      }
+    }
+    return { topics, bytes, people: people.length, decisions: total };
+  }
+
+  /** Read encodeSequence() output. Each Simulation needs its own source: it tracks its place. */
+  function sequenceSource(topics, bytes) {
+    const dv = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    const P = dv.getUint32(0, true);
+    const span = new Map();
+    let total = 0;
+    for (let i = 0; i < P; i++) {
+      const count = dv.getUint32(4 + 4 * P + 4 * i, true);
+      span.set(dv.getUint32(4 + 4 * i, true), [total, total + count]);
+      total += count;
+    }
+    const base = 4 + 8 * P;
+    const at = new Map();
+    return {
+      answer(person, key, labels, anchors) {
+        const s = span.get(person);
+        if (!s) return -1;
+        const i = at.has(person) ? at.get(person) : s[0];
+        if (i < 0 || i >= s[1]) return -1;
+        if (topics[dv.getUint16(base + 2 * i, true)] !== key) {
+          at.set(person, -1); // out of step with this day: the rules decide the rest
+          return -1;
+        }
+        at.set(person, i + 1);
+        const v = dv.getUint16(base + 2 * total + 2 * i, true);
+        if (v === 0xffff) return -1;
+        return anchors ? anchors.indexOf(v) : v < labels.length ? v : -1;
+      },
+    };
+  }
+
   const api = {
-    World, Simulation, clock, DAY_START, DAY_END, BIN, NBINS, CHANNELS, CHANNEL_LABELS, KIND_LABELS, REGIONS,
+    World, Simulation, clock, tableSource, encodeSequence, sequenceSource,
+    DAY_START, DAY_END, BIN, NBINS, CHANNELS, CHANNEL_LABELS, KIND_LABELS, REGIONS,
     STATE: { HOME: STATE_HOME, PLACE: STATE_PLACE, WALK: STATE_WALK, BIKE: STATE_BIKE, CAR: STATE_CAR, HIDDEN: STATE_HIDDEN },
+    ANCHOR: { HOME: ANCHOR_HOME, DORM: ANCHOR_DORM, PLACE: ANCHOR_PLACE, GATE: ANCHOR_GATE, STOP: ANCHOR_STOP },
     KIND: { RESIDENT, DORM, WORKER_IN, STUDENT_IN, VISITOR, TRANSFER },
   };
   root.HobokenSim = api;

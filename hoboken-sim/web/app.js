@@ -67,7 +67,8 @@
     ready = false;
     selectPerson(-1);
     const jev = decider === "jev" ? jevDays[dayType] : null;
-    const next = new H.Simulation(world, Object.assign({ dayType }, overrides, jev ? { decisions: jev.decisions } : {}), true);
+    // Jev's answers belong to the default day, so the assumption sliders don't apply to it.
+    const next = new H.Simulation(world, Object.assign({ dayType }, jev ? { decisions: H.sequenceSource(jev.topics, jev.bytes) } : overrides), true);
     const steps = next.build();
     let last = performance.now();
     for (;;) {
@@ -124,20 +125,26 @@
   }
 
   // ------------------------------------------------------------------ Jev decisions
-  /** Decision tables written by jev/run-jev.mjs, inlined by the bundler or served next to the page. */
+  /** Jev days written by jev/run-jev.mjs, inlined by the bundler or served next to the page. */
   async function loadJev() {
-    // A bundled page already carries every table that existed when it was built.
+    // A bundled page already carries every day that existed when it was built.
     const bundled = Boolean(document.getElementById("hoboken-data"));
     for (const day of ["weekday", "weekend"]) {
       const inline = document.getElementById("jev-" + day);
       try {
-        if (inline) jevDays[day] = JSON.parse(inline.textContent);
+        let saved = null;
+        if (inline) saved = JSON.parse(inline.textContent);
         else if (!bundled) {
           const res = await fetch("data/jev-" + day + ".json");
-          if (res.ok) jevDays[day] = await res.json();
+          if (res.ok) saved = await res.json();
+        }
+        if (saved && saved.format === "hoboken-jev/2") {
+          saved.bytes = await gunzipBase64(saved.sequence);
+          delete saved.sequence;
+          jevDays[day] = saved;
         }
       } catch {
-        // No Jev run for this day yet.
+        // No Jev run for this day yet, or a browser that can't unpack it.
       }
     }
     for (const b of $("deciders").querySelectorAll("button")) {
@@ -149,25 +156,43 @@
     }
   }
 
+  async function gunzipBase64(text) {
+    const bin = atob(text);
+    const bytes = new Uint8Array(bin.length);
+    for (let i = 0; i < bin.length; i++) bytes[i] = bin.charCodeAt(i);
+    const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip"));
+    return new Uint8Array(await new Response(stream).arrayBuffer());
+  }
+
   function describeDecider() {
     const jev = jevDays[dayType];
     const jevBtn = $("deciders").querySelector('[data-decider="jev"]');
     jevBtn.disabled = !jev;
     if (!jev && decider === "jev") decider = "rules";
     for (const b of $("deciders").querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.decider === decider));
+    const usingJev = decider === "jev";
+    $("rebuild").disabled = usingJev;
+    $("resetAssume").disabled = usingJev;
+    $("assumeNote").hidden = !usingJev;
     const note = $("deciderNote");
     if (!jev) {
-      note.innerHTML = "Where each person eats, drinks, shops, works out and walks the dog is sampled from the eight likeliest nearby places, weighted by distance and popularity. " +
-        "<a href=\"https://docs.typesafe.ai/\" target=\"_blank\" rel=\"noopener\">Jev</a> (TypeSafe AI's decision model) can make those choices instead: run " +
+      note.innerHTML = "Every decision in this day comes from rules calibrated to published counts: whether people go out, when they leave, " +
+        "how they travel, where they go, how long they stay, when the dog gets walked, which road drivers take and where they park. " +
+        "<a href=\"https://docs.typesafe.ai/\" target=\"_blank\" rel=\"noopener\">Jev</a> (TypeSafe AI's decision model) can make all of them instead: run " +
         "<code>node hoboken-sim/jev/run-jev.mjs</code> with a TypeSafe API key and this page gains a Jev day.";
       return;
     }
     const st = jev.stats;
     const when = new Date(jev.created).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
     const share = st.decisionPointsForThesePeople ? Math.round((100 * st.decisionsFromJev) / st.decisionPointsForThesePeople) : 0;
-    const applied = decider === "jev" && sim ? " This run applied " + fmt(sim.decisionStats.fromTable) + " of them." : "";
-    note.textContent = `Jev (${jev.model}) chose places for ${fmt(jev.people)} people on ${when}: ${fmt(st.decisionsFromJev)} venue choices ` +
-      `(${share}% of theirs), ${fmt(st.inputTokens)} input tokens, about $${st.estimatedCostUSD.toFixed(2)}. Everyone else follows the rules.` + applied;
+    const everyone = sim && jev.people >= sim.n;
+    const raked = jev.raked
+      ? " Working from home, trips out of town, travel modes and train connections were raked to the published totals: Jev chose who, the counts set how many."
+      : " Nothing was raked: travel-mode totals are Jev's own.";
+    const applied = usingJev && sim ? " This run applied " + fmt(sim.decisionStats.fromTable) + " of them." : "";
+    note.textContent = `Jev (${jev.model}) made ${fmt(st.decisionsFromJev)} decisions for ${fmt(jev.people)} people on ${when} ` +
+      `(${share}% of their decisions; ${fmt(st.inputTokens)} input tokens, about $${st.estimatedCostUSD.toFixed(2)}).` +
+      (everyone ? "" : " Everyone else follows the rules.") + raked + applied;
   }
 
   // ------------------------------------------------------------------ 3D / map switch
@@ -1003,7 +1028,8 @@
     const d = sim.describe(i);
     $("pWho").textContent = d.kind;
     $("pFacts").innerHTML = d.facts.slice(1).map((f) => `<span>${escapeHtml(f)}</span>`).join("") +
-      (d.home ? `<span>${escapeHtml(d.home.replace("Home on ", "lives on "))}</span>` : "");
+      (d.home ? `<span>${escapeHtml(d.home.replace("Home on ", "lives on "))}</span>` : "") +
+      (d.jev ? `<span class="jev">Jev made ${fmt(d.jev.fromJev)} of their ${fmt(d.jev.decisions)} decisions today</span>` : "");
     $("pPlan").innerHTML = d.items.map((it, k) => `<li data-k="${k}" data-t0="${it.t0}" data-t1="${it.t1}"><time>${H.clock(it.t0)}</time><span>${escapeHtml(it.text)}</span></li>`).join("");
     $("pcWho").textContent = [d.kind].concat(d.facts.slice(1, 3)).join(" · ");
     refreshPlanHighlight();
