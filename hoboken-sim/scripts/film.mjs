@@ -10,7 +10,7 @@
 //
 // Needs Playwright's Chromium (npm install --no-save playwright && npx playwright install chromium)
 // and ffmpeg on the PATH (or FFMPEG=/path/to/ffmpeg). It renders with software WebGL, so every
-// frame is reproducible on any machine; the 48-second film takes several minutes.
+// frame is reproducible on any machine; the 47-second film takes about 15 minutes on 4 CPU cores.
 import { spawn } from "node:child_process";
 import { once } from "node:events";
 import { mkdir, readFile, writeFile } from "node:fs/promises";

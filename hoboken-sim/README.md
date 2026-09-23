@@ -138,8 +138,8 @@ node scripts/film.mjs --jev            # the same film with Jev's day, after jev
 node scripts/film.mjs --still 9,30     # single frames, for checking shots
 ```
 
-It renders with software WebGL, so the frames come out the same on any machine. That's slow: about
-1 second per frame on 4 CPU cores, or roughly 18 minutes for the 1,128 frames of the 47-second film.
+It renders with software WebGL, so the frames come out the same on any machine. That's slow: 0.8–1
+second per frame on 4 CPU cores, so the 1,128 frames of the 47-second film took 15 minutes here.
 
 ## Unreal Engine 5
 
