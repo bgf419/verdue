@@ -29,10 +29,13 @@ OUT = pathlib.Path(__file__).resolve().parent.parent / ".cache" / "overture"
 DETAIL = (-74.0520, 40.7310, -74.0140, 40.7650)
 # Wider frame for context layers (river, Manhattan shoreline, regional roads).
 CONTEXT = (-74.0750, 40.7150, -73.9750, 40.7800)
+# Manhattan across the river, for the 3D skyline (only tall buildings are kept; see build_data.py).
+SKYLINE = (-74.0140, 40.7050, -73.9650, 40.7800)
 
 LAYERS = [
     ("divisions", "division_area", CONTEXT, "id,names,subtype,class,admin_level,geometry,bbox,is_land", "divisions"),
     ("buildings", "building", DETAIL, "id,names,height,num_floors,subtype,class,geometry,is_underground,bbox", "buildings"),
+    ("buildings", "building", SKYLINE, "id,height,num_floors,geometry,is_underground,bbox", "skyline"),
     # Contact fields (phones, emails, socials) are deliberately not requested.
     ("places", "place", DETAIL, "id,names,categories,basic_category,taxonomy,confidence,brand,operating_status,addresses,geometry,bbox", "places"),
     ("transportation", "segment", CONTEXT, "id,names,subtype,class,subclass,road_flags,rail_flags,level_rules,routes,connectors,access_restrictions,geometry,bbox", "segments"),

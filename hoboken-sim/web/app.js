@@ -23,12 +23,17 @@
   let speed = 300;
   let simT = 6.5 * 3600;
   let dayType = "weekday";
+  let decider = "rules";
+  const jevDays = {};
   let xs;
   let ys;
   let states;
   let who;
   let selected = -1;
   let following = false;
+  const V3 = window.HobokenView3D;
+  let mode = V3 && V3.webglAvailable() ? "3d" : "map";
+  let view3d = null;
   let light = 1;
   let sun = { rise: 6.8 * 3600, set: 19 * 3600 };
   const overrides = {};
@@ -61,7 +66,8 @@
   async function buildDay() {
     ready = false;
     selectPerson(-1);
-    const next = new H.Simulation(world, Object.assign({ dayType }, overrides), true);
+    const jev = decider === "jev" ? jevDays[dayType] : null;
+    const next = new H.Simulation(world, Object.assign({ dayType }, overrides, jev ? { decisions: jev.decisions } : {}), true);
     const steps = next.build();
     let last = performance.now();
     for (;;) {
@@ -90,6 +96,7 @@
     crossMax = Math.max(1, ...all.in, ...all.out);
     drawWhoChart();
     drawChecks();
+    describeDecider();
     setLoading(null);
     ready = true;
     sim.positionsAt(simT, xs, ys, states);
@@ -110,8 +117,103 @@
     fillAbout();
     initAssumptions();
     connectClaude();
+    await loadJev();
     await buildDay();
     requestAnimationFrame(frame);
+    setMode(mode);
+  }
+
+  // ------------------------------------------------------------------ Jev decisions
+  /** Decision tables written by jev/run-jev.mjs, inlined by the bundler or served next to the page. */
+  async function loadJev() {
+    // A bundled page already carries every table that existed when it was built.
+    const bundled = Boolean(document.getElementById("hoboken-data"));
+    for (const day of ["weekday", "weekend"]) {
+      const inline = document.getElementById("jev-" + day);
+      try {
+        if (inline) jevDays[day] = JSON.parse(inline.textContent);
+        else if (!bundled) {
+          const res = await fetch("data/jev-" + day + ".json");
+          if (res.ok) jevDays[day] = await res.json();
+        }
+      } catch {
+        // No Jev run for this day yet.
+      }
+    }
+    for (const b of $("deciders").querySelectorAll("button")) {
+      b.addEventListener("click", async () => {
+        if (b.disabled || b.dataset.decider === decider) return;
+        decider = b.dataset.decider;
+        await buildDay();
+      });
+    }
+  }
+
+  function describeDecider() {
+    const jev = jevDays[dayType];
+    const jevBtn = $("deciders").querySelector('[data-decider="jev"]');
+    jevBtn.disabled = !jev;
+    if (!jev && decider === "jev") decider = "rules";
+    for (const b of $("deciders").querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.decider === decider));
+    const note = $("deciderNote");
+    if (!jev) {
+      note.innerHTML = "Where each person eats, drinks, shops, works out and walks the dog is sampled from the eight likeliest nearby places, weighted by distance and popularity. " +
+        "<a href=\"https://docs.typesafe.ai/\" target=\"_blank\" rel=\"noopener\">Jev</a> (TypeSafe AI's decision model) can make those choices instead: run " +
+        "<code>node hoboken-sim/jev/run-jev.mjs</code> with a TypeSafe API key and this page gains a Jev day.";
+      return;
+    }
+    const st = jev.stats;
+    const when = new Date(jev.created).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
+    const share = st.decisionPointsForThesePeople ? Math.round((100 * st.decisionsFromJev) / st.decisionPointsForThesePeople) : 0;
+    const applied = decider === "jev" && sim ? " This run applied " + fmt(sim.decisionStats.fromTable) + " of them." : "";
+    note.textContent = `Jev (${jev.model}) chose places for ${fmt(jev.people)} people on ${when}: ${fmt(st.decisionsFromJev)} venue choices ` +
+      `(${share}% of theirs), ${fmt(st.inputTokens)} input tokens, about $${st.estimatedCostUSD.toFixed(2)}. Everyone else follows the rules.` + applied;
+  }
+
+  // ------------------------------------------------------------------ 3D / map switch
+  async function setMode(next) {
+    mode = next;
+    for (const b of $("views").querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.view === next));
+    const is3d = next === "3d";
+    $("legend2d").hidden = is3d;
+    $("legend3d").hidden = !is3d;
+    $("presets").hidden = !is3d;
+    for (const c of [baseCanvas, glCanvas, overlay]) c.hidden = is3d;
+    if (view3d) view3d.canvas.hidden = !is3d;
+    if (!is3d) {
+      baseDirty = true;
+      return;
+    }
+    if (!view3d) {
+      const note = $("note3d");
+      note.hidden = false;
+      note.textContent = "Building 3D Hoboken…";
+      try {
+        await V3.load();
+        view3d = V3.create(stage, data, world, {
+          onPick: (i) => selectPerson(i),
+          onFollowBroken: () => setFollowing(false),
+        });
+        view3d.setSelected(selected);
+        note.hidden = true;
+        $("presets").innerHTML = Object.entries(view3d.presets)
+          .map(([key, p]) => `<button type="button" data-preset="${key}">${escapeHtml(p.label)}</button>`).join("");
+        for (const b of $("presets").querySelectorAll("button")) {
+          b.addEventListener("click", () => {
+            setFollowing(false);
+            view3d.preset(b.dataset.preset);
+          });
+        }
+      } catch (err) {
+        note.textContent = "The 3D view couldn't load (" + err.message + "). Showing the map instead.";
+        setTimeout(() => { note.hidden = true; }, 6000);
+        setMode("map");
+        return;
+      }
+    }
+    if (mode !== "3d") return;
+    view3d.canvas.hidden = false;
+    view3d.resize();
   }
 
   // ------------------------------------------------------------------ geometry helpers
@@ -565,6 +667,21 @@
         tag("Terminal · " + fmt(terminal.reduce((s, g) => s + g[1], 0)), cx, top + 14, 4);
       }
     }
+    if (view.scale > 0.45) {
+      // Dogs trot a couple of metres beside whoever is walking them.
+      ctx.fillStyle = light > 0.5 ? "#8a5a2b" : "#c8925a";
+      ctx.beginPath();
+      const r = Math.max(1.2, Math.min(3, view.scale * 1.6));
+      for (let i = 0; i < sim.n; i++) {
+        if (states[i] === H.STATE.HIDDEN || !sim.withDog(i)) continue;
+        const dx = sx(xs[i] + 1.6 * Math.cos(sim.heading[i] + 1.2));
+        const dy = sy(ys[i] + 1.6 * Math.sin(sim.heading[i] + 1.2));
+        if (dx < -5 || dy < -5 || dx > W + 5 || dy > Hh + 5) continue;
+        ctx.moveTo(dx + r, dy);
+        ctx.arc(dx, dy, r, 0, Math.PI * 2);
+      }
+      ctx.fill();
+    }
     if (selected >= 0 && states[selected] !== H.STATE.HIDDEN) {
       const x = sx(xs[selected]);
       const y = sy(ys[selected]);
@@ -607,14 +724,24 @@
         if (simT >= H.DAY_END) simT = H.DAY_START;
       }
       sim.positionsAt(simT, xs, ys, states);
+      const l3 = lightAt(simT);
+      if (mode === "3d" && view3d) {
+        light = l3;
+        view3d.update(sim, xs, ys, states, who, simT, l3, sun);
+        if (now - lastPanel > 250) {
+          lastPanel = now;
+          updatePanels();
+        }
+        requestAnimationFrame(frame);
+        return;
+      }
       if (following && selected >= 0 && states[selected] !== H.STATE.HIDDEN) {
         view.cx += (xs[selected] - view.cx) * 0.15;
         view.cy += (ys[selected] - view.cy) * 0.15;
         interacting = now;
       }
-      const l = lightAt(simT);
-      if (Math.abs(l - light) > 0.03 || (l !== light && (l === 0 || l === 1))) {
-        light = l;
+      if (Math.abs(l3 - light) > 0.03 || (l3 !== light && (l3 === 0 || l3 === 1))) {
+        light = l3;
         baseDirty = true;
       }
       if (interacting && now - interacting < 160) {
@@ -645,6 +772,16 @@
     $("kIn").textContent = fmt(inTown);
     $("kAway").textContent = fmt(sim.params.residents - p[0][b]);
     $("kMoving").textContent = fmt(sim.nMovers);
+    let cars = 0;
+    let dogs = 0;
+    for (let i = 0; i < sim.n; i++) {
+      const st = states[i];
+      if (st === H.STATE.HIDDEN) continue;
+      if (st === H.STATE.CAR) cars++;
+      if (sim.withDog(i)) dogs++;
+    }
+    $("kCars").textContent = fmt(cars);
+    $("kDogs").textContent = fmt(dogs);
     const c = sim.crossingsUntil(simT);
     let tin = 0;
     let tout = 0;
@@ -847,28 +984,39 @@
   }
 
   // ------------------------------------------------------------------ person inspector
+  function setFollowing(on) {
+    following = on && selected >= 0;
+    for (const id of ["follow", "pcFollow"]) $(id).setAttribute("aria-pressed", String(following));
+    $("follow").textContent = following ? "Stop following" : "Follow on map";
+    $("pcFollow").textContent = following ? "Following" : "Follow";
+    if (view3d) view3d.setFollow(following ? selected : -1);
+  }
+
   function selectPerson(i) {
     selected = i;
-    following = false;
-    $("follow").setAttribute("aria-pressed", "false");
-    $("follow").textContent = "Follow on map";
+    setFollowing(false);
+    if (view3d) view3d.setSelected(i);
     $("thought").hidden = true;
     $("personBlock").hidden = i < 0;
+    $("pickCard").hidden = i < 0;
     if (i < 0 || !sim) return;
     const d = sim.describe(i);
     $("pWho").textContent = d.kind;
     $("pFacts").innerHTML = d.facts.slice(1).map((f) => `<span>${escapeHtml(f)}</span>`).join("") +
       (d.home ? `<span>${escapeHtml(d.home.replace("Home on ", "lives on "))}</span>` : "");
     $("pPlan").innerHTML = d.items.map((it, k) => `<li data-k="${k}" data-t0="${it.t0}" data-t1="${it.t1}"><time>${H.clock(it.t0)}</time><span>${escapeHtml(it.text)}</span></li>`).join("");
+    $("pcWho").textContent = [d.kind].concat(d.facts.slice(1, 3)).join(" · ");
     refreshPlanHighlight();
-    if (window.innerWidth < 1000) $("personBlock").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "nearest" });
   }
 
   function refreshPlanHighlight() {
+    let now = "";
     for (const li of $("pPlan").children) {
       const on = simT >= Number(li.dataset.t0) && simT < Number(li.dataset.t1);
       li.classList.toggle("now", on);
+      if (on) now = li.lastElementChild.textContent;
     }
+    $("pcNow").textContent = now || (states && states[selected] === H.STATE.HIDDEN ? "Outside Hoboken right now" : "");
   }
 
   function escapeHtml(s) {
@@ -970,11 +1118,11 @@
       $("scrubOut").textContent = H.clock(simT);
     });
     $("closePerson").addEventListener("click", () => selectPerson(-1));
-    $("follow").addEventListener("click", () => {
-      following = !following;
-      $("follow").setAttribute("aria-pressed", String(following));
-      $("follow").textContent = following ? "Stop following" : "Follow on map";
-    });
+    $("follow").addEventListener("click", () => setFollowing(!following));
+    $("pcFollow").addEventListener("click", () => setFollowing(!following));
+    $("pcClose").addEventListener("click", () => selectPerson(-1));
+    $("pcDetails").addEventListener("click", () => $("personBlock").scrollIntoView({ behavior: reduceMotion ? "auto" : "smooth", block: "start" }));
+    for (const b of $("views").querySelectorAll("button")) b.addEventListener("click", () => setMode(b.dataset.view));
     $("think").addEventListener("click", think);
     document.addEventListener("keydown", (ev) => {
       if (ev.target.closest && ev.target.closest("input, button, textarea, select")) return;
@@ -986,6 +1134,7 @@
     window.addEventListener("resize", () => {
       resize();
       if (!ready) fitHoboken();
+      if (view3d) view3d.resize();
     });
 
     // Pan, zoom, pinch and click-to-select on the overlay canvas.
@@ -1017,7 +1166,7 @@
         if (downAt && downAt.moved) {
           view.cx -= dx / view.scale;
           view.cy += dy / view.scale;
-          following = false;
+          if (following) setFollowing(false);
           interacting = performance.now();
         }
       }

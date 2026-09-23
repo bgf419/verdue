@@ -95,6 +95,12 @@
       "source": "Stevens Institute of Technology facts and statistics, fall 2025",
       "url": "https://www.stevens.edu/discover-stevens/stevens-by-the-numbers/facts-statistics",
       "confidence": "MEDIUM"
+    },
+    "usHouseholdsWithDog": {
+      "value": 0.426,
+      "source": "AVMA 2025 Pet Ownership and Demographic Sourcebook: dogs in 42.6% of US households (87.3 million dogs)",
+      "url": "https://www.avma.org/news/pet-population-continues-increase-while-pet-spending-declines",
+      "confidence": "MEDIUM"
     }
   },
   "derived": {
@@ -234,6 +240,15 @@
         "5": 0.03
       },
       "note": "Chosen to reproduce the 2.10 average household size",
+      "confidence": "LOW"
+    },
+    "householdsWithDog": {
+      "value": 0.22,
+      "range": [
+        0.15,
+        0.35
+      ],
+      "note": "No Hoboken count is published (the city licenses dogs but doesn't report totals). Set at about half the national 42.6% share for a city of small apartments and 2.1-person households. One adult walks the dog two or three times a day, to one of Hoboken's 8 dog runs or a nearby park.",
       "confidence": "LOW"
     }
   }

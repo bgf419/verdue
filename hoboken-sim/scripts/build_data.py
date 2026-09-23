@@ -116,7 +116,12 @@ for d in divisions:
 
 water_geoms = [project(wkb.loads(w["geometry"])) for w in read("water")
                if w["subtype"] in {"river", "ocean", "water", "canal", "reservoir", "pond"}]
-water = unary_union([g for g in water_geoms if g.area > 400]).intersection(view)
+water_all = unary_union([g for g in water_geoms if g.area > 400])
+water = water_all.intersection(view)
+# The 3D view looks out to the horizon, so it gets the river out to the edge of the context frame.
+CONTEXT_LL = (-74.0750, 40.7150, -73.9750, 40.7800)
+context = project(box(*CONTEXT_LL))
+water3d = water_all.intersection(context)
 
 PARK_CLASSES = {("park", "park"), ("park", "dog_park"), ("recreation", "pitch"), ("recreation", "playground"),
                 ("recreation", "recreation_ground"), ("recreation", "track"), ("pedestrian", "plaza")}
@@ -271,6 +276,25 @@ for p in read("places"):
         if name and re.search(pattern, name, re.I):
             jobs = headcount
     places.append({"x": g.x, "y": g.y, "group": group, "name": shown, "jobs": jobs, "cat": p["basic_category"]})
+
+# Dog runs: the land-use polygons are authoritative; reuse a named place when one sits on the run.
+DOG_NAME = re.compile(r"\bdog (park|run|playpen)\b", re.I)
+for p in places:
+    p["dog"] = p["cat"] == "dog_park" or bool(p["name"] and DOG_NAME.search(p["name"]))
+    if p["dog"] and any(q is not p and q.get("dog") and math.hypot(p["x"] - q["x"], p["y"] - q["y"]) < 40 for q in places):
+        p["dog"] = False  # a second listing for a run already counted
+for lu in read("land_use"):
+    if lu["class"] != "dog_park":
+        continue
+    c = project(wkb.loads(lu["geometry"])).representative_point()
+    if not hoboken_near.contains(c):
+        continue
+    near = [p for p in places if p["dog"] and math.hypot(p["x"] - c.x, p["y"] - c.y) < 60]
+    if near:
+        continue
+    name = primary_name(lu)
+    places.append({"x": c.x, "y": c.y, "group": "park", "name": name if name and not looks_personal(name) else None,
+                   "jobs": 0, "cat": "dog_park", "dog": True})
 
 # --------------------------------------------------------------------------------------
 # Street graph (Overture segments split at connectors)
@@ -463,6 +487,13 @@ for e in edges:
     e["geom"] = shapely.LineString(coords)
 
 walk_edge_ids = [i for i, e in enumerate(edges) if e["flags"] & EDGE_WALK]
+street_edge_ids = [i for i, e in enumerate(edges) if e["name"] and e["flags"] & (EDGE_CAR_FWD | EDGE_CAR_BWD)]
+street_tree = STRtree([edges[i]["geom"] for i in street_edge_ids])
+
+
+def street_name(p):
+    """Name of the nearest named street a car can use (for labels like "Home on Bloomfield Street")."""
+    return edges[street_edge_ids[int(street_tree.nearest(p))]]["name"]
 walk_edge_tree = STRtree([edges[i]["geom"] for i in walk_edge_ids])
 
 
@@ -611,7 +642,7 @@ for i, (b, g) in enumerate(zip(raw_buildings, b_geoms)):
             units = float(addr_count[i])
         elif g.area >= 45:
             units = 0.5 * g.area * floors / 95.0
-    polys = rings(g, 0.5)
+    polys = rings(g, 0.5 if in_h else 1.5)  # context buildings outside Hoboken need less detail
     if not polys:
         continue
     bi = len(buildings)
@@ -620,6 +651,19 @@ for i, (b, g) in enumerate(zip(raw_buildings, b_geoms)):
         homes.append({"b": bi, "x": c.x, "y": c.y, "units": units, "area": g.area})
     if kind == 2 and in_h:
         dorms.append({"b": bi, "x": c.x, "y": c.y, "cap": g.area * floors})
+
+# Manhattan skyline for the 3D view: towers of 40 m and up, footprints only.
+skyline = []
+for b in read("skyline", ["height", "num_floors", "geometry", "is_underground"]):
+    height = b["height"] or ((b["num_floors"] or 0) * 3.4)
+    if b["is_underground"] or not height or height < 40:
+        continue
+    g = project(wkb.loads(b["geometry"]))
+    if g.representative_point().x < 1200:  # keep to Manhattan, east of the river
+        continue
+    polys = rings(g, 1.5)
+    if polys:
+        skyline.append([round(height, 1), polys[0][0]])
 
 obs, asm = cal["observed"], cal["assumptions"]
 dorm_total = asm["stevensDormResidents"]["value"]
@@ -655,6 +699,7 @@ for p, n in zip(places, job_counts):
     p["car"] = nearest_car(Point(p["x"], p["y"])) if p["group"] == "parking" else -1
 for h in homes:
     h["edge"], h["t"] = snap(Point(h["x"], h["y"]))
+    h["street"] = street_name(Point(h["x"], h["y"]))
     h["car"] = nearest_car(Point(h["x"], h["y"]))
 for d in dorms:
     d["edge"], d["t"] = snap(Point(d["x"], d["y"]))
@@ -772,9 +817,12 @@ data = {
     "hoboken": hb,
     "neighbors": neighbors,
     "water": rings(water, 3),
+    "water3d": rings(water3d, 6),
+    "context3d": [q(v) for v in context.bounds],
     "parks": rings(parks, 0.8) if parks is not None else [],
     "piers": piers,
     "buildings": buildings,
+    "skyline": skyline,
     "contextRoads": context_roads,
     "rail": rail,
     "graph": {"nodes": flat(node_xy), "edges": edge_out, "geom": geom_out, "names": names},
@@ -782,7 +830,9 @@ data = {
     "busStops": bus_stops,
     "places": place_out,
     "placeNames": place_names,
-    "homes": [[q(h["x"]), q(h["y"]), h["edge"], round(h["t"] * 1000), h["households"], h["b"], h["car"]] for h in homes],
+    "dogParks": [i for i, p in enumerate(places) if p["dog"]],
+    "homes": [[q(h["x"]), q(h["y"]), h["edge"], round(h["t"] * 1000), h["households"], h["b"], h["car"], name_index[h["street"]]]
+              for h in homes],
     "dorms": [[q(d["x"]), q(d["y"]), d["edge"], round(d["t"] * 1000), d["residents"], d["b"]] for d in dorms],
     "citibike": citibike,
     "calibration": cal,
@@ -795,7 +845,8 @@ print(json.dumps(data["meta"]["counts"]))
 print("households", households_total, "in", len(homes), "buildings; dorm residents", dorm_total, "in", len(dorms), "buildings")
 print("jobs", sum(p["jobs"] for p in places), "places by group",
       dict(collections.Counter(p["group"] for p in places).most_common()))
-print("named places", len(place_names))
+print("named places", len(place_names), "dog runs", sum(1 for p in places if p["dog"]),
+      [p["name"] for p in places if p["dog"]], "skyline towers", len(skyline))
 for g in gateways:
     print("gateway", g["id"], g["edge"], g["t"], g["carNode"])
 print("citibike", json.dumps(citibike["perDay"]), citibike["months"])

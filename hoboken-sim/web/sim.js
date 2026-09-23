@@ -47,12 +47,13 @@
     "Visitor", "Changing trains at Hoboken Terminal"];
 
   const ACTS = ["home", "work", "school", "daycare", "class", "eat", "drinks", "coffee", "shopping", "groceries",
-    "gym", "park", "errand", "doctor", "worship", "sightseeing", "station", "away"];
+    "gym", "park", "errand", "doctor", "worship", "sightseeing", "station", "away", "dogwalk"];
   const ACT_LABELS = ["At home", "At work", "At school", "At daycare", "In class", "Eating out", "Out for drinks",
     "Getting coffee", "Shopping", "Buying groceries", "At the gym", "In a park", "Running an errand", "At a doctor",
-    "At a service", "Sightseeing", "At the station", "Outside Hoboken"];
+    "At a service", "Sightseeing", "At the station", "Outside Hoboken", "Walking the dog"];
   const A = {};
   ACTS.forEach((a, i) => { A[a] = i; });
+  const ACT_DOG = A.dogwalk;
 
   const REGIONS = ["Midtown Manhattan", "Lower Manhattan", "Jersey City", "Newark & western NJ", "Elsewhere in NJ",
     "Brooklyn & Queens", "Hoboken"];
@@ -327,6 +328,7 @@
     this.G = {};
     this.groups.forEach((name, i) => { this.G[name] = i; });
     this.stopAnchors = data.busStops.map((_, i) => this.stopA0 + i);
+    this.dogRunAnchors = (data.dogParks || []).map((i) => this.placeA0 + i);
     this.hblrAnchors = ["hblr_term", "hblr_2nd", "hblr_9th"].map((id) => this.gate[id]);
     this.ferryAnchors = ["ferry_term", "ferry_14"].map((id) => this.gate[id]);
 
@@ -348,7 +350,8 @@
     if (kind === ANCHOR_GATE) return this.data.gateways[this.aRef[anchor]].label;
     if (kind === ANCHOR_STOP) return "Bus stop on " + this.streetOf(anchor);
     if (kind === ANCHOR_DORM) return "Stevens residence hall";
-    return "Home on " + this.streetOf(anchor);
+    const street = this.data.homes[this.aRef[anchor]][7];
+    return "Home on " + (street >= 0 ? this.data.graph.names[street] : this.streetOf(anchor));
   };
 
   World.prototype.streetOf = function (anchor) {
@@ -637,7 +640,11 @@
     const asm = cal.assumptions;
     const opt = this.options;
     const weekend = opt.dayType === "weekend";
-    const rng = rngFrom(opt.seed + (weekend ? 101 : 0));
+    const baseSeed = (opt.seed + (weekend ? 101 : 0)) >>> 0;
+    // The city (households, jobs, dogs) is drawn from one stream; each person's day plan then
+    // comes from their own stream, so changing one person's decision (Jev's, say) can't
+    // reshuffle everyone planned after them.
+    let rng = rngFrom(baseSeed);
     this.weekend = weekend;
     this.params = {
       residents: obs.residents.value,
@@ -654,6 +661,9 @@
     const agents = [];
     const events = (this.events = { t: [], dir: [], ch: [], gate: [], kind: [] });
     const transfers = (this.transferBoardings = new Float64Array(CHANNELS.length));
+    const personStream = () => {
+      rng = rngFrom((baseSeed ^ Math.imul(agents.length + 1, 0x9e3779b1)) >>> 0);
+    };
 
     // --- per-agent plan builder -------------------------------------------------
     let cur = null;
@@ -724,6 +734,25 @@
       return go(home, mode, arrive + stay, backAct);
     }
 
+    // --- decisions ------------------------------------------------------------------
+    // Every venue choice goes through choose(). By default it samples the distance-weighted
+    // pool. With recordDecisions the options are logged (for Jev to answer), and a decision
+    // table ({"person:k": anchor}) overrides the sampled pick when its answer is still an option.
+    const table = opt.decisions || null;
+    const recording = !!opt.recordDecisions;
+    const log = (this.decisionLog = recording ? [] : null);
+    const decided = (this.decisionStats = { points: 0, fromTable: 0 });
+    let kSerial = -1;
+    let kNext = 0;
+    function nextK() {
+      if (agents.length !== kSerial) {
+        kSerial = agents.length;
+        kNext = 0;
+      }
+      return kNext++;
+    }
+    const TOP = 8;
+
     // --- place choice ---------------------------------------------------------------
     const G = w.G;
     const groupWeights = {};
@@ -739,25 +768,35 @@
       }
       return groupWeights[key];
     }
-    /** A venue of `group`, favouring ones near `from` (distance decay `scale` metres, 150 m cells). */
-    const nearbyCache = new Map();
-    function nearby(group, from, scale) {
+    /** A venue of `group`, favouring ones near `from` (distance decay `scale` metres). */
+    function nearby(group, from, scale, why, when) {
       const { ids, ws } = weighted(group, "visit");
+      return choose(group, ids, ws, from, scale, why || group, when);
+    }
+    /** A dog run near `from`, or a stretch of park or waterfront when the runs are far. */
+    function dogSpot(from) {
+      const runs = w.dogRunAnchors;
+      if (runs.length && rng() < 0.6) return choose("dogrun", runs, null, from, 350, "walking the dog");
+      return nearby("park", from, 400, "walking the dog");
+    }
+    // Distance-weighted pools cached per 150 m cell.
+    const poolCache = new Map();
+    function choose(poolKey, ids, ws, from, scale, why, when) {
       if (!ids.length) return -1;
       const cx = Math.floor(w.aX[from] / 150);
       const cy = Math.floor(w.aY[from] / 150);
-      const key = group + "|" + scale + "|" + cx + "|" + cy;
-      let cum = nearbyCache.get(key);
+      const key = poolKey + "|" + scale + "|" + cx + "|" + cy;
+      let cum = poolCache.get(key);
       if (!cum) {
         const x = (cx + 0.5) * 150;
         const y = (cy + 0.5) * 150;
         cum = new Float64Array(ids.length);
         let s = 0;
         for (let i = 0; i < ids.length; i++) {
-          s += (ws[i] || 0.2) * Math.exp(-Math.hypot(w.aX[ids[i]] - x, w.aY[ids[i]] - y) / scale);
+          s += ((ws && ws[i]) || (ws ? 0.2 : 1)) * Math.exp(-Math.hypot(w.aX[ids[i]] - x, w.aY[ids[i]] - y) / scale);
           cum[i] = s;
         }
-        nearbyCache.set(key, cum);
+        poolCache.set(key, cum);
       }
       const r = rng() * cum[cum.length - 1];
       let lo = 0;
@@ -767,7 +806,32 @@
         if (cum[mid] < r) lo = mid + 1;
         else hi = mid;
       }
-      return ids[lo];
+      let pickd = ids[lo];
+      if (recording || table) {
+        const person = agents.length;
+        const k = nextK();
+        decided.points++;
+        const options = topOptions(cum, ids, pickd);
+        if (log) {
+          log.push({ person, k, why, clock: when !== undefined ? when : cur && cur.agent && !cur.agent.legEnd ? cur.t : null,
+            from, options, rule: pickd });
+        }
+        const answer = table && table[person + ":" + k];
+        if (answer !== undefined && options.indexOf(answer) >= 0) {
+          pickd = answer;
+          decided.fromTable++;
+        }
+      }
+      return pickd;
+    }
+    /** The TOP most likely options from a cumulative pool, always including the sampled one. */
+    function topOptions(cum, ids, sampled) {
+      const scored = [];
+      for (let i = 0; i < ids.length; i++) scored.push([cum[i] - (i ? cum[i - 1] : 0), ids[i]]);
+      scored.sort((a, b) => b[0] - a[0]);
+      const out = scored.slice(0, TOP).map((x) => x[1]);
+      if (out.indexOf(sampled) < 0) out[out.length - 1] = sampled;
+      return out;
     }
     function nearest(anchors, from) {
       let best = anchors[0];
@@ -957,6 +1021,30 @@
       if (p.region === R.hoboken) p.work = workplace();
     }
 
+    // Dogs: a share of households keep one, walked by whoever is home in the daytime if anyone is.
+    const dogShare = opt.dogShare != null ? opt.dogShare : asm.householdsWithDog ? asm.householdsWithDog.value : 0;
+    const counted = new Set();
+    let dogs = 0;
+    for (const p of residents) {
+      if (counted.has(p.household)) continue;
+      counted.add(p.household);
+      if (rng() >= dogShare) continue;
+      const adults = p.household.filter((q) => !q.child);
+      if (!adults.length) continue;
+      (adults.find((q) => !q.worker || q.wfh) || adults[0]).dog = true;
+      dogs++;
+    }
+    this.dogs = dogs;
+    /** Out and back from home with the dog: a dog run or a stretch of park, then home. */
+    const dogWalk = (p, dep, maxStay) => {
+      if (!p.dog || dep > DAY_END - HOUR) return;
+      const spot = dogSpot(p.home);
+      if (spot < 0) return;
+      const arrive = go(spot, WALK, dep, A.dogwalk);
+      go(p.home, WALK, arrive + minutes(between(rng, 3, maxStay)), A.dogwalk);
+      cur.act = A.home;
+    };
+
     // School runs are decided first so the adult who walks a child can match the child's times.
     if (!weekend) {
       for (const p of residents) {
@@ -977,21 +1065,22 @@
       const late = p.age < 40 && rng() < 0.45;
       const dep = Math.max(earliest + minutes(20), late ? atHour(rng, [[20, 3], [21, 4], [22, 3]]) : atHour(rng, [[18, 3], [19, 5], [20, 3]]));
       if (dep > DAY_END - HOUR) return;
-      const place = nearby(late ? "nightlife" : rng() < 0.7 ? "food" : "nightlife", cur.anchor, 700);
+      const group = late ? "nightlife" : rng() < 0.7 ? "food" : "nightlife";
+      const place = nearby(group, cur.anchor, 700, late ? "a late night out" : group === "food" ? "dinner out" : "drinks after dinner time", dep);
       if (place < 0) return;
-      const arrive = go(place, WALK, dep, late ? A.drinks : A.eat);
+      const arrive = go(place, WALK, dep, late || group === "nightlife" ? A.drinks : A.eat);
       let t = arrive + minutes(between(rng, 70, late ? 200 : 140));
       if (late && rng() < 0.35) {
-        const next = nearby("nightlife", place, 250);
+        const next = nearby("nightlife", place, 250, "another bar", t);
         t = go(next, WALK, t, A.drinks) + minutes(between(rng, 45, 120));
       }
       go(p.home, WALK, Math.min(t, DAY_END - minutes(20)), A.home);
     };
     const errands = (p, window, chance, group, act, stayMin, stayMax, scale) => {
       if (rng() >= chance) return;
-      const place = nearby(group, p.home, scale || 600);
-      if (place < 0) return;
       const dep = Math.max(cur.t + minutes(5), atHour(rng, window));
+      const place = nearby(group, p.home, scale || 600, ACT_LABELS[act].toLowerCase(), dep);
+      if (place < 0) return;
       if (dep > DAY_END - HOUR) return;
       const mode = rng() < 0.08 ? BIKE : WALK;
       outing(place, mode, dep, minutes(between(rng, stayMin, stayMax)), act, A.home);
@@ -1013,6 +1102,7 @@
     let done = 0;
     for (const p of residents) {
       if (++done % 4000 === 0) yield 0.1 + 0.6 * (done / residents.length);
+      personStream();
       begin(p, p.home, DAY_START, A.home);
       const kid = p.child;
       if (kid) {
@@ -1034,11 +1124,13 @@
 
       const works = p.worker && (!weekend || rng() < 0.18);
       if (!weekend && p.gradStudent && !works) {
+        dogWalk(p, atHour(rng, [[7, 3], [8, 2]]), 15);
         const c = go(classroom(), rng() < 0.15 ? BIKE : WALK, atHour(rng, [[9, 3], [10, 4], [11, 2]]), A.class);
-        const lunch = nearby(rng() < 0.6 ? "food" : "cafe", cur.anchor, 300);
+        const lunch = nearby(rng() < 0.6 ? "food" : "cafe", cur.anchor, 300, "lunch between classes");
         let t = go(lunch, WALK, Math.max(c + HOUR, atHour(rng, [[12, 3], [13, 2]])), A.eat) + minutes(40);
         t = go(classroom(), WALK, t, A.class) + between(rng, 2, 4) * HOUR;
         go(p.home, WALK, t, A.home);
+        dogWalk(p, Math.max(cur.t + minutes(15), atHour(rng, [[18, 3], [19, 3], [20, 2]])), 20);
         eveningOut(p, cur.t, 0.3);
         finish();
         continue;
@@ -1048,11 +1140,12 @@
         let dep = atHour(rng, COMMUTE_DEPART);
         if (weekend) dep = atHour(rng, [[7, 3], [8, 4], [9, 4], [10, 3], [11, 2], [15, 1], [16, 1]]);
         const shift = dep >= 11 * HOUR ? between(rng, 7.5, 8.5) : Math.min(12, Math.max(6.5, 9.3 + 0.8 * gauss(rng)));
+        dogWalk(p, dep - minutes(between(rng, 50, 75)), 12);
         if (!weekend && rng() < 0.1 && dep > 7 * HOUR) {
-          const gym = nearby("fitness", p.home, 600);
+          const gym = nearby("fitness", p.home, 600, "a workout before work", dep - minutes(85));
           if (gym >= 0) outing(gym, WALK, dep - minutes(85), minutes(55), A.gym, A.home);
         }
-        const coffee = rng() < 0.18 && p.ch !== CH.car ? nearby("cafe", p.home, 350) : -1;
+        const coffee = rng() < 0.18 && p.ch !== CH.car ? nearby("cafe", p.home, 350, "coffee on the way to work", dep - minutes(10)) : -1;
         if (coffee >= 0) go(coffee, WALK, dep - minutes(10), A.coffee);
         if (p.region === R.hoboken && p.work >= 0 && p.work !== undefined) {
           const mode = p.ch === CH.bike ? BIKE : p.ch === CH.car ? CAR : WALK;
@@ -1060,7 +1153,7 @@
           const lunchT = t + between(rng, 3, 4.5) * HOUR;
           let end = t + shift * HOUR;
           if (rng() < 0.35 && lunchT < end - HOUR) {
-            const lunch = nearby(rng() < 0.7 ? "food" : "cafe", p.work, 300);
+            const lunch = nearby(rng() < 0.7 ? "food" : "cafe", p.work, 300, "lunch near work", lunchT);
             if (lunch >= 0) end = Math.max(end, go(lunch, WALK, lunchT, A.eat) + minutes(35));
             go(p.work, WALK, cur.t + minutes(35), A.work);
           }
@@ -1071,6 +1164,7 @@
           away(gate, MAP_MODE[p.ch], p.ch, dep, back, p.region);
           go(p.home, MAP_MODE[p.ch], cur.t, A.home);
         }
+        dogWalk(p, cur.t + minutes(between(rng, 10, 40)), 20);
         errands(p, [[18, 3], [19, 4], [20, 2]], 0.18, "grocery", A.groceries, 15, 35, 500);
         eveningOut(p, cur.t, weekend ? 0.3 : 0.16);
         finish();
@@ -1078,6 +1172,7 @@
       }
 
       // At home most of the day: people who work from home, don't work, or are off today.
+      dogWalk(p, weekend ? atHour(rng, [[7, 2], [8, 4], [9, 3]]) : atHour(rng, [[6, 3], [7, 4]]), weekend ? 35 : 15);
       if (p.escorting && !weekend) {
         const t = go(p.escorting.school, WALK, p.escorting.dep, A.school);
         go(p.home, WALK, t + minutes(6), A.home);
@@ -1087,6 +1182,7 @@
         errands(p, [[7, 3], [8, 4], [9, 3], [10, 2]], p.age < 65 ? 0.3 : 0.22, "cafe", A.coffee, 10, 30, 400);
         errands(p, [[10, 2], [11, 2], [13, 2], [14, 2], [15, 1]], p.age >= 65 ? 0.12 : 0.04, "health", A.doctor, 40, 90, 1200);
         errands(p, [[11, 2], [12, 5], [13, 3]], 0.26, rng() < 0.7 ? "food" : "cafe", A.eat, 35, 60, 500);
+        if (rng() < 0.6) dogWalk(p, Math.max(cur.t + minutes(10), atHour(rng, [[12, 2], [13, 3], [14, 2]])), 15);
         if (p.escorting) {
           const walk = w.travelTime(p.home, p.escorting.school, WALK, p.escorting.pickup);
           go(p.escorting.school, WALK, p.escorting.pickup - walk - minutes(3), A.school);
@@ -1096,6 +1192,7 @@
         errands(p, [[15, 2], [16, 3], [17, 4], [18, 4], [19, 2]], 0.3, rng() < 0.75 ? "grocery" : rng() < 0.5 ? "retail" : "personal",
           A.groceries, 15, 40, 500);
         nycTrip(p, 0.05);
+        dogWalk(p, Math.max(cur.t + minutes(10), atHour(rng, [[17, 2], [18, 4], [19, 3], [20, 2]])), 25);
         eveningOut(p, cur.t, p.age < 40 ? 0.2 : 0.12);
       } else {
         errands(p, [[8, 2], [9, 3], [10, 3], [16, 2], [17, 2]], 0.24, "fitness", A.gym, 55, 90, 700);
@@ -1104,6 +1201,7 @@
         errands(p, [[11, 2], [12, 2], [14, 3], [15, 3], [16, 2]], 0.2, "retail", A.shopping, 30, 80, 800);
         errands(p, [[10, 2], [12, 2], [15, 3], [17, 3], [18, 2]], 0.33, "grocery", A.groceries, 20, 40, 500);
         nycTrip(p, 0.12);
+        dogWalk(p, Math.max(cur.t + minutes(10), atHour(rng, [[17, 2], [18, 4], [19, 3], [20, 2]])), 30);
         eveningOut(p, cur.t, p.age < 40 ? 0.42 : 0.25);
       }
       finish();
@@ -1113,19 +1211,20 @@
     w.data.dorms.forEach((d, i) => {
       const anchor = w.dormA0 + i;
       for (let j = 0; j < d[4]; j++) {
+        personStream();
         const spot = w.spotInBuilding(d[5], rng, w.aX[anchor], w.aY[anchor]);
         const p = { kind: DORM, age: 18 + Math.floor(rng() * 5), home: anchor, hx: spot[0], hy: spot[1] };
         begin(p, anchor, DAY_START, A.home);
         if (!weekend) {
           if (rng() < 0.8) outing(classroom(), WALK, atHour(rng, [[8, 2], [9, 5], [10, 3]]), minutes(between(rng, 75, 140)), A.class, A.home);
-          if (rng() < 0.6) outing(nearby(rng() < 0.6 ? "food" : "cafe", anchor, 350), WALK, atHour(rng, [[12, 4], [13, 3]]),
+          if (rng() < 0.6) outing(nearby(rng() < 0.6 ? "food" : "cafe", anchor, 350, "lunch"), WALK, atHour(rng, [[12, 4], [13, 3]]),
             minutes(between(rng, 30, 60)), A.eat, A.home);
           if (rng() < 0.7) outing(classroom(), WALK, atHour(rng, [[13, 2], [14, 4], [15, 2]]), minutes(between(rng, 75, 150)), A.class, A.home);
-          if (rng() < 0.3) outing(nearby("fitness", anchor, 250), WALK, atHour(rng, [[16, 2], [17, 3], [18, 2]]), minutes(60), A.gym, A.home);
+          if (rng() < 0.3) outing(nearby("fitness", anchor, 250, "a workout"), WALK, atHour(rng, [[16, 2], [17, 3], [18, 2]]), minutes(60), A.gym, A.home);
           eveningOut(p, cur.t, 0.35);
         } else {
-          if (rng() < 0.45) outing(nearby("food", anchor, 700), WALK, atHour(rng, [[11, 3], [12, 3], [13, 2]]), minutes(70), A.eat, A.home);
-          if (rng() < 0.35) outing(nearby("park", anchor, 900), WALK, atHour(rng, [[13, 2], [14, 3], [15, 2]]), minutes(80), A.park, A.home);
+          if (rng() < 0.45) outing(nearby("food", anchor, 700, "a weekend lunch"), WALK, atHour(rng, [[11, 3], [12, 3], [13, 2]]), minutes(70), A.eat, A.home);
+          if (rng() < 0.35) outing(nearby("park", anchor, 900, "time outdoors"), WALK, atHour(rng, [[13, 2], [14, 3], [15, 2]]), minutes(80), A.park, A.home);
           nycTrip(p, 0.2);
           eveningOut(p, cur.t, 0.55);
         }
@@ -1146,6 +1245,7 @@
     yield 0.72;
     for (let i = 0; i < this.params.inboundWorkers; i++) {
       if (i % 4000 === 3999) yield 0.72 + 0.12 * (i / this.params.inboundWorkers);
+      personStream();
       const p = { kind: WORKER_IN, age: 20 + Math.floor(rng() * 45) };
       const work = (p.work = workplace());
       const group = w.groups[w.placeOf(work)[2]];
@@ -1169,7 +1269,7 @@
       }
       let end = Math.min(DAY_END - minutes(30), start + (hours + 0.6 * gauss(rng)) * HOUR);
       if ((group === "office" || group === "health" || group === "civic" || group === "university") && rng() < 0.3) {
-        const lunch = nearby(rng() < 0.7 ? "food" : "cafe", work, 300);
+        const lunch = nearby(rng() < 0.7 ? "food" : "cafe", work, 300, "lunch near work", start + 3.5 * HOUR);
         const lt = start + between(rng, 3, 4.5) * HOUR;
         if (lunch >= 0 && lt < end - HOUR) {
           go(lunch, WALK, lt, A.eat);
@@ -1189,6 +1289,7 @@
 
     // --- Stevens students who live elsewhere ---------------------------------------------------
     for (let i = 0; i < this.params.inboundStudents; i++) {
+      personStream();
       const p = { kind: STUDENT_IN, age: 20 + Math.floor(rng() * 10) };
       const ch = [CH.path, CH.hblr, CH.njtRail, CH.bus, CH.car][pick(rng, [45, 20, 10, 15, 10])];
       p.ch = ch;
@@ -1201,7 +1302,7 @@
       go(cls, ch === CH.car ? WALK : MAP_MODE[ch], cur.t, A.class);
       let t = cur.t + between(rng, 1.5, 3) * HOUR;
       if (rng() < 0.6) {
-        go(nearby(rng() < 0.6 ? "food" : "cafe", cls, 300), WALK, t, A.eat);
+        go(nearby(rng() < 0.6 ? "food" : "cafe", cls, 300, "lunch between classes", t), WALK, t, A.eat);
         t = go(classroom(), WALK, cur.t + minutes(35), A.class) + between(rng, 1.2, 2.5) * HOUR;
       }
       if (ch === CH.car) {
@@ -1221,6 +1322,7 @@
     yield 0.86;
     for (let i = 0; i < this.params.visitors; i++) {
       if (i % 4000 === 3999) yield 0.86 + 0.08 * (i / this.params.visitors);
+      personStream();
       const p = { kind: VISITOR, age: 18 + Math.floor(rng() * 55) };
       const key = pickKey(rng, vShares);
       const ch = { path: CH.path, car: CH.car, walk: CH.walk, bike: CH.bike, hblr: CH.hblr, bus: CH.bus, ferry: CH.ferry }[key];
@@ -1233,7 +1335,7 @@
       else if (clock >= 21) group = rng() < 0.7 ? "nightlife" : "food";
       else if (clock >= 16) group = pickKey(rng, { food: 55, nightlife: 30, park: 8, arts: 7 });
       else group = pickKey(rng, weekend ? { food: 45, park: 25, retail: 18, cafe: 7, arts: 5 } : { food: 40, cafe: 15, park: 20, retail: 20, arts: 5 });
-      const first = nearby(group, w.gate.path, 1500);
+      const first = nearby(group, w.gate.path, 1500, "the first stop of a visit to Hoboken (" + group + ")", arrive);
       if (first < 0) continue;
       const gate = gateFor(ch, first, p.region);
       arriveFromOutside(p, gate, ch, arrive);
@@ -1246,7 +1348,7 @@
       let at = first;
       for (let s = 0; s < stops && t < DAY_END - 2 * HOUR; s++) {
         const next = t / HOUR >= 20 ? "nightlife" : pickKey(rng, { food: 3, cafe: 2, park: 2, retail: 2, nightlife: t / HOUR > 17 ? 3 : 0 });
-        const place = nearby(next, at, 400);
+        const place = nearby(next, at, 400, "the next stop of the visit (" + next + ")", t);
         if (place < 0) break;
         t = go(place, WALK, t, actOf[next]) + minutes(between(rng, stayOf[next][0], stayOf[next][1]));
         at = place;
@@ -1265,6 +1367,7 @@
     const terminalStop = nearest(w.stopAnchors, w.gate.njt);
     const TRANSFER_TO = [[CH.path, w.gate.path, 70], [CH.ferry, w.gate.ferry_term, 18], [CH.hblr, w.gate.hblr_term, 7], [CH.bus, terminalStop, 5]];
     for (let i = 0; i < this.params.transfers; i++) {
+      personStream();
       const p = { kind: TRANSFER, age: 22 + Math.floor(rng() * 45) };
       const [ch, target] = TRANSFER_TO[pick(rng, TRANSFER_TO.map((x) => x[2]))];
       p.ch = ch;
@@ -1308,6 +1411,7 @@
       }
       delete p.household;
     });
+    this.heading = new Float32Array(n); // direction of travel, radians from east
     // Resting positions near a venue: a fixed scatter per person so crowds read as crowds.
     this.jx = new Float32Array(n);
     this.jy = new Float32Array(n);
@@ -1445,6 +1549,7 @@
       hblrBoardings: outBy[CH.hblr] + tb[CH.hblr],
       ferryBoardings: outBy[CH.ferry] + tb[CH.ferry],
       carExits: outBy[CH.car],
+      dogs: this.dogs,
     };
   };
 
@@ -1483,8 +1588,29 @@
       else hi = mid;
     }
     const u = (s - c[lo]) / (c[hi] - c[lo] || 1);
-    x[i] = r.x[lo] + (r.x[hi] - r.x[lo]) * u;
-    y[i] = r.y[lo] + (r.y[hi] - r.y[lo]) * u;
+    const dx = r.x[hi] - r.x[lo];
+    const dy = r.y[hi] - r.y[lo];
+    x[i] = r.x[lo] + dx * u;
+    y[i] = r.y[lo] + dy * u;
+    if (dx || dy) this.heading[i] = Math.atan2(dy, dx);
+  };
+
+  /** True while person i is out with their dog (on the way, at the run, or heading home). */
+  Simulation.prototype.withDog = function (i) {
+    return this.legs.act[this.cursor[i]] === ACT_DOG;
+  };
+
+  /** True when leg l is part of a dog walk. */
+  Simulation.prototype.withDogLeg = function (l) {
+    return this.legs.act[l] === ACT_DOG;
+  };
+
+  /** True while person i is at a venue that is outdoors (a park, pier or dog run). */
+  Simulation.prototype.outdoors = function (i) {
+    const l = this.cursor[i];
+    const a = this.legs.a[l];
+    const w = this.world;
+    return w.aKind[a] === ANCHOR_PLACE && w.placeGroup[w.aRef[a]] === w.G.park;
   };
 
   /** Re-evaluate person i at time t (cursor only moves forward; positionsAt rewinds it). */
@@ -1594,7 +1720,8 @@
         const region = L.info[l] >> 4;
         items.push({ t0: L.t0[l], t1: L.t1[l], kind: "away", text: "In " + REGIONS[region] + " (" + CHANNEL_LABELS[L.info[l] & 15] + ")" });
       } else if (k === TRIP) {
-        items.push({ t0: L.t0[l], t1: L.t1[l], kind: "trip", text: cap(MODE_LABELS[L.mode[l]]) + " to " + w.anchorName(L.b[l]) });
+        const how = p.child && p.age < 3 && L.mode[l] === WALK ? "In a stroller" : cap(MODE_LABELS[L.mode[l]]);
+        items.push({ t0: L.t0[l], t1: L.t1[l], kind: "trip", text: how + " to " + w.anchorName(L.b[l]) });
       } else {
         items.push({ t0: L.t0[l], t1: L.t1[l], kind: "stay", text: ACT_LABELS[L.act[l]] + (L.act[l] === A.home ? "" : " · " + w.anchorName(L.a[l])) });
       }
@@ -1608,6 +1735,7 @@
     if (p.region !== undefined && p.kind === RESIDENT && p.worker && !p.wfh) facts.push("works in " + REGIONS[p.region]);
     if (p.work !== undefined && p.work >= 0 && (p.kind === WORKER_IN || p.region === R.hoboken)) facts.push("job: " + w.anchorName(p.work));
     if (p.ch !== undefined) facts.push("by " + CHANNEL_LABELS[p.ch]);
+    if (p.dog) facts.push("walks the family dog");
     return { id: i, kind: KIND_LABELS[p.kind], facts, items, home: p.home !== undefined ? w.anchorName(p.home) : null };
   };
 

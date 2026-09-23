@@ -130,6 +130,24 @@
     backdrop-filter: blur(6px);
   }
   .legend .row { display: flex; align-items: center; gap: 8px; }
+  .legend .hint { max-width: 26ch; font-size: 11.5px; color: var(--muted); }
+  .sw.fig { width: 7px; height: 12px; border-radius: 3px 3px 2px 2px; }
+  .sw.car { width: 14px; height: 8px; border-radius: 2px; background: #9aa0a6; }
+  .map canvas.view3d { cursor: grab; }
+  .map canvas.view3d:active { cursor: grabbing; }
+  .presets { position: absolute; top: 12px; right: 12px; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; max-width: min(60%, 520px); }
+  .presets button { border: 1px solid var(--rule); background: color-mix(in srgb, var(--panel) 90%, transparent); border-radius: 999px;
+    padding: 4px 10px; font-size: 12.5px; cursor: pointer; backdrop-filter: blur(6px); }
+  .presets button:hover { border-color: var(--accent); }
+  .pickcard { position: absolute; left: 12px; top: 96px; width: min(300px, calc(100% - 24px)); background: color-mix(in srgb, var(--panel) 94%, transparent);
+    border: 1px solid var(--rule); border-radius: 8px; padding: 8px 10px; display: grid; gap: 4px; backdrop-filter: blur(6px); }
+  .pc-who { font-weight: 600; }
+  .pc-now { font-size: 12.5px; color: var(--ink-2); }
+  .pc-actions { display: flex; gap: 6px; margin-top: 2px; }
+  .pc-actions .btn { padding: 3px 9px; font-size: 12.5px; }
+  .pc-actions .btn[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .note3d { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--panel); border: 1px solid var(--rule);
+    border-radius: 8px; padding: 10px 14px; max-width: 34ch; text-align: center; font-size: 13px; }
   .sw { width: 10px; height: 10px; border-radius: 50%; flex: none; }
   .sw.sq { border-radius: 2px; }
   .sw.dia { border-radius: 1px; transform: rotate(45deg) scale(0.85); }
@@ -154,6 +172,7 @@
   .seg button { border: 0; background: transparent; padding: 5px 9px; cursor: pointer; font-size: 13px; }
   .seg button + button { border-left: 1px solid var(--rule); }
   .seg button[aria-pressed="true"] { background: var(--accent-soft); color: var(--ink); font-weight: 600; }
+  .seg button:disabled { color: var(--muted); cursor: not-allowed; }
   .scrub { flex: 1 1 220px; display: flex; align-items: center; gap: 8px; min-width: 0; }
   .scrub input { flex: 1; min-width: 0; accent-color: var(--accent); }
   .scrub output { font-variant-numeric: tabular-nums; color: var(--ink-2); font-size: 12px; min-width: 62px; text-align: right; }
@@ -180,6 +199,7 @@
     text-wrap: balance;
   }
   .note { color: var(--muted); font-size: 12px; margin: 8px 0 0; max-width: 60ch; }
+  .note code { font-size: 11.5px; background: var(--accent-soft); padding: 0 4px; border-radius: 3px; }
 
   .kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
   .kpi .v { font: 800 30px/1 var(--display); font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
@@ -243,6 +263,8 @@
   }
   @media (max-width: 520px) {
     .legend { display: none; }
+    .presets { top: auto; bottom: 8px; right: 8px; left: 8px; max-width: none; justify-content: flex-start; }
+    .pickcard { top: 64px; left: 8px; }
     .clock { top: 8px; left: 8px; padding: 4px 10px 6px; }
     .clock .time { font-size: 26px; }
     .brand { font-size: 22px; }
@@ -268,7 +290,7 @@
       <div class="time" id="clockTime">6:30 am</div>
       <div class="day" id="clockDay">Weekday · Sept 22, 2026</div>
     </div>
-    <div class="legend" id="legend">
+    <div class="legend" id="legend2d" hidden>
       <div class="row"><i class="sw" style="background: var(--s1)"></i>Hoboken residents</div>
       <div class="row"><i class="sw" style="background: var(--s2)"></i>Commuting in (work, Stevens)</div>
       <div class="row"><i class="sw" style="background: var(--s3)"></i>Visitors</div>
@@ -277,7 +299,24 @@
       <div class="row"><i class="sw dia" style="background: var(--ink-2)"></i>Cycling</div>
       <div class="row"><i class="sw sq" style="background: var(--ink-2)"></i>Driving</div>
       <div class="row"><i class="sw ring"></i>Gateway traffic, last 15 min</div>
+      <div class="row"><i class="sw" style="background: #8a5a2b"></i>Dog (zoom in)</div>
     </div>
+    <div class="legend" id="legend3d">
+      <div class="row"><i class="sw fig" style="background: var(--s1)"></i>Hoboken residents</div>
+      <div class="row"><i class="sw fig" style="background: var(--s2)"></i>Commuting in (work, Stevens)</div>
+      <div class="row"><i class="sw fig" style="background: var(--s3)"></i>Visitors</div>
+      <div class="row"><i class="sw car"></i>Cars</div>
+      <div class="row"><i class="sw sq" style="background: #8a5a2b"></i>Dogs out for a walk</div>
+      <hr>
+      <div class="hint">Drag to orbit · pinch or scroll to zoom · tap anyone to follow them. People indoors aren't shown.</div>
+    </div>
+    <div class="presets" id="presets" role="group" aria-label="Camera views"></div>
+    <div class="pickcard" id="pickCard" hidden>
+      <div class="pc-who" id="pcWho"></div>
+      <div class="pc-now" id="pcNow"></div>
+      <div class="pc-actions"><button class="btn" type="button" id="pcFollow" aria-pressed="false">Follow</button><button class="btn" type="button" id="pcDetails">Day plan</button><button class="btn" type="button" id="pcClose" aria-label="Close">×</button></div>
+    </div>
+    <div class="note3d" id="note3d" hidden></div>
     <div class="loading" id="loading"><div><div id="loadingText">Loading Hoboken…</div><div class="bar"><i id="loadingBar"></i></div></div></div>
     </div>
     <div class="controls">
@@ -293,6 +332,10 @@
         <input id="scrub" type="range" min="14400" max="100800" step="60" value="23400" aria-label="Time of day">
         <output id="scrubOut" for="scrub">6:30 am</output>
       </label>
+      <div class="seg" role="group" aria-label="View" id="views">
+        <button type="button" data-view="3d" aria-pressed="true">3D</button>
+        <button type="button" data-view="map" aria-pressed="false">Map</button>
+      </div>
       <div class="seg" role="group" aria-label="Day" id="days">
         <button type="button" data-day="weekday" aria-pressed="true">Weekday</button>
         <button type="button" data-day="weekend" aria-pressed="false">Saturday</button>
@@ -308,6 +351,8 @@
         <div class="kpi"><div class="v" id="kAway">–</div><div class="l">residents out of town</div></div>
         <div class="kpi"><div class="v" id="kMoving">–</div><div class="l">on the move in Hoboken</div></div>
         <div class="kpi"><div class="v" id="kCross">–</div><div class="l">city-line crossings today<br><span id="kCrossSplit"></span></div></div>
+        <div class="kpi"><div class="v" id="kCars">–</div><div class="l">cars on Hoboken streets</div></div>
+        <div class="kpi"><div class="v" id="kDogs">–</div><div class="l">dogs out for a walk</div></div>
       </div>
     </section>
 
@@ -350,6 +395,15 @@
       <p class="note" id="bikeNote"></p>
     </section>
 
+    <section class="block" aria-labelledby="h-decide">
+      <h2 id="h-decide">Who makes the choices</h2>
+      <div class="seg" role="group" aria-label="Decisions made by" id="deciders">
+        <button type="button" data-decider="rules" aria-pressed="true">Rules</button>
+        <button type="button" data-decider="jev" aria-pressed="false" disabled>Jev</button>
+      </div>
+      <p class="note" id="deciderNote"></p>
+    </section>
+
     <section class="block" aria-labelledby="h-assume">
       <h2 id="h-assume">Assumptions you can change</h2>
       <div class="sliders">
@@ -378,6 +432,7 @@
 </div>
 
 <script src="sim.js"></script>
+<script src="view3d.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

@@ -32,6 +32,24 @@ test("the synthetic age mix matches the ACS age groups within one point", () => 
   }
 });
 
+test("dogs: the assumed share of households has one, and every walk starts and ends at home", () => {
+  const share = data.calibration.assumptions.householdsWithDog.value;
+  const households = data.homes.reduce((s, h) => s + h[4], 0);
+  assert.ok(Math.abs(weekday.dogs / households - share) < 0.02, `${weekday.dogs} dogs in ${households} households`);
+  const L = weekday.legs;
+  let walks = 0;
+  for (let i = 0; i < weekday.n; i++) {
+    for (let l = weekday.legStart[i]; l < weekday.legEnd[i]; l++) {
+      if (L.kind[l] !== 1 || !weekday.withDogLeg(l)) continue;
+      const outbound = L.a[l] === weekday.homeAnchor[i];
+      const inbound = L.b[l] === weekday.homeAnchor[i];
+      assert.ok(outbound || inbound, `dog walk leg ${l} of person ${i} neither leaves nor returns home`);
+      if (outbound) walks++;
+    }
+  }
+  assert.ok(walks >= weekday.dogs * 1.5, `${walks} walks for ${weekday.dogs} dogs`);
+});
+
 test("every plan is a gap-free, time-ordered sequence of legs covering the day", () => {
   for (const sim of [weekday, saturday]) {
     for (let i = 0; i < sim.n; i++) {
