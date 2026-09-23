@@ -3,7 +3,8 @@
 An agent-based simulation of one day in Hoboken, NJ. About 90,000 synthetic people move on
 Hoboken's real street grid: 59,149 residents, plus commuters coming in to work or to Stevens,
 visitors, and NJ Transit riders changing trains at Hoboken Terminal. The model is calibrated to
-Census, transit and Citi Bike figures. It runs entirely in the browser.
+Census and transit figures. Measured Citi Bike trips are shown alongside for comparison but aren't
+a model input. It runs entirely in the browser.
 
 This folder is self-contained. It doesn't touch the Verdue app, its build or its CI.
 
@@ -20,7 +21,7 @@ This folder is self-contained. It doesn't touch the Verdue app, its build or its
   at Hoboken Terminal, three light-rail stops, the 14th Street ferry, four road crossings
   (Weehawken/Lincoln Tunnel, the 14th Street Viaduct, JC Heights, downtown Jersey City) and two
   waterfront walkways. Rings on the map and the "crossing the city line" chart count them.
-- **Checks against published numbers**, a measured Citi Bike panel, sliders for the uncertain
+- **Checks against published numbers**, a measured Citi Bike panel (for comparison only), sliders for the uncertain
   assumptions, and a person inspector. Where the page runs inside Claude, the inspector has an
   optional "Imagine their thoughts" button.
 
@@ -41,7 +42,7 @@ node --test hoboken-sim/tests/*.test.mjs         # engine tests (also: npm run t
 
 ```bash
 pip install pyarrow shapely numpy
-python3 hoboken-sim/scripts/fetch_overture.py                     # ~1 min, range reads from Overture's S3 bucket
+python3 hoboken-sim/scripts/fetch_overture.py                     # ~3 min, range reads from Overture's S3 bucket
 python3 hoboken-sim/scripts/fetch_citibike.py 202509 202606 202607 202608
 python3 hoboken-sim/scripts/build_data.py                         # writes web/data/hoboken.json
 ```
@@ -66,7 +67,8 @@ residents who take the 9th Street elevator down to the light rail.
 Confidence by component:
 
 - **High:** street geometry, buildings, gateway locations, the Citi Bike data.
-- **Medium:** population, age mix, employment, commute mode shares and station counts. These came
+- **Medium:** population, age mix (the synthetic population matches the ACS age groups to within
+  0.1 point; median 32 vs 31.9), employment, commute mode shares and station counts. These came
   through search-result summaries of Census/ACS, PANYNJ and NJ Transit figures because the build
   environment couldn't reach those sites directly. Re-verify them before relying on them.
 - **Low:** jobs located in Hoboken (25,000; range 18k–32k), people commuting in (16,000;

@@ -843,7 +843,7 @@
     const pd = cb.perDay;
     $("bikeKeys").innerHTML = `<span class="k"><i class="sw" style="background:var(--accent)"></i>Weekday <b>${fmt(pd.weekday.internal + pd.weekday.outbound + pd.weekday.inbound)}</b> trips/day</span>` +
       `<span class="k"><i class="sw" style="background:var(--ink-2)"></i>Weekend <b>${fmt(pd.weekend.internal + pd.weekend.outbound + pd.weekend.inbound)}</b> trips/day</span>`;
-    $("bikeNote").textContent = `Real trip records from ${cb.stations.length} Hoboken docks (${cb.months.join(", ")}). On a weekday ${fmt(pd.weekday.internal)} trips stay inside Hoboken, ${fmt(pd.weekday.outbound)} leave and ${fmt(pd.weekday.inbound)} arrive from Jersey City docks. Peak hour: ${peak > 12 ? peak - 12 + " pm" : peak + " am"}.`;
+    $("bikeNote").textContent = `Shown for comparison; the simulation's cyclists come from Census commute shares, not from these records. Real trip records from ${cb.stations.length} Hoboken docks (${cb.months.join(", ")}). On a weekday ${fmt(pd.weekday.internal)} trips stay inside Hoboken, ${fmt(pd.weekday.outbound)} leave and ${fmt(pd.weekday.inbound)} arrive from Jersey City docks. Peak hour: ${peak > 12 ? peak - 12 + " pm" : peak + " am"}.`;
   }
 
   // ------------------------------------------------------------------ person inspector

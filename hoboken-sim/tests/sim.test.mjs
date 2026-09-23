@@ -22,6 +22,16 @@ test("residents, workers and work-from-home share match the Census inputs exactl
   assert.ok(Math.abs(c.wfhShare - observed.commuteModeShares.value.workedFromHome) < 0.001);
 });
 
+test("the synthetic age mix matches the ACS age groups within one point", () => {
+  const people = weekday.profile.filter((p) => p.kind === H.KIND.RESIDENT || p.kind === H.KIND.DORM);
+  const share = (lo, hi) => people.filter((p) => p.age >= lo && p.age <= hi).length / people.length;
+  const groups = { "0-4": [0, 4], "5-14": [5, 14], "15-24": [15, 24], "25-44": [25, 44], "45-64": [45, 64], "65+": [65, 200] };
+  for (const [key, [lo, hi]] of Object.entries(groups)) {
+    const want = observed.ageShares.value[key];
+    assert.ok(Math.abs(share(lo, hi) - want) < 0.01, `${key}: ${(100 * share(lo, hi)).toFixed(1)}% vs ${(100 * want).toFixed(1)}%`);
+  }
+});
+
 test("every plan is a gap-free, time-ordered sequence of legs covering the day", () => {
   for (const sim of [weekday, saturday]) {
     for (let i = 0; i < sim.n; i++) {

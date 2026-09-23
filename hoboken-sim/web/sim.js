@@ -852,35 +852,59 @@
       if (h.size > 1) { h.size--; total--; }
     }
 
+    // Ages. Children and parents are drawn first; every other adult is then drawn from what is
+    // left of the ACS age targets (dorm residents included), so the whole population matches
+    // the published age mix instead of stacking parents on top of it.
     const ageShares = obs.ageShares.value;
-    const adultBrackets = [[18, 24, ageShares["15-24"] - 0.044 - 0.01], [25, 34, ageShares["25-44"] * 0.63],
-      [35, 44, ageShares["25-44"] * 0.37], [45, 64, ageShares["45-64"]], [65, 90, ageShares["65+"]]];
-    function adultAge() {
-      const b = adultBrackets[pick(rng, adultBrackets.map((x) => x[2]))];
-      return Math.floor(between(rng, b[0], b[1] + 1));
-    }
     function kidAge() {
       const r = rng();
       return r < 0.51 ? Math.floor(rng() * 5) : r < 0.93 ? 5 + Math.floor(rng() * 10) : 15 + Math.floor(rng() * 3);
     }
+    const BRACKETS = [[18, 24], [25, 34], [35, 44], [45, 64], [65, 90]];
+    const bracketOf = (age) => (age <= 24 ? 0 : age <= 34 ? 1 : age <= 44 ? 2 : age <= 64 ? 3 : 4);
     const residents = [];
+    const others = [];
+    const taken = new Float64Array(BRACKETS.length);
+    taken[0] += dormTotal; // Stevens residence halls: all 18-22
+    let teens = 0;
     for (const h of households) {
       let kids = 0;
-      if (h.size === 2 && rng() < 0.07) kids = 1;
-      else if (h.size === 3 && rng() < 0.6) kids = 1;
-      else if (h.size === 4 && rng() < 0.7) kids = 2;
+      if (h.size === 2 && rng() < 0.06) kids = 1;
+      else if (h.size === 3 && rng() < 0.53) kids = 1;
+      else if (h.size === 4 && rng() < 0.62) kids = 2;
       else if (h.size === 5) kids = rng() < 0.7 ? 3 : 2;
       const hb = w.data.homes[w.aRef[h.home]][5];
       const members = [];
       for (let m = 0; m < h.size; m++) {
         const isKid = m >= h.size - kids;
-        const age = isKid ? kidAge() : kids ? Math.round(38 + 5 * gauss(rng)) : adultAge();
+        let age = -1;
+        if (isKid) {
+          age = kidAge();
+          if (age >= 15) teens++;
+        } else if (kids) {
+          age = Math.max(21, Math.min(62, Math.round(38 + 5 * gauss(rng))));
+          taken[bracketOf(age)]++;
+        }
         const spot = w.spotInBuilding(hb, rng, w.aX[h.home], w.aY[h.home]);
-        const person = { kind: RESIDENT, age: Math.max(0, Math.min(95, age)), home: h.home, hx: spot[0], hy: spot[1],
+        const person = { kind: RESIDENT, age, home: h.home, hx: spot[0], hy: spot[1],
           household: members, child: isKid, parent: !isKid && kids > 0 };
+        if (age < 0) others.push(person);
         members.push(person);
         residents.push(person);
       }
+    }
+    const pop = this.params.residents;
+    const left = [
+      ageShares["15-24"] * pop - teens,
+      ageShares["25-44"] * 0.63 * pop, // 25-34 vs 35-44 split of the ACS 25-44 group: assumption
+      ageShares["25-44"] * 0.37 * pop,
+      ageShares["45-64"] * pop,
+      ageShares["65+"] * pop,
+    ].map((target, b) => Math.max(0, target - taken[b]));
+    for (const person of others) {
+      const b = pick(rng, left.some((v) => v > 0) ? left : [1, 3, 2, 2, 1]);
+      left[b] = Math.max(0, left[b] - 1);
+      person.age = Math.floor(between(rng, BRACKETS[b][0], BRACKETS[b][1] + 1));
     }
     // Employment: exactly the ACS count, weighted by age.
     const adults = residents.filter((p) => !p.child && p.age >= 18);
