@@ -1,0 +1,240 @@
+{
+  "asOf": "2026-09-23",
+  "note": "Every figure used by the simulation. 'observed' figures come from a published source; 'assumption' figures are modeling estimates with a stated range. Confidence tags: HIGH (80%+), MEDIUM (50-80%), LOW (<50%). Observed figures were retrieved through search-result summaries because the build environment could not reach census.gov, panynj.gov, or njtransit.com directly; re-verify before relying on them.",
+  "observed": {
+    "census2020Population": {
+      "value": 60419,
+      "source": "2020 Decennial Census",
+      "url": "https://en.wikipedia.org/wiki/Hoboken,_New_Jersey",
+      "confidence": "HIGH"
+    },
+    "residents": {
+      "value": 59149,
+      "source": "U.S. Census Bureau population estimate, July 1, 2024",
+      "url": "https://en.wikipedia.org/wiki/Hoboken,_New_Jersey",
+      "confidence": "MEDIUM"
+    },
+    "medianAge": {
+      "value": 31.9,
+      "source": "ACS 2020-2024 5-year, via Census Reporter",
+      "url": "http://censusreporter.org/profiles/16000US3432250-hoboken-nj/",
+      "confidence": "MEDIUM"
+    },
+    "averageHouseholdSize": {
+      "value": 2.1,
+      "source": "ACS 2020-2024 5-year, via Census Reporter",
+      "url": "http://censusreporter.org/profiles/16000US3432250-hoboken-nj/",
+      "confidence": "MEDIUM"
+    },
+    "ageShares": {
+      "value": {
+        "0-4": 0.075,
+        "5-14": 0.061,
+        "15-24": 0.114,
+        "25-44": 0.527,
+        "45-64": 0.155,
+        "65+": 0.068
+      },
+      "source": "ACS 2024 age groups (under 15: 13.6%, 15-24: 11.4%, 25-44: 52.7%, 65+: 6.8%); 45-64 is the remainder; the split of under-15 into 0-4 and 5-14 is an assumption",
+      "url": "https://www.newjersey-demographics.com/hoboken-demographics",
+      "confidence": "MEDIUM"
+    },
+    "employedResidents": {
+      "value": 39700,
+      "source": "ACS 2024, via Data USA",
+      "url": "https://datausa.io/profile/geo/hoboken-nj/",
+      "confidence": "MEDIUM"
+    },
+    "commuteModeShares": {
+      "value": {
+        "workedFromHome": 0.367,
+        "transit": 0.366,
+        "droveAlone": 0.163
+      },
+      "source": "ACS 2024 1-year, means of transportation to work, via Data USA",
+      "url": "https://datausa.io/profile/geo/hoboken-nj/",
+      "confidence": "MEDIUM"
+    },
+    "pathHobokenAnnual2025": {
+      "value": 4989034,
+      "source": "PANYNJ PATH ridership, 2025 (Hoboken ranked 6 of 13 stations). The station was closed for 25 days in Jan-Feb 2025 for track work.",
+      "url": "https://en.wikipedia.org/wiki/Hoboken_Terminal",
+      "confidence": "MEDIUM"
+    },
+    "njtRailHobokenWeekdayBoardings2025": {
+      "value": 7790,
+      "source": "NJ Transit average weekday boardings, 2025 (3rd of 153 stations)",
+      "url": "https://en.wikipedia.org/wiki/Hoboken_Terminal",
+      "confidence": "MEDIUM"
+    },
+    "hblrWeekdayBoardings2025": {
+      "value": {
+        "Hoboken Terminal": 3751,
+        "2nd Street": 1551,
+        "9th Street-Congress Street": 2870
+      },
+      "source": "NJ Transit average weekday boardings, 2025",
+      "url": "https://en.wikipedia.org/wiki/9th_Street%E2%80%93Congress_Street_station",
+      "confidence": "MEDIUM"
+    },
+    "nyWaterwaySystemWeekday2022": {
+      "value": 18148,
+      "source": "NY Waterway average weekday ridership, Sept 2022, all 18 terminals (Hoboken share not published)",
+      "url": "https://en.wikipedia.org/wiki/NY_Waterway",
+      "confidence": "MEDIUM"
+    },
+    "stevens": {
+      "value": {
+        "students": 8367,
+        "undergraduates": 4206,
+        "graduates": 4161,
+        "faculty": 354,
+        "staffFullTime": 713,
+        "staffPartTime": 116
+      },
+      "source": "Stevens Institute of Technology facts and statistics, fall 2025",
+      "url": "https://www.stevens.edu/discover-stevens/stevens-by-the-numbers/facts-statistics",
+      "confidence": "MEDIUM"
+    }
+  },
+  "derived": {
+    "pathHobokenWeekdayEntries": {
+      "value": 17200,
+      "range": [
+        15500,
+        19000
+      ],
+      "method": "2025 annual entries / ~290 weekday-equivalent open days (232 open weekdays + weekends at ~55% of a weekday + holidays at ~50%)",
+      "confidence": "MEDIUM"
+    },
+    "households": {
+      "value": 26900,
+      "method": "(residents - ~2,600 in Stevens dormitories) / 2.10 persons per household",
+      "confidence": "MEDIUM"
+    }
+  },
+  "assumptions": {
+    "residualCommuteModeShares": {
+      "value": {
+        "walked": 0.06,
+        "carpool": 0.02,
+        "bicycle": 0.012,
+        "taxiOther": 0.012
+      },
+      "note": "ACS residual after WFH, transit and drove-alone is 10.4%; this split is an estimate",
+      "confidence": "LOW"
+    },
+    "residentTransitSubmodes": {
+      "value": {
+        "path": 0.6,
+        "busToNYC": 0.14,
+        "ferry": 0.1,
+        "hblr": 0.08,
+        "njtRail": 0.08
+      },
+      "note": "Set so modeled PATH entries land inside the derived 15,500-19,000 weekday range once NJ Transit-to-PATH transfers are included",
+      "confidence": "LOW"
+    },
+    "jobsLocatedInHoboken": {
+      "value": 25000,
+      "range": [
+        18000,
+        32000
+      ],
+      "note": "LEHD/OnTheMap was unreachable from the build environment; estimated from the employer mix (Stevens, hospital, schools, city government, waterfront offices, ~700 food and retail venues)",
+      "confidence": "LOW"
+    },
+    "inboundWorkersWeekday": {
+      "value": 16000,
+      "range": [
+        11000,
+        22000
+      ],
+      "note": "Jobs in Hoboken filled by non-residents and actually on site on a typical weekday (part-time, remote and days off removed)",
+      "confidence": "LOW"
+    },
+    "inboundWorkersWeekend": {
+      "value": 7000,
+      "range": [
+        4000,
+        11000
+      ],
+      "confidence": "LOW"
+    },
+    "inboundStudentsWeekday": {
+      "value": 2500,
+      "range": [
+        1500,
+        4000
+      ],
+      "note": "Stevens students who live outside Hoboken and come to campus on a weekday",
+      "confidence": "LOW"
+    },
+    "stevensDormResidents": {
+      "value": 2600,
+      "range": [
+        2000,
+        3200
+      ],
+      "confidence": "LOW"
+    },
+    "visitorsWeekday": {
+      "value": 8000,
+      "range": [
+        4000,
+        15000
+      ],
+      "note": "Dining, nightlife, shopping, waterfront, medical visits, business meetings",
+      "confidence": "LOW"
+    },
+    "visitorsWeekend": {
+      "value": 16000,
+      "range": [
+        8000,
+        30000
+      ],
+      "confidence": "LOW"
+    },
+    "inboundModeShares": {
+      "value": {
+        "car": 0.4,
+        "path": 0.14,
+        "njtRail": 0.12,
+        "hblr": 0.1,
+        "bus": 0.14,
+        "walk": 0.05,
+        "bike": 0.02,
+        "ferry": 0.03
+      },
+      "confidence": "LOW"
+    },
+    "visitorModeShares": {
+      "value": {
+        "path": 0.34,
+        "car": 0.33,
+        "walk": 0.12,
+        "bike": 0.02,
+        "hblr": 0.06,
+        "bus": 0.05,
+        "ferry": 0.08
+      },
+      "confidence": "LOW"
+    },
+    "njtRailTransfersWeekday": {
+      "value": 4400,
+      "note": "NJ Transit rail riders who change to PATH, ferry, light rail or bus inside Hoboken Terminal without entering the streets. Set so modeled NJ Transit boardings (Hoboken-origin riders + returning transfers) match the published 7,790 average weekday boardings.",
+      "confidence": "LOW"
+    },
+    "householdSizeShares": {
+      "value": {
+        "1": 0.38,
+        "2": 0.34,
+        "3": 0.15,
+        "4": 0.1,
+        "5": 0.03
+      },
+      "note": "Chosen to reproduce the 2.10 average household size",
+      "confidence": "LOW"
+    }
+  }
+}
