@@ -23,8 +23,8 @@ const LOW = [0x9c5b45, 0xa8674f, 0x8e4f3d, 0xb07a5f, 0x9a6a55, 0xc2a283, 0x8b5a4
 const MID = [0xc9c1b3, 0xb9b2a6, 0xd6cfc2, 0xa9a39a, 0xbfae98, 0xd2c6b4];
 const TALL = [0x8fa1b3, 0xa3b1bf, 0x7f8e9e, 0xc5ccd3, 0x9aa7ae, 0x6f8193];
 const MATERIALS = [
-  ["ground", 0xd9ddd3], ["water", 0x5d7f98], ["park", 0x9fc38a], ["pier", 0xc9c6bd], ["asphalt", 0x62676b],
-  ["path", 0xd8d2c4], ["rail", 0x4a4f52],
+  ["ground", 0xb8bcb3], ["water", 0x5d7f98], ["park", 0x9fc38a], ["pier", 0xc9c6bd], ["asphalt", 0x62676b],
+  ["path", 0xc4beb1], ["rail", 0x4a4f52],
   ...LOW.map((c, i) => ["brick" + i, c]), ...MID.map((c, i) => ["stone" + i, c]), ...TALL.map((c, i) => ["glass" + i, c]),
 ];
 const MAT = Object.fromEntries(MATERIALS.map(([name], i) => [name, i]));

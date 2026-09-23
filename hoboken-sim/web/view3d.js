@@ -140,7 +140,7 @@
     }
 
     const box = data.context3d.map((v) => v / S);
-    const groundMat = new T.MeshLambertMaterial({ color: 0xd9ddd3 });
+    const groundMat = new T.MeshLambertMaterial({ color: 0xb8bcb3 });
     const ground = new T.Mesh(new T.PlaneGeometry(box[2] - box[0] + 30000, box[3] - box[1] + 30000), groundMat);
     ground.rotation.x = -Math.PI / 2;
     ground.position.set((box[0] + box[2]) / 2, -0.6, -(box[1] + box[3]) / 2);
@@ -158,7 +158,7 @@
     // Streets as flat ribbons, one merged mesh; paths lighter than asphalt.
     const ROAD_W = { 1: 15, 2: 13, 3: 12, 4: 10, 5: 8.5, 6: 5, 7: 2.6, 8: 2.8 };
     const ASPHALT = rgb(0x62676b);
-    const PATH = rgb(0xd8d2c4);
+    const PATH = rgb(0xc4beb1);
     const rPos = [];
     const rCol = [];
     function ribbon(xs, ys, width, col, y) {
@@ -442,12 +442,24 @@
 
     // ------------------------------------------------------------ camera
     let tween = null;
+    // A scripted camera (scripts/film.mjs) is placed exactly; the orbit controls, which would
+    // clamp low street-level angles, leave it alone until someone drags or picks a preset.
+    let scripted = false;
     function worldToCam(p) {
       return new T.Vector3(p[0], p[2] || 0, -p[1]);
+    }
+    /** Put the camera at world [x, y, height] looking at world [x, y, height]. */
+    function look(pos, target) {
+      tween = null;
+      scripted = true;
+      camera.position.copy(worldToCam(pos));
+      controls.target.copy(worldToCam(target));
+      camera.lookAt(controls.target);
     }
     function preset(name, instant) {
       const P = PRESETS[name];
       if (!P) return;
+      scripted = false;
       const to = { pos: worldToCam(P.pos), target: worldToCam([P.target[0], P.target[1], 0]) };
       if (instant) {
         camera.position.copy(to.pos);
@@ -466,7 +478,7 @@
     const SKY_DAY = rgb(0xa9c6de);
     const SKY_DUSK = rgb(0xe8b48c);
     const SKY_NIGHT = rgb(0x0b1322);
-    const GROUND_DAY = rgb(0xd9ddd3);
+    const GROUND_DAY = rgb(0xb8bcb3);
     const GROUND_NIGHT = rgb(0x151c1e);
     const WATER_DAY = rgb(0x5d7f98);
     const WATER_NIGHT = rgb(0x0b1826);
@@ -501,6 +513,9 @@
       roadMat.color.setScalar(ASPH_NIGHT + (1 - ASPH_NIGHT) * light);
       buildingMat.emissiveIntensity = (1 - light) * 0.95;
       cars.material.emissive.setRGB(0.25 * (1 - light), 0.22 * (1 - light), 0.12 * (1 - light));
+      // Street lighting isn't modelled; a little glow keeps people and dogs visible after dark.
+      people.material.emissive.setScalar(0.3 * (1 - light));
+      dogs.material.emissive.setScalar(0.18 * (1 - light));
     }
 
     // ------------------------------------------------------------ per frame
@@ -578,7 +593,8 @@
         ring.visible = false;
       }
       lightFor(t, light, sunTimes);
-      controls.update();
+      if (scripted) camera.lookAt(controls.target);
+      else controls.update();
       renderer.render(scene, camera);
     }
 
@@ -618,6 +634,7 @@
     canvas.addEventListener("pointerdown", (ev) => {
       down = { x: ev.clientX, y: ev.clientY };
       tween = null;
+      scripted = false;
     });
     canvas.addEventListener("pointerup", (ev) => {
       if (down && Math.hypot(ev.clientX - down.x, ev.clientY - down.y) < 6) hooks.onPick(pick(ev.clientX, ev.clientY));
@@ -632,6 +649,7 @@
       update,
       resize,
       preset,
+      look,
       presets: PRESETS,
       setSelected(i) {
         selected = i;

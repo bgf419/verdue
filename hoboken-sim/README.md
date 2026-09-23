@@ -118,6 +118,29 @@ What to expect:
   follows the SDK's request and response types. It has never run against the real API, because
   this build environment can't reach `api.typesafe.ai` and has no key.
 
+## Make a video
+
+`scripts/film.mjs` renders a 47-second flythrough of the day. The shots:
+- dawn over Hoboken
+- the first dog walks at Church Square Park
+- rush hour at Hoboken Terminal
+- the evening rush on Washington Street
+- sunset over Manhattan from Pier A
+- a night out
+
+A live clock and counts of people, cars and dogs run throughout. The script drives the same 3D view frame by frame in headless Chromium and encodes with ffmpeg. A corner label says whether the decisions came from the rules or from Jev.
+
+```bash
+cd hoboken-sim
+npm install --no-save playwright && npx playwright install chromium   # plus ffmpeg on the PATH
+node scripts/film.mjs                  # dist/hoboken-weekday.mp4, rules
+node scripts/film.mjs --jev            # the same film with Jev's day, after jev/run-jev.mjs
+node scripts/film.mjs --still 9,30     # single frames, for checking shots
+```
+
+It renders with software WebGL, so the frames come out the same on any machine. That's slow: about
+1 second per frame on 4 CPU cores, or roughly 18 minutes for the 1,128 frames of the 47-second film.
+
 ## Unreal Engine 5
 
 The post that prompted this showed San Francisco in Unreal Engine 5. Unreal can't run in the cloud
@@ -201,6 +224,7 @@ place names.
 | `web/app.js`, `web/index.html` | Map view, charts, controls, inspector, Rules/Jev switch |
 | `jev/run-jev.mjs` | Sends every decision in the day to Jev, rakes the published totals, packs the answers for the page |
 | `scripts/export_unreal.mjs` | Writes the city and a day as a `.hday` file for Unreal, plus a `.glb` of the city |
+| `scripts/film.mjs` | Renders a flythrough video of the day from the 3D view (rules or Jev) |
 | `unreal/HobokenSim` | Unreal Engine 5 plugin: `HobokenDay.h` reads the day file (plain C++), `HobokenCrowd` builds and plays it |
 | `unreal/tools/day_check.cpp` | Command-line check of `HobokenDay.h`, used by the tests |
 | `calibration.json` | Every input figure with source and confidence |
