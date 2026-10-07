@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-06T13:23:18.966Z",
-  "recordCount": 3828,
+  "generatedAt": "2026-10-07T13:31:38.873Z",
+  "recordCount": 3830,
   "coverage": {
     "sourceId": "courtlistener-recap-class-action-complaints",
     "sourceLabel": "CourtListener RECAP federal class-action complaint search",
@@ -14,14 +14,14 @@
     "status": "complete",
     "stale": false,
     "mode": "incremental",
-    "checkedAt": "2026-10-06T13:23:18.966Z",
-    "lastSuccessfulAt": "2026-10-06T13:23:18.966Z",
+    "checkedAt": "2026-10-07T13:31:38.873Z",
+    "lastSuccessfulAt": "2026-10-07T13:31:38.873Z",
     "queryCore": "description:(Class Action Complaint)",
-    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-09-29 TO 2026-10-06]",
-    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-09-29+TO+2026-10-06%5D",
+    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-09-30 TO 2026-10-07]",
+    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-09-30+TO+2026-10-07%5D",
     "dateRange": {
-      "startDate": "2026-09-29",
-      "endDate": "2026-10-06"
+      "startDate": "2026-09-30",
+      "endDate": "2026-10-07"
     },
     "resumedFromCursor": false,
     "restartRequested": false,
@@ -31,11 +31,11 @@
     "cacheHits": 0,
     "retries": 0,
     "requestBudgetExhausted": false,
-    "rawResultsSeen": 13,
-    "approximateResultCount": 13,
+    "rawResultsSeen": 10,
+    "approximateResultCount": 10,
     "resultCountCaveat": "CourtListener says type=r counts use cardinality aggregation and may vary by about 6% when more than 2,000 results match.",
-    "observedThisRun": 11,
-    "retainedFromPrevious": 6711,
+    "observedThisRun": 7,
+    "retainedFromPrevious": 6717,
     "error": null,
     "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/",
     "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
@@ -56,17 +56,17 @@
     },
     "incremental": {
       "status": "complete",
-      "startDate": "2026-09-29",
-      "endDate": "2026-10-06",
-      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-09-29 TO 2026-10-06]",
-      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-09-29+TO+2026-10-06%5D",
+      "startDate": "2026-09-30",
+      "endDate": "2026-10-07",
+      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-09-30 TO 2026-10-07]",
+      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-09-30+TO+2026-10-07%5D",
       "nextUrl": null,
       "incrementalDays": 7,
       "pagesFetchedTotal": 1,
-      "rawResultsSeenTotal": 13,
-      "acceptedResultsTotal": 11,
-      "lastAttemptAt": "2026-10-06T13:23:18.966Z",
-      "lastCompletedAt": "2026-10-06T13:23:18.966Z"
+      "rawResultsSeenTotal": 10,
+      "acceptedResultsTotal": 7,
+      "lastAttemptAt": "2026-10-07T13:31:38.873Z",
+      "lastCompletedAt": "2026-10-07T13:31:38.873Z"
     }
   }
 }
