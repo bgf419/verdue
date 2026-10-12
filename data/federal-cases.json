@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-11T12:58:13.092Z",
-  "recordCount": 6730,
+  "generatedAt": "2026-10-12T15:35:59.804Z",
+  "recordCount": 6731,
   "records": [
     {
       "id": "courtlistener-docket-74944258",
@@ -77,8 +77,66 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-10T12:38:44.004Z",
-      "lastSeenAt": "2026-10-11T12:58:13.092Z",
+      "lastSeenAt": "2026-10-12T15:35:59.804Z",
       "lastChangedAt": "2026-10-10T12:38:44.004Z",
+      "freshness": "current"
+    },
+    {
+      "id": "courtlistener-docket-74946807",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "74946807",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "STEVENSON v. FORWARD AIR CORPORATION",
+      "docketId": 74946807,
+      "docketNumber": "2:26-cv-11829",
+      "docketUrl": "https://www.courtlistener.com/docket/74946807/stevenson-v-forward-air-corporation/",
+      "court": "District Court, C.D. California",
+      "courtId": "cacd",
+      "dateFiled": "2026-10-09",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "05:704 Labor Litigation",
+      "suitNature": "790 Labor: Other",
+      "matchedFilings": [
+        {
+          "documentId": "496894200",
+          "docketEntryId": "481169161",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-09",
+          "description": "NOTICE OF REMOVAL from Los Angeles, case number 26STCV04880 Receipt No: ACACDC-43539239 - Fee: $405, filed by Defendants FORWARD AIR CORPORATION, FAF LLC. (Attachments: # 1 Exhibit A- State Court Filings, # 2 Complaint for Class Action, # 3 Summons - Forward Air, # 4 Civil Case Cover Sheet, # 5 Notice of Case Assignment - Unlimited Civil Case, # 6 ADR Information Packet, # 7 Notice of Posting Jury Fees, # 8 Initial Status Conference Order (Complex Litigation Program), # 9 Minute Order re Scheduling Initial Status Conference, # 10 Clerk's Certificate of Service re Minute Order and Initial Status Conference Order, # 11 Proof of Service of Summons - FAF, LLC, # 12 Proof of Service of Summons - Forward Air Corporation, # 13 Notice re Continuance of Hearing and Order, # 14 Notice of Posting Defendants Complex Fees, # 15 Notice of Appearance- Thomas F. Cochrane, # 16 Joint Initial Status Conference Report, # 17 Notice of Posting Jury Fees, # 18 Minute Order re Initial Status Conference, # 19 Order Authorizing Electronic Service, # 20 First Amended Complaint for Class and Representative Action, # 21 Joint Status Conference Statement, # 22 Minute Order - Notice re Continuance of Hearing and Order, # 23 Minute Order Continuing Further Status Conference, # 24 Notice of E-Filing - Answer to First Amended Class Action Complaint, # 25 Answer to First Amended Class Action Complaint, # 26 Exhibit B - Defendant's Notice of Removal to Adverse Parties and State Court Clerk, # 27 Declaration of Pete Beam ISO Notice of Removal) (Attorney Thomas Frasca Cochrane added to party FAF LLC(pty:dft), Attorney Thomas Frasca Cochrane added to party FORWARD AIR CORPORATION(pty:dft))(Cochrane, Thomas) (Entered: 10/09/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74946807/1/stevenson-v-forward-air-corporation/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/74946807/stevenson-v-forward-air-corporation/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/74946807/stevenson-v-forward-air-corporation/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-12T15:35:59.804Z",
+      "lastSeenAt": "2026-10-12T15:35:59.804Z",
+      "lastChangedAt": "2026-10-12T15:35:59.804Z",
       "freshness": "current"
     },
     {
@@ -145,7 +203,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-10T12:38:44.004Z",
-      "lastSeenAt": "2026-10-11T12:58:13.092Z",
+      "lastSeenAt": "2026-10-12T15:35:59.804Z",
       "lastChangedAt": "2026-10-10T12:38:44.004Z",
       "freshness": "current"
     },
@@ -223,7 +281,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-10T12:38:44.004Z",
-      "lastSeenAt": "2026-10-11T12:58:13.092Z",
+      "lastSeenAt": "2026-10-12T15:35:59.804Z",
       "lastChangedAt": "2026-10-10T12:38:44.004Z",
       "freshness": "current"
     },
@@ -253,16 +311,6 @@
       "suitNature": "440 Civil Rights: Other",
       "matchedFilings": [
         {
-          "documentId": "496337105",
-          "docketEntryId": "480625738",
-          "documentNumber": 1,
-          "entryDateFiled": "2026-10-06",
-          "description": "Class Action Complaint with jury demand against Cuyahoga County, Ohio, David Ray, Chris Ronayne. Filing fee paid. $405.00. Receipt # 166010. Filed by Che Gadison, Brandon King, Phyllis Mosley. (Attachments: # 1 (Index of Exhibit List) Various Supporting Documents, # 2 Summons, # 3 Civil Cover Sheet) (B,Ch) (Entered: 10/06/2026)",
-          "documentType": "PACER Document",
-          "availableInRecap": false,
-          "url": "https://www.courtlistener.com/docket/74923036/1/gadison-v-ronayne/"
-        },
-        {
           "documentId": "496358436",
           "docketEntryId": "480625738",
           "documentNumber": 1,
@@ -281,6 +329,16 @@
           "documentType": "Attachment",
           "availableInRecap": false,
           "url": "https://www.courtlistener.com/docket/74923036/1/2/gadison-v-ronayne/"
+        },
+        {
+          "documentId": "496358438",
+          "docketEntryId": "480625738",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-06",
+          "description": "Class Action Complaint with jury demand against Cuyahoga County, Ohio, David Ray, Chris Ronayne. Filing fee paid. $405.00. Receipt # 166010. Filed by Che Gadison, Brandon King, Phyllis Mosley. (Attachments: # 1 (Index of Exhibit List) Various Supporting Documents, # 2 Summons, # 3 Civil Cover Sheet) (B,Ch) (Entered: 10/06/2026)",
+          "documentType": "Attachment",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74923036/1/3/gadison-v-ronayne/"
         }
       ],
       "action": {
@@ -301,8 +359,8 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-07T13:31:38.873Z",
-      "lastSeenAt": "2026-10-11T12:58:13.092Z",
-      "lastChangedAt": "2026-10-11T12:58:13.092Z",
+      "lastSeenAt": "2026-10-12T15:35:59.804Z",
+      "lastChangedAt": "2026-10-12T15:35:59.804Z",
       "freshness": "current"
     },
     {
@@ -379,7 +437,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-08T13:38:07.617Z",
-      "lastSeenAt": "2026-10-11T12:58:13.092Z",
+      "lastSeenAt": "2026-10-12T15:35:59.804Z",
       "lastChangedAt": "2026-10-08T13:38:07.617Z",
       "freshness": "current"
     },
@@ -447,7 +505,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-10T12:38:44.004Z",
-      "lastSeenAt": "2026-10-11T12:58:13.092Z",
+      "lastSeenAt": "2026-10-12T15:35:59.804Z",
       "lastChangedAt": "2026-10-10T12:38:44.004Z",
       "freshness": "current"
     },
@@ -525,7 +583,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-07T13:31:38.873Z",
-      "lastSeenAt": "2026-10-11T12:58:13.092Z",
+      "lastSeenAt": "2026-10-12T15:35:59.804Z",
       "lastChangedAt": "2026-10-07T13:31:38.873Z",
       "freshness": "current"
     },
@@ -450466,14 +450524,14 @@
     "status": "complete",
     "stale": false,
     "mode": "incremental",
-    "checkedAt": "2026-10-11T12:58:13.092Z",
-    "lastSuccessfulAt": "2026-10-11T12:58:13.092Z",
+    "checkedAt": "2026-10-12T15:35:59.804Z",
+    "lastSuccessfulAt": "2026-10-12T15:35:59.804Z",
     "queryCore": "description:(Class Action Complaint)",
-    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-04 TO 2026-10-11]",
-    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-04+TO+2026-10-11%5D",
+    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-05 TO 2026-10-12]",
+    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-05+TO+2026-10-12%5D",
     "dateRange": {
-      "startDate": "2026-10-04",
-      "endDate": "2026-10-11"
+      "startDate": "2026-10-05",
+      "endDate": "2026-10-12"
     },
     "resumedFromCursor": false,
     "restartRequested": false,
@@ -450483,10 +450541,10 @@
     "cacheHits": 0,
     "retries": 0,
     "requestBudgetExhausted": false,
-    "rawResultsSeen": 8,
-    "approximateResultCount": 8,
+    "rawResultsSeen": 9,
+    "approximateResultCount": 9,
     "resultCountCaveat": "CourtListener says type=r counts use cardinality aggregation and may vary by about 6% when more than 2,000 results match.",
-    "observedThisRun": 7,
+    "observedThisRun": 8,
     "retainedFromPrevious": 6723,
     "error": null,
     "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/",
@@ -450508,17 +450566,17 @@
     },
     "incremental": {
       "status": "complete",
-      "startDate": "2026-10-04",
-      "endDate": "2026-10-11",
-      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-04 TO 2026-10-11]",
-      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-04+TO+2026-10-11%5D",
+      "startDate": "2026-10-05",
+      "endDate": "2026-10-12",
+      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-05 TO 2026-10-12]",
+      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-05+TO+2026-10-12%5D",
       "nextUrl": null,
       "incrementalDays": 7,
       "pagesFetchedTotal": 1,
-      "rawResultsSeenTotal": 8,
-      "acceptedResultsTotal": 7,
-      "lastAttemptAt": "2026-10-11T12:58:13.092Z",
-      "lastCompletedAt": "2026-10-11T12:58:13.092Z"
+      "rawResultsSeenTotal": 9,
+      "acceptedResultsTotal": 8,
+      "lastAttemptAt": "2026-10-12T15:35:59.804Z",
+      "lastCompletedAt": "2026-10-12T15:35:59.804Z"
     }
   }
 }
