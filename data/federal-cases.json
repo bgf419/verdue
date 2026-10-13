@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-12T15:35:59.804Z",
+  "generatedAt": "2026-10-13T14:18:28.163Z",
   "recordCount": 6731,
   "records": [
     {
@@ -77,7 +77,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-10T12:38:44.004Z",
-      "lastSeenAt": "2026-10-12T15:35:59.804Z",
+      "lastSeenAt": "2026-10-13T14:18:28.163Z",
       "lastChangedAt": "2026-10-10T12:38:44.004Z",
       "freshness": "current"
     },
@@ -135,7 +135,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-12T15:35:59.804Z",
-      "lastSeenAt": "2026-10-12T15:35:59.804Z",
+      "lastSeenAt": "2026-10-13T14:18:28.163Z",
       "lastChangedAt": "2026-10-12T15:35:59.804Z",
       "freshness": "current"
     },
@@ -203,7 +203,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-10T12:38:44.004Z",
-      "lastSeenAt": "2026-10-12T15:35:59.804Z",
+      "lastSeenAt": "2026-10-13T14:18:28.163Z",
       "lastChangedAt": "2026-10-10T12:38:44.004Z",
       "freshness": "current"
     },
@@ -281,7 +281,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-10T12:38:44.004Z",
-      "lastSeenAt": "2026-10-12T15:35:59.804Z",
+      "lastSeenAt": "2026-10-13T14:18:28.163Z",
       "lastChangedAt": "2026-10-10T12:38:44.004Z",
       "freshness": "current"
     },
@@ -311,6 +311,16 @@
       "suitNature": "440 Civil Rights: Other",
       "matchedFilings": [
         {
+          "documentId": "496337105",
+          "docketEntryId": "480625738",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-06",
+          "description": "Class Action Complaint with jury demand against Cuyahoga County, Ohio, David Ray, Chris Ronayne. Filing fee paid. $405.00. Receipt # 166010. Filed by Che Gadison, Brandon King, Phyllis Mosley. (Attachments: # 1 (Index of Exhibit List) Various Supporting Documents, # 2 Summons, # 3 Civil Cover Sheet) (B,Ch) (Entered: 10/06/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74923036/1/gadison-v-ronayne/"
+        },
+        {
           "documentId": "496358436",
           "docketEntryId": "480625738",
           "documentNumber": 1,
@@ -329,16 +339,6 @@
           "documentType": "Attachment",
           "availableInRecap": false,
           "url": "https://www.courtlistener.com/docket/74923036/1/2/gadison-v-ronayne/"
-        },
-        {
-          "documentId": "496358438",
-          "docketEntryId": "480625738",
-          "documentNumber": 1,
-          "entryDateFiled": "2026-10-06",
-          "description": "Class Action Complaint with jury demand against Cuyahoga County, Ohio, David Ray, Chris Ronayne. Filing fee paid. $405.00. Receipt # 166010. Filed by Che Gadison, Brandon King, Phyllis Mosley. (Attachments: # 1 (Index of Exhibit List) Various Supporting Documents, # 2 Summons, # 3 Civil Cover Sheet) (B,Ch) (Entered: 10/06/2026)",
-          "documentType": "Attachment",
-          "availableInRecap": false,
-          "url": "https://www.courtlistener.com/docket/74923036/1/3/gadison-v-ronayne/"
         }
       ],
       "action": {
@@ -359,8 +359,8 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-07T13:31:38.873Z",
-      "lastSeenAt": "2026-10-12T15:35:59.804Z",
-      "lastChangedAt": "2026-10-12T15:35:59.804Z",
+      "lastSeenAt": "2026-10-13T14:18:28.163Z",
+      "lastChangedAt": "2026-10-13T14:18:28.163Z",
       "freshness": "current"
     },
     {
@@ -437,7 +437,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-08T13:38:07.617Z",
-      "lastSeenAt": "2026-10-12T15:35:59.804Z",
+      "lastSeenAt": "2026-10-13T14:18:28.163Z",
       "lastChangedAt": "2026-10-08T13:38:07.617Z",
       "freshness": "current"
     },
@@ -505,7 +505,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-10T12:38:44.004Z",
-      "lastSeenAt": "2026-10-12T15:35:59.804Z",
+      "lastSeenAt": "2026-10-13T14:18:28.163Z",
       "lastChangedAt": "2026-10-10T12:38:44.004Z",
       "freshness": "current"
     },
@@ -450524,14 +450524,14 @@
     "status": "complete",
     "stale": false,
     "mode": "incremental",
-    "checkedAt": "2026-10-12T15:35:59.804Z",
-    "lastSuccessfulAt": "2026-10-12T15:35:59.804Z",
+    "checkedAt": "2026-10-13T14:18:28.163Z",
+    "lastSuccessfulAt": "2026-10-13T14:18:28.163Z",
     "queryCore": "description:(Class Action Complaint)",
-    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-05 TO 2026-10-12]",
-    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-05+TO+2026-10-12%5D",
+    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-06 TO 2026-10-13]",
+    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-06+TO+2026-10-13%5D",
     "dateRange": {
-      "startDate": "2026-10-05",
-      "endDate": "2026-10-12"
+      "startDate": "2026-10-06",
+      "endDate": "2026-10-13"
     },
     "resumedFromCursor": false,
     "restartRequested": false,
@@ -450541,11 +450541,11 @@
     "cacheHits": 0,
     "retries": 0,
     "requestBudgetExhausted": false,
-    "rawResultsSeen": 9,
-    "approximateResultCount": 9,
+    "rawResultsSeen": 7,
+    "approximateResultCount": 7,
     "resultCountCaveat": "CourtListener says type=r counts use cardinality aggregation and may vary by about 6% when more than 2,000 results match.",
-    "observedThisRun": 8,
-    "retainedFromPrevious": 6723,
+    "observedThisRun": 7,
+    "retainedFromPrevious": 6724,
     "error": null,
     "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/",
     "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
@@ -450566,17 +450566,17 @@
     },
     "incremental": {
       "status": "complete",
-      "startDate": "2026-10-05",
-      "endDate": "2026-10-12",
-      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-05 TO 2026-10-12]",
-      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-05+TO+2026-10-12%5D",
+      "startDate": "2026-10-06",
+      "endDate": "2026-10-13",
+      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-06 TO 2026-10-13]",
+      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-06+TO+2026-10-13%5D",
       "nextUrl": null,
       "incrementalDays": 7,
       "pagesFetchedTotal": 1,
-      "rawResultsSeenTotal": 9,
-      "acceptedResultsTotal": 8,
-      "lastAttemptAt": "2026-10-12T15:35:59.804Z",
-      "lastCompletedAt": "2026-10-12T15:35:59.804Z"
+      "rawResultsSeenTotal": 7,
+      "acceptedResultsTotal": 7,
+      "lastAttemptAt": "2026-10-13T14:18:28.163Z",
+      "lastCompletedAt": "2026-10-13T14:18:28.163Z"
     }
   }
 }
