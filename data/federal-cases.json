@@ -1,8 +1,242 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-13T14:18:28.163Z",
-  "recordCount": 6731,
+  "generatedAt": "2026-10-14T12:00:00.466Z",
+  "recordCount": 6736,
   "records": [
+    {
+      "id": "courtlistener-docket-74954468",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "74954468",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "REZAYAT v. FRONTLINE TECHNOLOGIES GROUP LLC",
+      "docketId": 74954468,
+      "docketNumber": "2:26-cv-07838",
+      "docketUrl": "https://www.courtlistener.com/docket/74954468/rezayat-v-frontline-technologies-group-llc/",
+      "court": "District Court, E.D. Pennsylvania",
+      "courtId": "paed",
+      "dateFiled": "2026-10-13",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "28:1332(d)(5)(B) Diversity of Citizenship under CAFA",
+      "suitNature": "360 P.I.: Other",
+      "matchedFilings": [
+        {
+          "documentId": "497075916",
+          "docketEntryId": "481336079",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-13",
+          "description": "COMPLAINT (CLASS ACTION) against FRONTLINE TECHNOLOGIES GROUP LLC D/B/A FRONTLINE EDUCATION ( Filing fee $ 405 receipt number APAEDC-19730105.), filed by CAMELLIA REZAYAT. (Attachments: # 1 Civil Cover Sheet (Civil Cover Sheet), # 2 Designation Form (Designation Form))(FERICH, ANDREW) (Entered: 10/13/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": true,
+          "url": "https://www.courtlistener.com/docket/74954468/1/rezayat-v-frontline-technologies-group-llc/"
+        },
+        {
+          "documentId": "497113681",
+          "docketEntryId": "481336079",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-13",
+          "description": "COMPLAINT (CLASS ACTION) against FRONTLINE TECHNOLOGIES GROUP LLC D/B/A FRONTLINE EDUCATION ( Filing fee $ 405 receipt number APAEDC-19730105.), filed by CAMELLIA REZAYAT. (Attachments: # 1 Civil Cover Sheet (Civil Cover Sheet), # 2 Designation Form (Designation Form))(FERICH, ANDREW) (Entered: 10/13/2026)",
+          "documentType": "Attachment",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74954468/1/1/rezayat-v-frontline-technologies-group-llc/"
+        },
+        {
+          "documentId": "497113682",
+          "docketEntryId": "481336079",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-13",
+          "description": "COMPLAINT (CLASS ACTION) against FRONTLINE TECHNOLOGIES GROUP LLC D/B/A FRONTLINE EDUCATION ( Filing fee $ 405 receipt number APAEDC-19730105.), filed by CAMELLIA REZAYAT. (Attachments: # 1 Civil Cover Sheet (Civil Cover Sheet), # 2 Designation Form (Designation Form))(FERICH, ANDREW) (Entered: 10/13/2026)",
+          "documentType": "Attachment",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74954468/1/2/rezayat-v-frontline-technologies-group-llc/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/74954468/rezayat-v-frontline-technologies-group-llc/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/74954468/rezayat-v-frontline-technologies-group-llc/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-14T12:00:00.466Z",
+      "lastSeenAt": "2026-10-14T12:00:00.466Z",
+      "lastChangedAt": "2026-10-14T12:00:00.466Z",
+      "freshness": "current"
+    },
+    {
+      "id": "courtlistener-docket-74957988",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "74957988",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "DOE A v. RUBIO",
+      "docketId": 74957988,
+      "docketNumber": "1:26-cv-03574",
+      "docketUrl": "https://www.courtlistener.com/docket/74957988/doe-a-v-rubio/",
+      "court": "District Court, District of Columbia",
+      "courtId": "dcd",
+      "dateFiled": "2026-10-13",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "29:791 Job Discrimination (Rehabilitation Act)",
+      "suitNature": "442 Civil Rights: Jobs",
+      "matchedFilings": [
+        {
+          "documentId": "497147384",
+          "docketEntryId": "481405898",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-13",
+          "description": "COMPLAINT Class Action Complaint against MARCO RUBIO with Jury Demand ( Filing fee $ 405 receipt number ADCDC-12738665) filed by JANE DOE A, JOHN DOE B, JOHN DOE A. (Attachments: # 1 Civil Cover Sheet, # 2 Summons, # 3 Summons, # 4 Summons)(Schwartz, Bryan) (Entered: 10/13/2026)",
+          "documentType": "Attachment",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74957988/1/1/doe-a-v-rubio/"
+        },
+        {
+          "documentId": "497147386",
+          "docketEntryId": "481405898",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-13",
+          "description": "COMPLAINT Class Action Complaint against MARCO RUBIO with Jury Demand ( Filing fee $ 405 receipt number ADCDC-12738665) filed by JANE DOE A, JOHN DOE B, JOHN DOE A. (Attachments: # 1 Civil Cover Sheet, # 2 Summons, # 3 Summons, # 4 Summons)(Schwartz, Bryan) (Entered: 10/13/2026)",
+          "documentType": "Attachment",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74957988/1/2/doe-a-v-rubio/"
+        },
+        {
+          "documentId": "497147387",
+          "docketEntryId": "481405898",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-13",
+          "description": "COMPLAINT Class Action Complaint against MARCO RUBIO with Jury Demand ( Filing fee $ 405 receipt number ADCDC-12738665) filed by JANE DOE A, JOHN DOE B, JOHN DOE A. (Attachments: # 1 Civil Cover Sheet, # 2 Summons, # 3 Summons, # 4 Summons)(Schwartz, Bryan) (Entered: 10/13/2026)",
+          "documentType": "Attachment",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74957988/1/3/doe-a-v-rubio/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/74957988/doe-a-v-rubio/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/74957988/doe-a-v-rubio/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-14T12:00:00.466Z",
+      "lastSeenAt": "2026-10-14T12:00:00.466Z",
+      "lastChangedAt": "2026-10-14T12:00:00.466Z",
+      "freshness": "current"
+    },
+    {
+      "id": "courtlistener-docket-74951228",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "74951228",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "GARRETT-JONES v. DISTRICT OF COLUMBIA",
+      "docketId": 74951228,
+      "docketNumber": "1:26-cv-03562",
+      "docketUrl": "https://www.courtlistener.com/docket/74951228/garrett-jones-v-district-of-columbia/",
+      "court": "District Court, District of Columbia",
+      "courtId": "dcd",
+      "dateFiled": "2026-10-12",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "28:1332 Diversity-(Citizenship)",
+      "suitNature": "890 Other Statutory Actions",
+      "matchedFilings": [
+        {
+          "documentId": "496987151",
+          "docketEntryId": "481257246",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-12",
+          "description": "COMPLAINT (Class Action) against DISTRICT OF COLUMBIA with Jury Demand ( Filing fee $ 405 receipt number ADCDC-12735664) filed by ANTONETT GARRETT-JONES. (Attachments: # 1 Civil Cover Sheet, # 2 Summons)(Ferich, Andrew) (Entered: 10/12/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74951228/1/garrett-jones-v-district-of-columbia/"
+        },
+        {
+          "documentId": "497105700",
+          "docketEntryId": "481257246",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-12",
+          "description": "COMPLAINT (Class Action) against DISTRICT OF COLUMBIA with Jury Demand ( Filing fee $ 405 receipt number ADCDC-12735664) filed by ANTONETT GARRETT-JONES. (Attachments: # 1 Civil Cover Sheet, # 2 Summons)(Ferich, Andrew) (Entered: 10/12/2026)",
+          "documentType": "Attachment",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74951228/1/1/garrett-jones-v-district-of-columbia/"
+        },
+        {
+          "documentId": "497105701",
+          "docketEntryId": "481257246",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-12",
+          "description": "COMPLAINT (Class Action) against DISTRICT OF COLUMBIA with Jury Demand ( Filing fee $ 405 receipt number ADCDC-12735664) filed by ANTONETT GARRETT-JONES. (Attachments: # 1 Civil Cover Sheet, # 2 Summons)(Ferich, Andrew) (Entered: 10/12/2026)",
+          "documentType": "Attachment",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74951228/1/2/garrett-jones-v-district-of-columbia/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/74951228/garrett-jones-v-district-of-columbia/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/74951228/garrett-jones-v-district-of-columbia/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-14T12:00:00.466Z",
+      "lastSeenAt": "2026-10-14T12:00:00.466Z",
+      "lastChangedAt": "2026-10-14T12:00:00.466Z",
+      "freshness": "current"
+    },
     {
       "id": "courtlistener-docket-74944258",
       "sourceId": "courtlistener-recap-class-action-complaints",
@@ -14,7 +248,7 @@
       "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
       "participationMode": "no_current_action",
       "windowStatus": "not_applicable",
-      "caseName": "Furdek v. Amazon.com, Inc.",
+      "caseName": "Furdek v. Amazon.com Inc",
       "docketId": 74944258,
       "docketNumber": "2:26-cv-03843",
       "docketUrl": "https://www.courtlistener.com/docket/74944258/furdek-v-amazoncom-inc/",
@@ -77,8 +311,8 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-10T12:38:44.004Z",
-      "lastSeenAt": "2026-10-13T14:18:28.163Z",
-      "lastChangedAt": "2026-10-10T12:38:44.004Z",
+      "lastSeenAt": "2026-10-14T12:00:00.466Z",
+      "lastChangedAt": "2026-10-14T12:00:00.466Z",
       "freshness": "current"
     },
     {
@@ -135,8 +369,124 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-12T15:35:59.804Z",
-      "lastSeenAt": "2026-10-13T14:18:28.163Z",
+      "lastSeenAt": "2026-10-14T12:00:00.466Z",
       "lastChangedAt": "2026-10-12T15:35:59.804Z",
+      "freshness": "current"
+    },
+    {
+      "id": "courtlistener-docket-74947397",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "74947397",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "Hogrell v. GoPro, Inc.",
+      "docketId": 74947397,
+      "docketNumber": "3:26-cv-11719",
+      "docketUrl": "https://www.courtlistener.com/docket/74947397/hogrell-v-gopro-inc/",
+      "court": "District Court, N.D. California",
+      "courtId": "cand",
+      "dateFiled": "2026-10-09",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "28:1332 Diversity-Property Damage",
+      "suitNature": "380 Personal Property: Other",
+      "matchedFilings": [
+        {
+          "documentId": "496901092",
+          "docketEntryId": "481175837",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-09",
+          "description": "COMPLAINT [Class Action] against GoPro, Inc. ( Filing fee $ 405, receipt number ACANDC-22577595.). Filed by John Hogrell. (Cotchett, Joseph) (Filed on 10/9/2026) (Entered: 10/09/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74947397/1/hogrell-v-gopro-inc/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/74947397/hogrell-v-gopro-inc/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/74947397/hogrell-v-gopro-inc/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-14T12:00:00.466Z",
+      "lastSeenAt": "2026-10-14T12:00:00.466Z",
+      "lastChangedAt": "2026-10-14T12:00:00.466Z",
+      "freshness": "current"
+    },
+    {
+      "id": "courtlistener-docket-74939149",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "74939149",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "Winters v. Circle K Stores Incorporated",
+      "docketId": 74939149,
+      "docketNumber": "2:26-cv-07353",
+      "docketUrl": "https://www.courtlistener.com/docket/74939149/winters-v-circle-k-stores-incorporated/",
+      "court": "District Court, D. Arizona",
+      "courtId": "azd",
+      "dateFiled": "2026-10-08",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "47:227 Restrictions of Use of Telephone Equipment",
+      "suitNature": "485 Telephone Consumer Protection Act (TCPA)",
+      "matchedFilings": [
+        {
+          "documentId": "496720546",
+          "docketEntryId": "480999463",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-08",
+          "description": "CLASS ACTION COMPLAINT. Filing fee received: $ 405.00, receipt number AAZDC-26235591 filed by Richard Winters. (Friedman, Todd) (Attachments: # 1 Civil Cover Sheet)(VSB) (Entered: 10/08/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74939149/1/winters-v-circle-k-stores-incorporated/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/74939149/winters-v-circle-k-stores-incorporated/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/74939149/winters-v-circle-k-stores-incorporated/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-14T12:00:00.466Z",
+      "lastSeenAt": "2026-10-14T12:00:00.466Z",
+      "lastChangedAt": "2026-10-14T12:00:00.466Z",
       "freshness": "current"
     },
     {
@@ -203,7 +553,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-10T12:38:44.004Z",
-      "lastSeenAt": "2026-10-13T14:18:28.163Z",
+      "lastSeenAt": "2026-10-14T12:00:00.466Z",
       "lastChangedAt": "2026-10-10T12:38:44.004Z",
       "freshness": "current"
     },
@@ -233,34 +583,34 @@
       "suitNature": "380 Personal Property: Other",
       "matchedFilings": [
         {
-          "documentId": "496590882",
+          "documentId": "496707940",
           "docketEntryId": "480873635",
           "documentNumber": 1,
           "entryDateFiled": "2026-10-07",
           "description": "NOTICE OF REMOVAL from Los Angeles County Superior Court, case number 26STCV27057 Receipt No: ACACDC-43516883 - Fee: $405, filed by Defendant Chosen Foods, LLC. (Attachments: # 1 Exhibit A - Class Action Complaint, # 2 Exhibit B - Summons on Complaint, # 3 Exhibit C - Notice of Case Assignment, # 4 Exhibit D - Civil Case Cover Sheet, # 5 Exhibit E - ADR Packet, # 6 Exhibit F - Court Order Scheduling Initial Status Conferences, # 7 Exhibit G - Initial Status Conference Order-Complex Class Actions, # 8 Exhibit H - Clerk's Certificate of Service, # 9 Exhibit I - Other documents served) (Attorney Keri E Borders added to party Chosen Foods, LLC(pty:dft))(Borders, Keri) (Entered: 10/07/2026)",
-          "documentType": "PACER Document",
+          "documentType": "Attachment",
           "availableInRecap": true,
-          "url": "https://www.courtlistener.com/docket/74934296/1/noohi-v-chosen-foods-llc/"
+          "url": "https://www.courtlistener.com/docket/74934296/1/1/noohi-v-chosen-foods-llc/"
         },
         {
-          "documentId": "496707941",
+          "documentId": "496707942",
           "docketEntryId": "480873635",
           "documentNumber": 1,
           "entryDateFiled": "2026-10-07",
           "description": "NOTICE OF REMOVAL from Los Angeles County Superior Court, case number 26STCV27057 Receipt No: ACACDC-43516883 - Fee: $405, filed by Defendant Chosen Foods, LLC. (Attachments: # 1 Exhibit A - Class Action Complaint, # 2 Exhibit B - Summons on Complaint, # 3 Exhibit C - Notice of Case Assignment, # 4 Exhibit D - Civil Case Cover Sheet, # 5 Exhibit E - ADR Packet, # 6 Exhibit F - Court Order Scheduling Initial Status Conferences, # 7 Exhibit G - Initial Status Conference Order-Complex Class Actions, # 8 Exhibit H - Clerk's Certificate of Service, # 9 Exhibit I - Other documents served) (Attorney Keri E Borders added to party Chosen Foods, LLC(pty:dft))(Borders, Keri) (Entered: 10/07/2026)",
           "documentType": "Attachment",
           "availableInRecap": false,
-          "url": "https://www.courtlistener.com/docket/74934296/1/2/noohi-v-chosen-foods-llc/"
+          "url": "https://www.courtlistener.com/docket/74934296/1/3/noohi-v-chosen-foods-llc/"
         },
         {
-          "documentId": "496707943",
+          "documentId": "496707948",
           "docketEntryId": "480873635",
           "documentNumber": 1,
           "entryDateFiled": "2026-10-07",
           "description": "NOTICE OF REMOVAL from Los Angeles County Superior Court, case number 26STCV27057 Receipt No: ACACDC-43516883 - Fee: $405, filed by Defendant Chosen Foods, LLC. (Attachments: # 1 Exhibit A - Class Action Complaint, # 2 Exhibit B - Summons on Complaint, # 3 Exhibit C - Notice of Case Assignment, # 4 Exhibit D - Civil Case Cover Sheet, # 5 Exhibit E - ADR Packet, # 6 Exhibit F - Court Order Scheduling Initial Status Conferences, # 7 Exhibit G - Initial Status Conference Order-Complex Class Actions, # 8 Exhibit H - Clerk's Certificate of Service, # 9 Exhibit I - Other documents served) (Attorney Keri E Borders added to party Chosen Foods, LLC(pty:dft))(Borders, Keri) (Entered: 10/07/2026)",
           "documentType": "Attachment",
           "availableInRecap": false,
-          "url": "https://www.courtlistener.com/docket/74934296/1/4/noohi-v-chosen-foods-llc/"
+          "url": "https://www.courtlistener.com/docket/74934296/1/9/noohi-v-chosen-foods-llc/"
         }
       ],
       "action": {
@@ -281,8 +631,8 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-10T12:38:44.004Z",
-      "lastSeenAt": "2026-10-13T14:18:28.163Z",
-      "lastChangedAt": "2026-10-10T12:38:44.004Z",
+      "lastSeenAt": "2026-10-14T12:00:00.466Z",
+      "lastChangedAt": "2026-10-14T12:00:00.466Z",
       "freshness": "current"
     },
     {
@@ -450524,14 +450874,14 @@
     "status": "complete",
     "stale": false,
     "mode": "incremental",
-    "checkedAt": "2026-10-13T14:18:28.163Z",
-    "lastSuccessfulAt": "2026-10-13T14:18:28.163Z",
+    "checkedAt": "2026-10-14T12:00:00.466Z",
+    "lastSuccessfulAt": "2026-10-14T12:00:00.466Z",
     "queryCore": "description:(Class Action Complaint)",
-    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-06 TO 2026-10-13]",
-    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-06+TO+2026-10-13%5D",
+    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-07 TO 2026-10-14]",
+    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-07+TO+2026-10-14%5D",
     "dateRange": {
-      "startDate": "2026-10-06",
-      "endDate": "2026-10-13"
+      "startDate": "2026-10-07",
+      "endDate": "2026-10-14"
     },
     "resumedFromCursor": false,
     "restartRequested": false,
@@ -450541,11 +450891,11 @@
     "cacheHits": 0,
     "retries": 0,
     "requestBudgetExhausted": false,
-    "rawResultsSeen": 7,
-    "approximateResultCount": 7,
+    "rawResultsSeen": 9,
+    "approximateResultCount": 9,
     "resultCountCaveat": "CourtListener says type=r counts use cardinality aggregation and may vary by about 6% when more than 2,000 results match.",
-    "observedThisRun": 7,
-    "retainedFromPrevious": 6724,
+    "observedThisRun": 9,
+    "retainedFromPrevious": 6727,
     "error": null,
     "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/",
     "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
@@ -450566,17 +450916,17 @@
     },
     "incremental": {
       "status": "complete",
-      "startDate": "2026-10-06",
-      "endDate": "2026-10-13",
-      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-06 TO 2026-10-13]",
-      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-06+TO+2026-10-13%5D",
+      "startDate": "2026-10-07",
+      "endDate": "2026-10-14",
+      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-07 TO 2026-10-14]",
+      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-07+TO+2026-10-14%5D",
       "nextUrl": null,
       "incrementalDays": 7,
       "pagesFetchedTotal": 1,
-      "rawResultsSeenTotal": 7,
-      "acceptedResultsTotal": 7,
-      "lastAttemptAt": "2026-10-13T14:18:28.163Z",
-      "lastCompletedAt": "2026-10-13T14:18:28.163Z"
+      "rawResultsSeenTotal": 9,
+      "acceptedResultsTotal": 9,
+      "lastAttemptAt": "2026-10-14T12:00:00.466Z",
+      "lastCompletedAt": "2026-10-14T12:00:00.466Z"
     }
   }
 }
