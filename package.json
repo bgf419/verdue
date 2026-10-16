@@ -18,7 +18,8 @@
     "test:duration": "node --test tests/duration-benchmarks.test.mjs",
     "test:federal": "node --test tests/federal-cases.test.mjs",
     "test:government": "node --test tests/government-redress.test.mjs",
-    "lint": "eslint . --ignore-pattern dist-public"
+    "lint": "eslint . --ignore-pattern dist-public",
+    "test:hoboken": "node --test hoboken-sim/tests/*.test.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.112.2",
