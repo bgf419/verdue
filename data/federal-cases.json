@@ -1,8 +1,222 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-15T11:36:56.929Z",
-  "recordCount": 6736,
+  "generatedAt": "2026-10-16T11:31:02.929Z",
+  "recordCount": 6740,
   "records": [
+    {
+      "id": "courtlistener-docket-74966439",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "74966439",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "JACKSON v. DISTRICT OF COLUMBIA",
+      "docketId": 74966439,
+      "docketNumber": "1:26-cv-03591",
+      "docketUrl": "https://www.courtlistener.com/docket/74966439/jackson-v-district-of-columbia/",
+      "court": "District Court, District of Columbia",
+      "courtId": "dcd",
+      "dateFiled": "2026-10-15",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "42:1983 Prisoner Civil Rights",
+      "suitNature": "555 Prisoner Petition: Prison Condition (Other)",
+      "matchedFilings": [
+        {
+          "documentId": "497344902",
+          "docketEntryId": "481594534",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-15",
+          "description": "COMPLAINT for Class Action Injunctive Relief and Individual Claims for Damages against DISTRICT OF COLUMBIA with Jury Demand ( Filing fee $ 405 receipt number ADCDC-12742042) filed by MUSTAFA WRIGHT, SPIRO STAFILATOS, PERNELL JACKSON, LINNELL SHELTON, KEVIN CONDRAY, JUWUAN TUTT. (Attachments: # 1 Civil Cover Sheet, # 2 Summons)(McGough, Kristin) (Entered: 10/15/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": true,
+          "url": "https://www.courtlistener.com/docket/74966439/1/jackson-v-district-of-columbia/"
+        },
+        {
+          "documentId": "497353261",
+          "docketEntryId": "481594534",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-15",
+          "description": "COMPLAINT for Class Action Injunctive Relief and Individual Claims for Damages against DISTRICT OF COLUMBIA with Jury Demand ( Filing fee $ 405 receipt number ADCDC-12742042) filed by MUSTAFA WRIGHT, SPIRO STAFILATOS, PERNELL JACKSON, LINNELL SHELTON, KEVIN CONDRAY, JUWUAN TUTT. (Attachments: # 1 Civil Cover Sheet, # 2 Summons)(McGough, Kristin) (Entered: 10/15/2026)",
+          "documentType": "Attachment",
+          "availableInRecap": true,
+          "url": "https://www.courtlistener.com/docket/74966439/1/1/jackson-v-district-of-columbia/"
+        },
+        {
+          "documentId": "497353262",
+          "docketEntryId": "481594534",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-15",
+          "description": "COMPLAINT for Class Action Injunctive Relief and Individual Claims for Damages against DISTRICT OF COLUMBIA with Jury Demand ( Filing fee $ 405 receipt number ADCDC-12742042) filed by MUSTAFA WRIGHT, SPIRO STAFILATOS, PERNELL JACKSON, LINNELL SHELTON, KEVIN CONDRAY, JUWUAN TUTT. (Attachments: # 1 Civil Cover Sheet, # 2 Summons)(McGough, Kristin) (Entered: 10/15/2026)",
+          "documentType": "Attachment",
+          "availableInRecap": true,
+          "url": "https://www.courtlistener.com/docket/74966439/1/2/jackson-v-district-of-columbia/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/74966439/jackson-v-district-of-columbia/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/74966439/jackson-v-district-of-columbia/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-16T11:31:02.929Z",
+      "lastSeenAt": "2026-10-16T11:31:02.929Z",
+      "lastChangedAt": "2026-10-16T11:31:02.929Z",
+      "freshness": "current"
+    },
+    {
+      "id": "courtlistener-docket-74969255",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "74969255",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "INCORPORATED VILLAGE OF LYNBROOK v. Oshkosh Corporation",
+      "docketId": 74969255,
+      "docketNumber": "2:26-cv-01915",
+      "docketUrl": "https://www.courtlistener.com/docket/74969255/incorporated-village-of-lynbrook-v-oshkosh-corporation/",
+      "court": "District Court, E.D. Wisconsin",
+      "courtId": "wied",
+      "dateFiled": "2026-10-15",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "15:1 Antitrust Litigation",
+      "suitNature": "410 Anti-Trust",
+      "matchedFilings": [
+        {
+          "documentId": "497414143",
+          "docketEntryId": "481662281",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-15",
+          "description": "COMPLAINT (class action) with Jury Demand; against All Defendants by INCORPORATED VILLAGE OF LYNBROOK. ( Filing Fee PAID $405 receipt number AWIEDC-5386856) (Attachments: # 1 Civil Cover Sheet, # 2 Summons Oshkosh, # 3 Summons Pierce, # 4 Summons REV Group, # 5 Summons E-One, # 6 Summons Ferrara, # 7 Summons Kovatch, # 8 Summons Spartan, # 9 Summons Smeal SFA, # 10 Summons Smeal LTC, # 11 Summons Detroit Truck, # 12 Summons AIP LLC, # 13 Summons AIP CF IV, # 14 Summons AIP CF IV Parallel, # 15 Summons AIPCHC Holdings, # 16 Summons AIP CF4 LLC, # 17 Summons AIP CHC Investors, # 18 Summons Rosenbauer America, # 19 Summons Rosenbauer SD, # 20 Summons Rosenbauer MN)(Blythin, John)",
+          "documentType": "PACER Document",
+          "availableInRecap": true,
+          "url": "https://www.courtlistener.com/docket/74969255/1/incorporated-village-of-lynbrook-v-oshkosh-corporation/"
+        },
+        {
+          "documentId": "497486735",
+          "docketEntryId": "481662281",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-15",
+          "description": "COMPLAINT (class action) with Jury Demand; against All Defendants by INCORPORATED VILLAGE OF LYNBROOK. ( Filing Fee PAID $405 receipt number AWIEDC-5386856) (Attachments: # 1 Civil Cover Sheet, # 2 Summons Oshkosh, # 3 Summons Pierce, # 4 Summons REV Group, # 5 Summons E-One, # 6 Summons Ferrara, # 7 Summons Kovatch, # 8 Summons Spartan, # 9 Summons Smeal SFA, # 10 Summons Smeal LTC, # 11 Summons Detroit Truck, # 12 Summons AIP LLC, # 13 Summons AIP CF IV, # 14 Summons AIP CF IV Parallel, # 15 Summons AIPCHC Holdings, # 16 Summons AIP CF4 LLC, # 17 Summons AIP CHC Investors, # 18 Summons Rosenbauer America, # 19 Summons Rosenbauer SD, # 20 Summons Rosenbauer MN)(Blythin, John)",
+          "documentType": "Attachment",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74969255/1/2/incorporated-village-of-lynbrook-v-oshkosh-corporation/"
+        },
+        {
+          "documentId": "497486747",
+          "docketEntryId": "481662281",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-15",
+          "description": "COMPLAINT (class action) with Jury Demand; against All Defendants by INCORPORATED VILLAGE OF LYNBROOK. ( Filing Fee PAID $405 receipt number AWIEDC-5386856) (Attachments: # 1 Civil Cover Sheet, # 2 Summons Oshkosh, # 3 Summons Pierce, # 4 Summons REV Group, # 5 Summons E-One, # 6 Summons Ferrara, # 7 Summons Kovatch, # 8 Summons Spartan, # 9 Summons Smeal SFA, # 10 Summons Smeal LTC, # 11 Summons Detroit Truck, # 12 Summons AIP LLC, # 13 Summons AIP CF IV, # 14 Summons AIP CF IV Parallel, # 15 Summons AIPCHC Holdings, # 16 Summons AIP CF4 LLC, # 17 Summons AIP CHC Investors, # 18 Summons Rosenbauer America, # 19 Summons Rosenbauer SD, # 20 Summons Rosenbauer MN)(Blythin, John)",
+          "documentType": "Attachment",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74969255/1/14/incorporated-village-of-lynbrook-v-oshkosh-corporation/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/74969255/incorporated-village-of-lynbrook-v-oshkosh-corporation/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/74969255/incorporated-village-of-lynbrook-v-oshkosh-corporation/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-16T11:31:02.929Z",
+      "lastSeenAt": "2026-10-16T11:31:02.929Z",
+      "lastChangedAt": "2026-10-16T11:31:02.929Z",
+      "freshness": "current"
+    },
+    {
+      "id": "courtlistener-docket-74969950",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "74969950",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "Fessler v. D-Wave Quantum, Inc.",
+      "docketId": 74969950,
+      "docketNumber": "5:26-cv-11953",
+      "docketUrl": "https://www.courtlistener.com/docket/74969950/fessler-v-d-wave-quantum-inc/",
+      "court": "District Court, N.D. California",
+      "courtId": "cand",
+      "dateFiled": "2026-10-15",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "15:78u-4 Private Securities Litigation Act",
+      "suitNature": "850 Securities/Commodities",
+      "matchedFilings": [
+        {
+          "documentId": "497421578",
+          "docketEntryId": "481669539",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-15",
+          "description": "COMPLAINT against Alan Baratz, D-Wave Quantum, Inc., John Markovich ( Filing fee $ 405, receipt number ACANDC-22595497.). Case filed under the Class Action Private Securities Litigation Reform Act. Filed by Rodney Fessler. (Attachments: # 1 Supplement D-Wave Certification Fessler, # 2 Supplement Fessler--Schedule A, # 3 Summons)(Boyle, Michael) (Filed on 10/15/2026) (Entered: 10/15/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": true,
+          "url": "https://www.courtlistener.com/docket/74969950/1/fessler-v-d-wave-quantum-inc/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/74969950/fessler-v-d-wave-quantum-inc/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/74969950/fessler-v-d-wave-quantum-inc/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-16T11:31:02.929Z",
+      "lastSeenAt": "2026-10-16T11:31:02.929Z",
+      "lastChangedAt": "2026-10-16T11:31:02.929Z",
+      "freshness": "current"
+    },
     {
       "id": "courtlistener-docket-74954468",
       "sourceId": "courtlistener-recap-class-action-complaints",
@@ -77,7 +291,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-14T12:00:00.466Z",
-      "lastSeenAt": "2026-10-15T11:36:56.929Z",
+      "lastSeenAt": "2026-10-16T11:31:02.929Z",
       "lastChangedAt": "2026-10-14T12:00:00.466Z",
       "freshness": "current"
     },
@@ -155,7 +369,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-14T12:00:00.466Z",
-      "lastSeenAt": "2026-10-15T11:36:56.929Z",
+      "lastSeenAt": "2026-10-16T11:31:02.929Z",
       "lastChangedAt": "2026-10-14T12:00:00.466Z",
       "freshness": "current"
     },
@@ -233,8 +447,76 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-14T12:00:00.466Z",
-      "lastSeenAt": "2026-10-15T11:36:56.929Z",
+      "lastSeenAt": "2026-10-16T11:31:02.929Z",
       "lastChangedAt": "2026-10-14T12:00:00.466Z",
+      "freshness": "current"
+    },
+    {
+      "id": "courtlistener-docket-74961828",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "74961828",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "Pursley v. Georgia Power Company",
+      "docketId": 74961828,
+      "docketNumber": "1:26-cv-05877",
+      "docketUrl": "https://www.courtlistener.com/docket/74961828/pursley-v-georgia-power-company/",
+      "court": "District Court, N.D. Georgia",
+      "courtId": "gand",
+      "dateFiled": "2026-10-12",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "28:1332 Diversity-Breach of Fiduciary Duty",
+      "suitNature": "190 Contract: Other",
+      "matchedFilings": [
+        {
+          "documentId": "497435286",
+          "docketEntryId": "481682533",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-12",
+          "description": "CLASS ACTION COMPLAINT with Jury Demand filed by Shennard Pursley. (Filing fee $405, receipt number AGANDC-15623387) (Attachments: # 1 Civil Cover Sheet)(ltt) Please visit our website at http://www.gand.uscourts.gov/commonly-used-forms to obtain Pretrial Instructions and Pretrial Associated Forms which includes the Consent To Proceed Before U.S. Magistrate form. Modified on 10/14/2026 (ltt). (Entered: 10/14/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74961828/1/pursley-v-georgia-power-company/"
+        },
+        {
+          "documentId": "497435317",
+          "docketEntryId": "481682533",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-12",
+          "description": "CLASS ACTION COMPLAINT with Jury Demand filed by Shennard Pursley. (Filing fee $405, receipt number AGANDC-15623387) (Attachments: # 1 Civil Cover Sheet)(ltt) Please visit our website at http://www.gand.uscourts.gov/commonly-used-forms to obtain Pretrial Instructions and Pretrial Associated Forms which includes the Consent To Proceed Before U.S. Magistrate form. Modified on 10/14/2026 (ltt). (Entered: 10/14/2026)",
+          "documentType": "Attachment",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74961828/1/1/pursley-v-georgia-power-company/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/74961828/pursley-v-georgia-power-company/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/74961828/pursley-v-georgia-power-company/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-16T11:31:02.929Z",
+      "lastSeenAt": "2026-10-16T11:31:02.929Z",
+      "lastChangedAt": "2026-10-16T11:31:02.929Z",
       "freshness": "current"
     },
     {
@@ -311,7 +593,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-10T12:38:44.004Z",
-      "lastSeenAt": "2026-10-15T11:36:56.929Z",
+      "lastSeenAt": "2026-10-16T11:31:02.929Z",
       "lastChangedAt": "2026-10-14T12:00:00.466Z",
       "freshness": "current"
     },
@@ -369,7 +651,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-12T15:35:59.804Z",
-      "lastSeenAt": "2026-10-15T11:36:56.929Z",
+      "lastSeenAt": "2026-10-16T11:31:02.929Z",
       "lastChangedAt": "2026-10-12T15:35:59.804Z",
       "freshness": "current"
     },
@@ -427,7 +709,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-14T12:00:00.466Z",
-      "lastSeenAt": "2026-10-15T11:36:56.929Z",
+      "lastSeenAt": "2026-10-16T11:31:02.929Z",
       "lastChangedAt": "2026-10-14T12:00:00.466Z",
       "freshness": "current"
     },
@@ -450874,14 +451156,14 @@
     "status": "complete",
     "stale": false,
     "mode": "incremental",
-    "checkedAt": "2026-10-15T11:36:56.929Z",
-    "lastSuccessfulAt": "2026-10-15T11:36:56.929Z",
+    "checkedAt": "2026-10-16T11:31:02.929Z",
+    "lastSuccessfulAt": "2026-10-16T11:31:02.929Z",
     "queryCore": "description:(Class Action Complaint)",
-    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-08 TO 2026-10-15]",
-    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-08+TO+2026-10-15%5D",
+    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-09 TO 2026-10-16]",
+    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-09+TO+2026-10-16%5D",
     "dateRange": {
-      "startDate": "2026-10-08",
-      "endDate": "2026-10-15"
+      "startDate": "2026-10-09",
+      "endDate": "2026-10-16"
     },
     "resumedFromCursor": false,
     "restartRequested": false,
@@ -450891,11 +451173,11 @@
     "cacheHits": 0,
     "retries": 0,
     "requestBudgetExhausted": false,
-    "rawResultsSeen": 8,
-    "approximateResultCount": 8,
+    "rawResultsSeen": 11,
+    "approximateResultCount": 11,
     "resultCountCaveat": "CourtListener says type=r counts use cardinality aggregation and may vary by about 6% when more than 2,000 results match.",
-    "observedThisRun": 8,
-    "retainedFromPrevious": 6728,
+    "observedThisRun": 10,
+    "retainedFromPrevious": 6730,
     "error": null,
     "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/",
     "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
@@ -450916,17 +451198,17 @@
     },
     "incremental": {
       "status": "complete",
-      "startDate": "2026-10-08",
-      "endDate": "2026-10-15",
-      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-08 TO 2026-10-15]",
-      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-08+TO+2026-10-15%5D",
+      "startDate": "2026-10-09",
+      "endDate": "2026-10-16",
+      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-09 TO 2026-10-16]",
+      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-09+TO+2026-10-16%5D",
       "nextUrl": null,
       "incrementalDays": 7,
       "pagesFetchedTotal": 1,
-      "rawResultsSeenTotal": 8,
-      "acceptedResultsTotal": 8,
-      "lastAttemptAt": "2026-10-15T11:36:56.929Z",
-      "lastCompletedAt": "2026-10-15T11:36:56.929Z"
+      "rawResultsSeenTotal": 11,
+      "acceptedResultsTotal": 10,
+      "lastAttemptAt": "2026-10-16T11:31:02.929Z",
+      "lastCompletedAt": "2026-10-16T11:31:02.929Z"
     }
   }
 }
