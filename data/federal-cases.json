@@ -1,8 +1,86 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-16T11:31:02.929Z",
-  "recordCount": 6740,
+  "generatedAt": "2026-10-17T10:51:01.508Z",
+  "recordCount": 6743,
   "records": [
+    {
+      "id": "courtlistener-docket-74978323",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "74978323",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "James v. Valenti Southeast Management LLC",
+      "docketId": 74978323,
+      "docketNumber": "8:26-cv-03149",
+      "docketUrl": "https://www.courtlistener.com/docket/74978323/james-v-valenti-southeast-management-llc/",
+      "court": "District Court, M.D. Florida",
+      "courtId": "flmd",
+      "dateFiled": "2026-10-16",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "28:1332 Diversity-Personal Injury",
+      "suitNature": "360 P.I.: Other",
+      "matchedFilings": [
+        {
+          "documentId": "497621680",
+          "docketEntryId": "481862769",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-16",
+          "description": "COMPLAINT Class Action against Valenti Southeast Management LLC with Jury Demand (Filing fee $405 receipt number AFLMDC-25715037) filed by Jack James. (Attachments: # 1 Civil Cover Sheet, # 2 Proposed Summons)(Weekes, Mariya) (Entered: 10/16/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": true,
+          "url": "https://www.courtlistener.com/docket/74978323/1/james-v-valenti-southeast-management-llc/"
+        },
+        {
+          "documentId": "497647701",
+          "docketEntryId": "481862769",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-16",
+          "description": "COMPLAINT Class Action against Valenti Southeast Management LLC with Jury Demand (Filing fee $405 receipt number AFLMDC-25715037) filed by Jack James. (Attachments: # 1 Civil Cover Sheet, # 2 Proposed Summons)(Weekes, Mariya) (Entered: 10/16/2026)",
+          "documentType": "Attachment",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74978323/1/1/james-v-valenti-southeast-management-llc/"
+        },
+        {
+          "documentId": "497647702",
+          "docketEntryId": "481862769",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-16",
+          "description": "COMPLAINT Class Action against Valenti Southeast Management LLC with Jury Demand (Filing fee $405 receipt number AFLMDC-25715037) filed by Jack James. (Attachments: # 1 Civil Cover Sheet, # 2 Proposed Summons)(Weekes, Mariya) (Entered: 10/16/2026)",
+          "documentType": "Attachment",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74978323/1/2/james-v-valenti-southeast-management-llc/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/74978323/james-v-valenti-southeast-management-llc/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/74978323/james-v-valenti-southeast-management-llc/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-17T10:51:01.508Z",
+      "lastSeenAt": "2026-10-17T10:51:01.508Z",
+      "lastChangedAt": "2026-10-17T10:51:01.508Z",
+      "freshness": "current"
+    },
     {
       "id": "courtlistener-docket-74966439",
       "sourceId": "courtlistener-recap-class-action-complaints",
@@ -77,7 +155,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-16T11:31:02.929Z",
-      "lastSeenAt": "2026-10-16T11:31:02.929Z",
+      "lastSeenAt": "2026-10-17T10:51:01.508Z",
       "lastChangedAt": "2026-10-16T11:31:02.929Z",
       "freshness": "current"
     },
@@ -92,7 +170,7 @@
       "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
       "participationMode": "no_current_action",
       "windowStatus": "not_applicable",
-      "caseName": "INCORPORATED VILLAGE OF LYNBROOK v. Oshkosh Corporation",
+      "caseName": "Incorporated Village of Lynbrook v. Oshkosh Corporation",
       "docketId": 74969255,
       "docketNumber": "2:26-cv-01915",
       "docketUrl": "https://www.courtlistener.com/docket/74969255/incorporated-village-of-lynbrook-v-oshkosh-corporation/",
@@ -106,16 +184,6 @@
       "cause": "15:1 Antitrust Litigation",
       "suitNature": "410 Anti-Trust",
       "matchedFilings": [
-        {
-          "documentId": "497414143",
-          "docketEntryId": "481662281",
-          "documentNumber": 1,
-          "entryDateFiled": "2026-10-15",
-          "description": "COMPLAINT (class action) with Jury Demand; against All Defendants by INCORPORATED VILLAGE OF LYNBROOK. ( Filing Fee PAID $405 receipt number AWIEDC-5386856) (Attachments: # 1 Civil Cover Sheet, # 2 Summons Oshkosh, # 3 Summons Pierce, # 4 Summons REV Group, # 5 Summons E-One, # 6 Summons Ferrara, # 7 Summons Kovatch, # 8 Summons Spartan, # 9 Summons Smeal SFA, # 10 Summons Smeal LTC, # 11 Summons Detroit Truck, # 12 Summons AIP LLC, # 13 Summons AIP CF IV, # 14 Summons AIP CF IV Parallel, # 15 Summons AIPCHC Holdings, # 16 Summons AIP CF4 LLC, # 17 Summons AIP CHC Investors, # 18 Summons Rosenbauer America, # 19 Summons Rosenbauer SD, # 20 Summons Rosenbauer MN)(Blythin, John)",
-          "documentType": "PACER Document",
-          "availableInRecap": true,
-          "url": "https://www.courtlistener.com/docket/74969255/1/incorporated-village-of-lynbrook-v-oshkosh-corporation/"
-        },
         {
           "documentId": "497486735",
           "docketEntryId": "481662281",
@@ -135,6 +203,16 @@
           "documentType": "Attachment",
           "availableInRecap": false,
           "url": "https://www.courtlistener.com/docket/74969255/1/14/incorporated-village-of-lynbrook-v-oshkosh-corporation/"
+        },
+        {
+          "documentId": "497486748",
+          "docketEntryId": "481662281",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-15",
+          "description": "COMPLAINT (class action) with Jury Demand; against All Defendants by INCORPORATED VILLAGE OF LYNBROOK. ( Filing Fee PAID $405 receipt number AWIEDC-5386856) (Attachments: # 1 Civil Cover Sheet, # 2 Summons Oshkosh, # 3 Summons Pierce, # 4 Summons REV Group, # 5 Summons E-One, # 6 Summons Ferrara, # 7 Summons Kovatch, # 8 Summons Spartan, # 9 Summons Smeal SFA, # 10 Summons Smeal LTC, # 11 Summons Detroit Truck, # 12 Summons AIP LLC, # 13 Summons AIP CF IV, # 14 Summons AIP CF IV Parallel, # 15 Summons AIPCHC Holdings, # 16 Summons AIP CF4 LLC, # 17 Summons AIP CHC Investors, # 18 Summons Rosenbauer America, # 19 Summons Rosenbauer SD, # 20 Summons Rosenbauer MN)(Blythin, John)",
+          "documentType": "Attachment",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74969255/1/15/incorporated-village-of-lynbrook-v-oshkosh-corporation/"
         }
       ],
       "action": {
@@ -155,8 +233,8 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-16T11:31:02.929Z",
-      "lastSeenAt": "2026-10-16T11:31:02.929Z",
-      "lastChangedAt": "2026-10-16T11:31:02.929Z",
+      "lastSeenAt": "2026-10-17T10:51:01.508Z",
+      "lastChangedAt": "2026-10-17T10:51:01.508Z",
       "freshness": "current"
     },
     {
@@ -213,8 +291,134 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-16T11:31:02.929Z",
-      "lastSeenAt": "2026-10-16T11:31:02.929Z",
+      "lastSeenAt": "2026-10-17T10:51:01.508Z",
       "lastChangedAt": "2026-10-16T11:31:02.929Z",
+      "freshness": "current"
+    },
+    {
+      "id": "courtlistener-docket-74973522",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "74973522",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "Friello, Michael v. Kovo+(USA), Inc.",
+      "docketId": 74973522,
+      "docketNumber": "3:26-cv-01036",
+      "docketUrl": "https://www.courtlistener.com/docket/74973522/friello-michael-v-kovousa-inc/",
+      "court": "District Court, W.D. Wisconsin",
+      "courtId": "wiwd",
+      "dateFiled": "2026-10-15",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "28:1332 Diversity-Contract Dispute",
+      "suitNature": "190 Contract: Other",
+      "matchedFilings": [
+        {
+          "documentId": "497499204",
+          "docketEntryId": "481744934",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-15",
+          "description": "COMPLAINT Class Action Complaint against Kovo+(USA), Inc.. ( Filing fee $ 405 receipt number AWIWDC-3880684.), filed by Michael Friello. (Attachments: # 1 JS-44 Civil Cover Sheet) (Hagman, Nickolas) (Entered: 10/15/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": true,
+          "url": "https://www.courtlistener.com/docket/74973522/1/friello-michael-v-kovousa-inc/"
+        },
+        {
+          "documentId": "497633574",
+          "docketEntryId": "481744934",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-15",
+          "description": "COMPLAINT Class Action Complaint against Kovo+(USA), Inc.. ( Filing fee $ 405 receipt number AWIWDC-3880684.), filed by Michael Friello. (Attachments: # 1 JS-44 Civil Cover Sheet) (Hagman, Nickolas) (Entered: 10/15/2026)",
+          "documentType": "Attachment",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74973522/1/1/friello-michael-v-kovousa-inc/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/74973522/friello-michael-v-kovousa-inc/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/74973522/friello-michael-v-kovousa-inc/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-17T10:51:01.508Z",
+      "lastSeenAt": "2026-10-17T10:51:01.508Z",
+      "lastChangedAt": "2026-10-17T10:51:01.508Z",
+      "freshness": "current"
+    },
+    {
+      "id": "courtlistener-docket-74975059",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "74975059",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "Cortez v. Gildan Activewear Inc.",
+      "docketId": 74975059,
+      "docketNumber": "1:26-cv-02126",
+      "docketUrl": "https://www.courtlistener.com/docket/74975059/cortez-v-gildan-activewear-inc/",
+      "court": "District Court, N.D. New York",
+      "courtId": "nynd",
+      "dateFiled": "2026-10-15",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "15:78m(a) Securities Exchange Act",
+      "suitNature": "850 Securities/Commodities",
+      "matchedFilings": [
+        {
+          "documentId": "497543751",
+          "docketEntryId": "481786474",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-15",
+          "description": "CLASS ACTION COMPLAINT WITH JURY DEMAND against Luca Barile, Glenn J. Chamandy, Gildan Activewear Inc., and Rhodri J. Harries (Filing fee $405 receipt number ANYNDC-7809379) filed by Beda Cortez. (Attachments: # 1 Exhibit PSLRA Certification, # 2 Civil Cover Sheet)(tll) (Entered: 10/16/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": true,
+          "url": "https://www.courtlistener.com/docket/74975059/1/cortez-v-gildan-activewear-inc/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/74975059/cortez-v-gildan-activewear-inc/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/74975059/cortez-v-gildan-activewear-inc/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-17T10:51:01.508Z",
+      "lastSeenAt": "2026-10-17T10:51:01.508Z",
+      "lastChangedAt": "2026-10-17T10:51:01.508Z",
       "freshness": "current"
     },
     {
@@ -291,7 +495,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-14T12:00:00.466Z",
-      "lastSeenAt": "2026-10-16T11:31:02.929Z",
+      "lastSeenAt": "2026-10-17T10:51:01.508Z",
       "lastChangedAt": "2026-10-14T12:00:00.466Z",
       "freshness": "current"
     },
@@ -369,7 +573,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-14T12:00:00.466Z",
-      "lastSeenAt": "2026-10-16T11:31:02.929Z",
+      "lastSeenAt": "2026-10-17T10:51:01.508Z",
       "lastChangedAt": "2026-10-14T12:00:00.466Z",
       "freshness": "current"
     },
@@ -447,7 +651,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-14T12:00:00.466Z",
-      "lastSeenAt": "2026-10-16T11:31:02.929Z",
+      "lastSeenAt": "2026-10-17T10:51:01.508Z",
       "lastChangedAt": "2026-10-14T12:00:00.466Z",
       "freshness": "current"
     },
@@ -515,7 +719,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-16T11:31:02.929Z",
-      "lastSeenAt": "2026-10-16T11:31:02.929Z",
+      "lastSeenAt": "2026-10-17T10:51:01.508Z",
       "lastChangedAt": "2026-10-16T11:31:02.929Z",
       "freshness": "current"
     },
@@ -451156,14 +451360,14 @@
     "status": "complete",
     "stale": false,
     "mode": "incremental",
-    "checkedAt": "2026-10-16T11:31:02.929Z",
-    "lastSuccessfulAt": "2026-10-16T11:31:02.929Z",
+    "checkedAt": "2026-10-17T10:51:01.508Z",
+    "lastSuccessfulAt": "2026-10-17T10:51:01.508Z",
     "queryCore": "description:(Class Action Complaint)",
-    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-09 TO 2026-10-16]",
-    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-09+TO+2026-10-16%5D",
+    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-10 TO 2026-10-17]",
+    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-10+TO+2026-10-17%5D",
     "dateRange": {
-      "startDate": "2026-10-09",
-      "endDate": "2026-10-16"
+      "startDate": "2026-10-10",
+      "endDate": "2026-10-17"
     },
     "resumedFromCursor": false,
     "restartRequested": false,
@@ -451173,11 +451377,11 @@
     "cacheHits": 0,
     "retries": 0,
     "requestBudgetExhausted": false,
-    "rawResultsSeen": 11,
-    "approximateResultCount": 11,
+    "rawResultsSeen": 10,
+    "approximateResultCount": 10,
     "resultCountCaveat": "CourtListener says type=r counts use cardinality aggregation and may vary by about 6% when more than 2,000 results match.",
     "observedThisRun": 10,
-    "retainedFromPrevious": 6730,
+    "retainedFromPrevious": 6733,
     "error": null,
     "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/",
     "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
@@ -451198,17 +451402,17 @@
     },
     "incremental": {
       "status": "complete",
-      "startDate": "2026-10-09",
-      "endDate": "2026-10-16",
-      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-09 TO 2026-10-16]",
-      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-09+TO+2026-10-16%5D",
+      "startDate": "2026-10-10",
+      "endDate": "2026-10-17",
+      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-10 TO 2026-10-17]",
+      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-10+TO+2026-10-17%5D",
       "nextUrl": null,
       "incrementalDays": 7,
       "pagesFetchedTotal": 1,
-      "rawResultsSeenTotal": 11,
+      "rawResultsSeenTotal": 10,
       "acceptedResultsTotal": 10,
-      "lastAttemptAt": "2026-10-16T11:31:02.929Z",
-      "lastCompletedAt": "2026-10-16T11:31:02.929Z"
+      "lastAttemptAt": "2026-10-17T10:51:01.508Z",
+      "lastCompletedAt": "2026-10-17T10:51:01.508Z"
     }
   }
 }
