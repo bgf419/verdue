@@ -1,8 +1,144 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-19T13:27:25.196Z",
-  "recordCount": 6743,
+  "generatedAt": "2026-10-20T11:45:41.081Z",
+  "recordCount": 6748,
   "records": [
+    {
+      "id": "courtlistener-docket-74983565",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "74983565",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "Hill v. Parker-Hannifin Corporation",
+      "docketId": 74983565,
+      "docketNumber": "1:26-cv-02743",
+      "docketUrl": "https://www.courtlistener.com/docket/74983565/hill-v-parker-hannifin-corporation/",
+      "court": "District Court, N.D. Ohio",
+      "courtId": "ohnd",
+      "dateFiled": "2026-10-19",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "28:1332 Diversity-Property Damage",
+      "suitNature": "380 Personal Property: Other",
+      "matchedFilings": [
+        {
+          "documentId": "497755662",
+          "docketEntryId": "481990525",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-19",
+          "description": "Class Action Complaint with jury demand against Parker-Hannifin Corporation. Filing fee paid $405.00, Receipt number AOHNDC-13940672. Filed by Shawn Hill. (Attachments: # 1 Civil Cover Sheet, # 2 Summons) (Coates, Terence) (Entered: 10/19/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": true,
+          "url": "https://www.courtlistener.com/docket/74983565/1/hill-v-parker-hannifin-corporation/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/74983565/hill-v-parker-hannifin-corporation/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/74983565/hill-v-parker-hannifin-corporation/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-20T11:45:41.081Z",
+      "lastSeenAt": "2026-10-20T11:45:41.081Z",
+      "lastChangedAt": "2026-10-20T11:45:41.081Z",
+      "freshness": "current"
+    },
+    {
+      "id": "courtlistener-docket-74985350",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "74985350",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "Bondi v. Dunkin' Brands, Inc.",
+      "docketId": 74985350,
+      "docketNumber": "1:26-cv-14738",
+      "docketUrl": "https://www.courtlistener.com/docket/74985350/bondi-v-dunkin-brands-inc/",
+      "court": "District Court, D. Massachusetts",
+      "courtId": "mad",
+      "dateFiled": "2026-10-19",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "No cause code entered",
+      "suitNature": "890 Other Statutory Actions",
+      "matchedFilings": [
+        {
+          "documentId": "497797529",
+          "docketEntryId": "482031745",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-19",
+          "description": "COMPLAINT Class Action against Inspire Brands, Inc., Dunkin' Brands, Inc. Filing fee: $ 405, receipt number AMADC-12121846 (Fee Status: Filing Fee paid), filed by Rachael Bondi. (Attachments: # 1 Civil Cover Sheet, # 2 Category Form)(Reardon, James) (Entered: 10/19/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": true,
+          "url": "https://www.courtlistener.com/docket/74985350/1/bondi-v-dunkin-brands-inc/"
+        },
+        {
+          "documentId": "497806744",
+          "docketEntryId": "482031745",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-19",
+          "description": "COMPLAINT Class Action against Inspire Brands, Inc., Dunkin' Brands, Inc. Filing fee: $ 405, receipt number AMADC-12121846 (Fee Status: Filing Fee paid), filed by Rachael Bondi. (Attachments: # 1 Civil Cover Sheet, # 2 Category Form)(Reardon, James) (Entered: 10/19/2026)",
+          "documentType": "Attachment",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74985350/1/1/bondi-v-dunkin-brands-inc/"
+        },
+        {
+          "documentId": "497806745",
+          "docketEntryId": "482031745",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-19",
+          "description": "COMPLAINT Class Action against Inspire Brands, Inc., Dunkin' Brands, Inc. Filing fee: $ 405, receipt number AMADC-12121846 (Fee Status: Filing Fee paid), filed by Rachael Bondi. (Attachments: # 1 Civil Cover Sheet, # 2 Category Form)(Reardon, James) (Entered: 10/19/2026)",
+          "documentType": "Attachment",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74985350/1/2/bondi-v-dunkin-brands-inc/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/74985350/bondi-v-dunkin-brands-inc/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/74985350/bondi-v-dunkin-brands-inc/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-20T11:45:41.081Z",
+      "lastSeenAt": "2026-10-20T11:45:41.081Z",
+      "lastChangedAt": "2026-10-20T11:45:41.081Z",
+      "freshness": "current"
+    },
     {
       "id": "courtlistener-docket-74978323",
       "sourceId": "courtlistener-recap-class-action-complaints",
@@ -77,7 +213,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-17T10:51:01.508Z",
-      "lastSeenAt": "2026-10-19T13:27:25.196Z",
+      "lastSeenAt": "2026-10-20T11:45:41.081Z",
       "lastChangedAt": "2026-10-17T10:51:01.508Z",
       "freshness": "current"
     },
@@ -155,7 +291,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-16T11:31:02.929Z",
-      "lastSeenAt": "2026-10-19T13:27:25.196Z",
+      "lastSeenAt": "2026-10-20T11:45:41.081Z",
       "lastChangedAt": "2026-10-16T11:31:02.929Z",
       "freshness": "current"
     },
@@ -233,7 +369,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-16T11:31:02.929Z",
-      "lastSeenAt": "2026-10-19T13:27:25.196Z",
+      "lastSeenAt": "2026-10-20T11:45:41.081Z",
       "lastChangedAt": "2026-10-17T10:51:01.508Z",
       "freshness": "current"
     },
@@ -291,7 +427,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-16T11:31:02.929Z",
-      "lastSeenAt": "2026-10-19T13:27:25.196Z",
+      "lastSeenAt": "2026-10-20T11:45:41.081Z",
       "lastChangedAt": "2026-10-16T11:31:02.929Z",
       "freshness": "current"
     },
@@ -359,7 +495,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-17T10:51:01.508Z",
-      "lastSeenAt": "2026-10-19T13:27:25.196Z",
+      "lastSeenAt": "2026-10-20T11:45:41.081Z",
       "lastChangedAt": "2026-10-17T10:51:01.508Z",
       "freshness": "current"
     },
@@ -417,7 +553,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-17T10:51:01.508Z",
-      "lastSeenAt": "2026-10-19T13:27:25.196Z",
+      "lastSeenAt": "2026-10-20T11:45:41.081Z",
       "lastChangedAt": "2026-10-17T10:51:01.508Z",
       "freshness": "current"
     },
@@ -495,8 +631,66 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-14T12:00:00.466Z",
-      "lastSeenAt": "2026-10-19T13:27:25.196Z",
+      "lastSeenAt": "2026-10-20T11:45:41.081Z",
       "lastChangedAt": "2026-10-14T12:00:00.466Z",
+      "freshness": "current"
+    },
+    {
+      "id": "courtlistener-docket-74957129",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "74957129",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "Taylor v. MoneyGram Payment Systems, Inc.",
+      "docketId": 74957129,
+      "docketNumber": "0:26-cv-04476",
+      "docketUrl": "https://www.courtlistener.com/docket/74957129/taylor-v-moneygram-payment-systems-inc/",
+      "court": "District Court, D. Minnesota",
+      "courtId": "mnd",
+      "dateFiled": "2026-10-13",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "28:1332 Diversity-Property Damage",
+      "suitNature": "380 Personal Property: Other",
+      "matchedFilings": [
+        {
+          "documentId": "497782045",
+          "docketEntryId": "482016443",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-13",
+          "description": "COMPLAINT Class Action Complaint against MoneyGram Payment Systems, Inc. (filing fee $ 405, receipt number AMNDC-13345017) filed by Robert Taylor. Filer requests summons issued. (Attachments: # 1 Civil Cover Sheet) (Gudmundson, Brian) (Entered: 10/13/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74957129/1/taylor-v-moneygram-payment-systems-inc/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/74957129/taylor-v-moneygram-payment-systems-inc/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/74957129/taylor-v-moneygram-payment-systems-inc/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-20T11:45:41.081Z",
+      "lastSeenAt": "2026-10-20T11:45:41.081Z",
+      "lastChangedAt": "2026-10-20T11:45:41.081Z",
       "freshness": "current"
     },
     {
@@ -573,8 +767,124 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-14T12:00:00.466Z",
-      "lastSeenAt": "2026-10-19T13:27:25.196Z",
+      "lastSeenAt": "2026-10-20T11:45:41.081Z",
       "lastChangedAt": "2026-10-14T12:00:00.466Z",
+      "freshness": "current"
+    },
+    {
+      "id": "courtlistener-docket-74962023",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "74962023",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "Gray v. Phoenix Children's Hospital Incorporated",
+      "docketId": 74962023,
+      "docketNumber": "2:26-cv-07475",
+      "docketUrl": "https://www.courtlistener.com/docket/74962023/gray-v-phoenix-childrens-hospital-incorporated/",
+      "court": "District Court, D. Arizona",
+      "courtId": "azd",
+      "dateFiled": "2026-10-13",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "18:2510 Electronic Communications Privacy Act",
+      "suitNature": "890 Other Statutes: Other Statutory Actions",
+      "matchedFilings": [
+        {
+          "documentId": "497244856",
+          "docketEntryId": "481499800",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-13",
+          "description": "CLASS ACTION COMPLAINT. Filing fee received: $ 405.00, receipt number AAZDC-26250216 filed by Jennifer Dufault, Sarah Gray. (Bivens, Lisa) (Attachments: # 1 Civil Cover Sheet)(VSB) (Entered: 10/14/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": true,
+          "url": "https://www.courtlistener.com/docket/74962023/1/gray-v-phoenix-childrens-hospital-incorporated/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/74962023/gray-v-phoenix-childrens-hospital-incorporated/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/74962023/gray-v-phoenix-childrens-hospital-incorporated/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-20T11:45:41.081Z",
+      "lastSeenAt": "2026-10-20T11:45:41.081Z",
+      "lastChangedAt": "2026-10-20T11:45:41.081Z",
+      "freshness": "current"
+    },
+    {
+      "id": "courtlistener-docket-74962028",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "74962028",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "Boulton v. EOS Fitness Opco Holdings LLC",
+      "docketId": 74962028,
+      "docketNumber": "2:26-cv-07474",
+      "docketUrl": "https://www.courtlistener.com/docket/74962028/boulton-v-eos-fitness-opco-holdings-llc/",
+      "court": "District Court, D. Arizona",
+      "courtId": "azd",
+      "dateFiled": "2026-10-13",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "47:227 Restrictions of Use of Telephone Equipment",
+      "suitNature": "485 Telephone Consumer Protection Act (TCPA)",
+      "matchedFilings": [
+        {
+          "documentId": "497244713",
+          "docketEntryId": "481499657",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-13",
+          "description": "CLASS ACTION COMPLAINT. Filing fee received: $ 405.00, receipt number AAZDC-26249871 filed by Addison Boulton. (Freeman, Lisa) (Attachments: # 1 Civil Cover Sheet)(VRS) (Entered: 10/14/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74962028/1/boulton-v-eos-fitness-opco-holdings-llc/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/74962028/boulton-v-eos-fitness-opco-holdings-llc/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/74962028/boulton-v-eos-fitness-opco-holdings-llc/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-20T11:45:41.081Z",
+      "lastSeenAt": "2026-10-20T11:45:41.081Z",
+      "lastChangedAt": "2026-10-20T11:45:41.081Z",
       "freshness": "current"
     },
     {
@@ -451360,14 +451670,14 @@
     "status": "complete",
     "stale": false,
     "mode": "incremental",
-    "checkedAt": "2026-10-19T13:27:25.196Z",
-    "lastSuccessfulAt": "2026-10-19T13:27:25.196Z",
+    "checkedAt": "2026-10-20T11:45:41.081Z",
+    "lastSuccessfulAt": "2026-10-20T11:45:41.081Z",
     "queryCore": "description:(Class Action Complaint)",
-    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-12 TO 2026-10-19]",
-    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-12+TO+2026-10-19%5D",
+    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-13 TO 2026-10-20]",
+    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-13+TO+2026-10-20%5D",
     "dateRange": {
-      "startDate": "2026-10-12",
-      "endDate": "2026-10-19"
+      "startDate": "2026-10-13",
+      "endDate": "2026-10-20"
     },
     "resumedFromCursor": false,
     "restartRequested": false,
@@ -451377,11 +451687,11 @@
     "cacheHits": 0,
     "retries": 0,
     "requestBudgetExhausted": false,
-    "rawResultsSeen": 10,
-    "approximateResultCount": 10,
+    "rawResultsSeen": 13,
+    "approximateResultCount": 13,
     "resultCountCaveat": "CourtListener says type=r counts use cardinality aggregation and may vary by about 6% when more than 2,000 results match.",
-    "observedThisRun": 10,
-    "retainedFromPrevious": 6733,
+    "observedThisRun": 13,
+    "retainedFromPrevious": 6735,
     "error": null,
     "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/",
     "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
@@ -451402,17 +451712,17 @@
     },
     "incremental": {
       "status": "complete",
-      "startDate": "2026-10-12",
-      "endDate": "2026-10-19",
-      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-12 TO 2026-10-19]",
-      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-12+TO+2026-10-19%5D",
+      "startDate": "2026-10-13",
+      "endDate": "2026-10-20",
+      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-13 TO 2026-10-20]",
+      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-13+TO+2026-10-20%5D",
       "nextUrl": null,
       "incrementalDays": 7,
       "pagesFetchedTotal": 1,
-      "rawResultsSeenTotal": 10,
-      "acceptedResultsTotal": 10,
-      "lastAttemptAt": "2026-10-19T13:27:25.196Z",
-      "lastCompletedAt": "2026-10-19T13:27:25.196Z"
+      "rawResultsSeenTotal": 13,
+      "acceptedResultsTotal": 13,
+      "lastAttemptAt": "2026-10-20T11:45:41.081Z",
+      "lastCompletedAt": "2026-10-20T11:45:41.081Z"
     }
   }
 }
