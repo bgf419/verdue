@@ -1,8 +1,66 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-20T11:45:41.081Z",
-  "recordCount": 6748,
+  "generatedAt": "2026-10-21T11:57:43.670Z",
+  "recordCount": 6749,
   "records": [
+    {
+      "id": "courtlistener-docket-74989375",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "74989375",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "Lawrence v. D-Wave Quantum Inc.",
+      "docketId": 74989375,
+      "docketNumber": "3:26-cv-12155",
+      "docketUrl": "https://www.courtlistener.com/docket/74989375/lawrence-v-d-wave-quantum-inc/",
+      "court": "District Court, N.D. California",
+      "courtId": "cand",
+      "dateFiled": "2026-10-20",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "15:78m(a) Securities Exchange Act",
+      "suitNature": "850 Securities/Commodities",
+      "matchedFilings": [
+        {
+          "documentId": "497882191",
+          "docketEntryId": "482114422",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-20",
+          "description": "COMPLAINT against Alan Baratz, D-Wave Quantum Inc., John M. Markovich ( Filing fee $ 405, receipt number ACANDC-22614390.). Case filed under the Class Action Private Securities Litigation Reform Act. Filed by Victoria Lawrence. (Attachments: # 1 Certification and Schedule A)(Pafiti, Jennifer) (Filed on 10/20/2026) (Entered: 10/20/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": true,
+          "url": "https://www.courtlistener.com/docket/74989375/1/lawrence-v-d-wave-quantum-inc/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/74989375/lawrence-v-d-wave-quantum-inc/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/74989375/lawrence-v-d-wave-quantum-inc/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-21T11:57:43.670Z",
+      "lastSeenAt": "2026-10-21T11:57:43.670Z",
+      "lastChangedAt": "2026-10-21T11:57:43.670Z",
+      "freshness": "current"
+    },
     {
       "id": "courtlistener-docket-74983565",
       "sourceId": "courtlistener-recap-class-action-complaints",
@@ -57,7 +115,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-20T11:45:41.081Z",
-      "lastSeenAt": "2026-10-20T11:45:41.081Z",
+      "lastSeenAt": "2026-10-21T11:57:43.670Z",
       "lastChangedAt": "2026-10-20T11:45:41.081Z",
       "freshness": "current"
     },
@@ -135,7 +193,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-20T11:45:41.081Z",
-      "lastSeenAt": "2026-10-20T11:45:41.081Z",
+      "lastSeenAt": "2026-10-21T11:57:43.670Z",
       "lastChangedAt": "2026-10-20T11:45:41.081Z",
       "freshness": "current"
     },
@@ -213,7 +271,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-17T10:51:01.508Z",
-      "lastSeenAt": "2026-10-20T11:45:41.081Z",
+      "lastSeenAt": "2026-10-21T11:57:43.670Z",
       "lastChangedAt": "2026-10-17T10:51:01.508Z",
       "freshness": "current"
     },
@@ -291,7 +349,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-16T11:31:02.929Z",
-      "lastSeenAt": "2026-10-20T11:45:41.081Z",
+      "lastSeenAt": "2026-10-21T11:57:43.670Z",
       "lastChangedAt": "2026-10-16T11:31:02.929Z",
       "freshness": "current"
     },
@@ -369,7 +427,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-16T11:31:02.929Z",
-      "lastSeenAt": "2026-10-20T11:45:41.081Z",
+      "lastSeenAt": "2026-10-21T11:57:43.670Z",
       "lastChangedAt": "2026-10-17T10:51:01.508Z",
       "freshness": "current"
     },
@@ -427,7 +485,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-16T11:31:02.929Z",
-      "lastSeenAt": "2026-10-20T11:45:41.081Z",
+      "lastSeenAt": "2026-10-21T11:57:43.670Z",
       "lastChangedAt": "2026-10-16T11:31:02.929Z",
       "freshness": "current"
     },
@@ -495,7 +553,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-17T10:51:01.508Z",
-      "lastSeenAt": "2026-10-20T11:45:41.081Z",
+      "lastSeenAt": "2026-10-21T11:57:43.670Z",
       "lastChangedAt": "2026-10-17T10:51:01.508Z",
       "freshness": "current"
     },
@@ -553,7 +611,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-17T10:51:01.508Z",
-      "lastSeenAt": "2026-10-20T11:45:41.081Z",
+      "lastSeenAt": "2026-10-21T11:57:43.670Z",
       "lastChangedAt": "2026-10-17T10:51:01.508Z",
       "freshness": "current"
     },
@@ -451670,14 +451728,14 @@
     "status": "complete",
     "stale": false,
     "mode": "incremental",
-    "checkedAt": "2026-10-20T11:45:41.081Z",
-    "lastSuccessfulAt": "2026-10-20T11:45:41.081Z",
+    "checkedAt": "2026-10-21T11:57:43.670Z",
+    "lastSuccessfulAt": "2026-10-21T11:57:43.670Z",
     "queryCore": "description:(Class Action Complaint)",
-    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-13 TO 2026-10-20]",
-    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-13+TO+2026-10-20%5D",
+    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-14 TO 2026-10-21]",
+    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-14+TO+2026-10-21%5D",
     "dateRange": {
-      "startDate": "2026-10-13",
-      "endDate": "2026-10-20"
+      "startDate": "2026-10-14",
+      "endDate": "2026-10-21"
     },
     "resumedFromCursor": false,
     "restartRequested": false,
@@ -451687,11 +451745,11 @@
     "cacheHits": 0,
     "retries": 0,
     "requestBudgetExhausted": false,
-    "rawResultsSeen": 13,
-    "approximateResultCount": 13,
+    "rawResultsSeen": 10,
+    "approximateResultCount": 10,
     "resultCountCaveat": "CourtListener says type=r counts use cardinality aggregation and may vary by about 6% when more than 2,000 results match.",
-    "observedThisRun": 13,
-    "retainedFromPrevious": 6735,
+    "observedThisRun": 9,
+    "retainedFromPrevious": 6740,
     "error": null,
     "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/",
     "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
@@ -451712,17 +451770,17 @@
     },
     "incremental": {
       "status": "complete",
-      "startDate": "2026-10-13",
-      "endDate": "2026-10-20",
-      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-13 TO 2026-10-20]",
-      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-13+TO+2026-10-20%5D",
+      "startDate": "2026-10-14",
+      "endDate": "2026-10-21",
+      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-14 TO 2026-10-21]",
+      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-14+TO+2026-10-21%5D",
       "nextUrl": null,
       "incrementalDays": 7,
       "pagesFetchedTotal": 1,
-      "rawResultsSeenTotal": 13,
-      "acceptedResultsTotal": 13,
-      "lastAttemptAt": "2026-10-20T11:45:41.081Z",
-      "lastCompletedAt": "2026-10-20T11:45:41.081Z"
+      "rawResultsSeenTotal": 10,
+      "acceptedResultsTotal": 9,
+      "lastAttemptAt": "2026-10-21T11:57:43.670Z",
+      "lastCompletedAt": "2026-10-21T11:57:43.670Z"
     }
   }
 }
