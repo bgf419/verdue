@@ -1,8 +1,66 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-21T11:57:43.670Z",
-  "recordCount": 6749,
+  "generatedAt": "2026-10-22T11:59:49.857Z",
+  "recordCount": 6751,
   "records": [
+    {
+      "id": "courtlistener-docket-74999269",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "74999269",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "C.G. v. Virginia Hospital Health System",
+      "docketId": 74999269,
+      "docketNumber": "1:26-cv-03522",
+      "docketUrl": "https://www.courtlistener.com/docket/74999269/cg-v-virginia-hospital-health-system/",
+      "court": "District Court, E.D. Virginia",
+      "courtId": "vaed",
+      "dateFiled": "2026-10-21",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "28:1331 Fed. Question: Personal Injury",
+      "suitNature": "360 P.I.: Other",
+      "matchedFilings": [
+        {
+          "documentId": "498198078",
+          "docketEntryId": "482423259",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-21",
+          "description": "Complaint Class Action ( Filing fee $ 405, receipt number AVAEDC-11447258.), filed by C.G.. (Attachments: # 1 Civil Cover Sheet)(Cuneo, Carolyn) (Entered: 10/21/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74999269/1/cg-v-virginia-hospital-health-system/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/74999269/cg-v-virginia-hospital-health-system/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/74999269/cg-v-virginia-hospital-health-system/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-22T11:59:49.857Z",
+      "lastSeenAt": "2026-10-22T11:59:49.857Z",
+      "lastChangedAt": "2026-10-22T11:59:49.857Z",
+      "freshness": "current"
+    },
     {
       "id": "courtlistener-docket-74989375",
       "sourceId": "courtlistener-recap-class-action-complaints",
@@ -57,7 +115,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-21T11:57:43.670Z",
-      "lastSeenAt": "2026-10-21T11:57:43.670Z",
+      "lastSeenAt": "2026-10-22T11:59:49.857Z",
       "lastChangedAt": "2026-10-21T11:57:43.670Z",
       "freshness": "current"
     },
@@ -115,7 +173,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-20T11:45:41.081Z",
-      "lastSeenAt": "2026-10-21T11:57:43.670Z",
+      "lastSeenAt": "2026-10-22T11:59:49.857Z",
       "lastChangedAt": "2026-10-20T11:45:41.081Z",
       "freshness": "current"
     },
@@ -193,7 +251,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-20T11:45:41.081Z",
-      "lastSeenAt": "2026-10-21T11:57:43.670Z",
+      "lastSeenAt": "2026-10-22T11:59:49.857Z",
       "lastChangedAt": "2026-10-20T11:45:41.081Z",
       "freshness": "current"
     },
@@ -271,8 +329,66 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-17T10:51:01.508Z",
-      "lastSeenAt": "2026-10-21T11:57:43.670Z",
+      "lastSeenAt": "2026-10-22T11:59:49.857Z",
       "lastChangedAt": "2026-10-17T10:51:01.508Z",
+      "freshness": "current"
+    },
+    {
+      "id": "courtlistener-docket-74979748",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "74979748",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "Richard v. Spring Oaks Capital, LLC",
+      "docketId": 74979748,
+      "docketNumber": "2:26-cv-01160",
+      "docketUrl": "https://www.courtlistener.com/docket/74979748/richard-v-spring-oaks-capital-llc/",
+      "court": "District Court, E.D. Virginia",
+      "courtId": "vaed",
+      "dateFiled": "2026-10-16",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "15:1692 Fair Debt Collection Act",
+      "suitNature": "480 Consumer Credit",
+      "matchedFilings": [
+        {
+          "documentId": "498197101",
+          "docketEntryId": "482422364",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-16",
+          "description": "Complaint (Class Action) ( Filing fee $ 405, receipt number AVAEDC-11435712.), filed by Thomas Richard. (Attachments: # 1 Civil Cover Sheet)(Munro, Devon) (Entered: 10/16/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74979748/1/richard-v-spring-oaks-capital-llc/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/74979748/richard-v-spring-oaks-capital-llc/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/74979748/richard-v-spring-oaks-capital-llc/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-22T11:59:49.857Z",
+      "lastSeenAt": "2026-10-22T11:59:49.857Z",
+      "lastChangedAt": "2026-10-22T11:59:49.857Z",
       "freshness": "current"
     },
     {
@@ -349,7 +465,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-16T11:31:02.929Z",
-      "lastSeenAt": "2026-10-21T11:57:43.670Z",
+      "lastSeenAt": "2026-10-22T11:59:49.857Z",
       "lastChangedAt": "2026-10-16T11:31:02.929Z",
       "freshness": "current"
     },
@@ -427,7 +543,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-16T11:31:02.929Z",
-      "lastSeenAt": "2026-10-21T11:57:43.670Z",
+      "lastSeenAt": "2026-10-22T11:59:49.857Z",
       "lastChangedAt": "2026-10-17T10:51:01.508Z",
       "freshness": "current"
     },
@@ -485,7 +601,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-16T11:31:02.929Z",
-      "lastSeenAt": "2026-10-21T11:57:43.670Z",
+      "lastSeenAt": "2026-10-22T11:59:49.857Z",
       "lastChangedAt": "2026-10-16T11:31:02.929Z",
       "freshness": "current"
     },
@@ -553,7 +669,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-17T10:51:01.508Z",
-      "lastSeenAt": "2026-10-21T11:57:43.670Z",
+      "lastSeenAt": "2026-10-22T11:59:49.857Z",
       "lastChangedAt": "2026-10-17T10:51:01.508Z",
       "freshness": "current"
     },
@@ -611,7 +727,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-17T10:51:01.508Z",
-      "lastSeenAt": "2026-10-21T11:57:43.670Z",
+      "lastSeenAt": "2026-10-22T11:59:49.857Z",
       "lastChangedAt": "2026-10-17T10:51:01.508Z",
       "freshness": "current"
     },
@@ -451728,14 +451844,14 @@
     "status": "complete",
     "stale": false,
     "mode": "incremental",
-    "checkedAt": "2026-10-21T11:57:43.670Z",
-    "lastSuccessfulAt": "2026-10-21T11:57:43.670Z",
+    "checkedAt": "2026-10-22T11:59:49.857Z",
+    "lastSuccessfulAt": "2026-10-22T11:59:49.857Z",
     "queryCore": "description:(Class Action Complaint)",
-    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-14 TO 2026-10-21]",
-    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-14+TO+2026-10-21%5D",
+    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-15 TO 2026-10-22]",
+    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-15+TO+2026-10-22%5D",
     "dateRange": {
-      "startDate": "2026-10-14",
-      "endDate": "2026-10-21"
+      "startDate": "2026-10-15",
+      "endDate": "2026-10-22"
     },
     "resumedFromCursor": false,
     "restartRequested": false,
@@ -451745,10 +451861,10 @@
     "cacheHits": 0,
     "retries": 0,
     "requestBudgetExhausted": false,
-    "rawResultsSeen": 10,
-    "approximateResultCount": 10,
+    "rawResultsSeen": 12,
+    "approximateResultCount": 12,
     "resultCountCaveat": "CourtListener says type=r counts use cardinality aggregation and may vary by about 6% when more than 2,000 results match.",
-    "observedThisRun": 9,
+    "observedThisRun": 11,
     "retainedFromPrevious": 6740,
     "error": null,
     "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/",
@@ -451770,17 +451886,17 @@
     },
     "incremental": {
       "status": "complete",
-      "startDate": "2026-10-14",
-      "endDate": "2026-10-21",
-      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-14 TO 2026-10-21]",
-      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-14+TO+2026-10-21%5D",
+      "startDate": "2026-10-15",
+      "endDate": "2026-10-22",
+      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-15 TO 2026-10-22]",
+      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-15+TO+2026-10-22%5D",
       "nextUrl": null,
       "incrementalDays": 7,
       "pagesFetchedTotal": 1,
-      "rawResultsSeenTotal": 10,
-      "acceptedResultsTotal": 9,
-      "lastAttemptAt": "2026-10-21T11:57:43.670Z",
-      "lastCompletedAt": "2026-10-21T11:57:43.670Z"
+      "rawResultsSeenTotal": 12,
+      "acceptedResultsTotal": 11,
+      "lastAttemptAt": "2026-10-22T11:59:49.857Z",
+      "lastCompletedAt": "2026-10-22T11:59:49.857Z"
     }
   }
 }
