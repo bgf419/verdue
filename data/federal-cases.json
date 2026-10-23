@@ -1,8 +1,66 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-22T11:59:49.857Z",
-  "recordCount": 6751,
+  "generatedAt": "2026-10-23T11:45:43.818Z",
+  "recordCount": 6755,
   "records": [
+    {
+      "id": "courtlistener-docket-75005617",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "75005617",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "Holloway v. Parker-Hannifin Corporation",
+      "docketId": 75005617,
+      "docketNumber": "1:26-cv-02778",
+      "docketUrl": "https://www.courtlistener.com/docket/75005617/holloway-v-parker-hannifin-corporation/",
+      "court": "District Court, N.D. Ohio",
+      "courtId": "ohnd",
+      "dateFiled": "2026-10-22",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "28:1332 Diversity-Property Damage",
+      "suitNature": "380 Personal Property: Other",
+      "matchedFilings": [
+        {
+          "documentId": "498285269",
+          "docketEntryId": "482508018",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-22",
+          "description": "Class Action Complaint with jury demand against Parker-Hannifin Corporation. Filing fee paid $ 405, Receipt number AOHNDC-13948376. Plaintiff has indicated that case may be related to pending civil action 1:26-cv-02743-PAB. Filed by Shambriea Holloway. (Attachments: # 1 Civil Cover Sheet, # 2 Summons) (Goldenberg, Jeffrey) (Entered: 10/22/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": true,
+          "url": "https://www.courtlistener.com/docket/75005617/1/holloway-v-parker-hannifin-corporation/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/75005617/holloway-v-parker-hannifin-corporation/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/75005617/holloway-v-parker-hannifin-corporation/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-23T11:45:43.818Z",
+      "lastSeenAt": "2026-10-23T11:45:43.818Z",
+      "lastChangedAt": "2026-10-23T11:45:43.818Z",
+      "freshness": "current"
+    },
     {
       "id": "courtlistener-docket-74999269",
       "sourceId": "courtlistener-recap-class-action-complaints",
@@ -57,8 +115,144 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-22T11:59:49.857Z",
-      "lastSeenAt": "2026-10-22T11:59:49.857Z",
+      "lastSeenAt": "2026-10-23T11:45:43.818Z",
       "lastChangedAt": "2026-10-22T11:59:49.857Z",
+      "freshness": "current"
+    },
+    {
+      "id": "courtlistener-docket-75000779",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "75000779",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "Cravens v. Gardaworld Security Services Inc.",
+      "docketId": 75000779,
+      "docketNumber": "4:26-cv-01814",
+      "docketUrl": "https://www.courtlistener.com/docket/75000779/cravens-v-gardaworld-security-services-inc/",
+      "court": "District Court, E.D. Missouri",
+      "courtId": "moed",
+      "dateFiled": "2026-10-21",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "28:1332 Diversity-(Citizenship)",
+      "suitNature": "380 Personal Property: Other",
+      "matchedFilings": [
+        {
+          "documentId": "498172895",
+          "docketEntryId": "482399717",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-21",
+          "description": "COMPLAINT CLASS ACTION COMPLAINT against defendant GARDAWORLD SECURITY SERVICES INC. with receipt number AMOEDC-12146420, in the amount of $405 Jury Demand,, filed by ANDRE CRAVENS, TAMARA GREEN. (Attachments: # 1 Civil Cover Sheet, # 2 Original Filing Form, # 3 Summons as to Gardaworld Security Services Inc.)(Borrelli, Raina) (Entered: 10/21/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": true,
+          "url": "https://www.courtlistener.com/docket/75000779/1/cravens-v-gardaworld-security-services-inc/"
+        },
+        {
+          "documentId": "498235967",
+          "docketEntryId": "482399717",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-21",
+          "description": "COMPLAINT CLASS ACTION COMPLAINT against defendant GARDAWORLD SECURITY SERVICES INC. with receipt number AMOEDC-12146420, in the amount of $405 Jury Demand,, filed by ANDRE CRAVENS, TAMARA GREEN. (Attachments: # 1 Civil Cover Sheet, # 2 Original Filing Form, # 3 Summons as to Gardaworld Security Services Inc.)(Borrelli, Raina) (Entered: 10/21/2026)",
+          "documentType": "Attachment",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/75000779/1/1/cravens-v-gardaworld-security-services-inc/"
+        },
+        {
+          "documentId": "498235969",
+          "docketEntryId": "482399717",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-21",
+          "description": "COMPLAINT CLASS ACTION COMPLAINT against defendant GARDAWORLD SECURITY SERVICES INC. with receipt number AMOEDC-12146420, in the amount of $405 Jury Demand,, filed by ANDRE CRAVENS, TAMARA GREEN. (Attachments: # 1 Civil Cover Sheet, # 2 Original Filing Form, # 3 Summons as to Gardaworld Security Services Inc.)(Borrelli, Raina) (Entered: 10/21/2026)",
+          "documentType": "Attachment",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/75000779/1/3/cravens-v-gardaworld-security-services-inc/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/75000779/cravens-v-gardaworld-security-services-inc/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/75000779/cravens-v-gardaworld-security-services-inc/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-23T11:45:43.818Z",
+      "lastSeenAt": "2026-10-23T11:45:43.818Z",
+      "lastChangedAt": "2026-10-23T11:45:43.818Z",
+      "freshness": "current"
+    },
+    {
+      "id": "courtlistener-docket-75002608",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "75002608",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "Fisher v. TintedMD LLC",
+      "docketId": 75002608,
+      "docketNumber": "1:26-cv-01362",
+      "docketUrl": "https://www.courtlistener.com/docket/75002608/fisher-v-tintedmd-llc/",
+      "court": "District Court, D. Delaware",
+      "courtId": "ded",
+      "dateFiled": "2026-10-21",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "18:2511 Wiretapping",
+      "suitNature": "890 Other Statutory Actions",
+      "matchedFilings": [
+        {
+          "documentId": "498211371",
+          "docketEntryId": "482435737",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-21",
+          "description": "CLASS ACTION COMPLAINT with Jury Demand against TintedMD LLC (Filing fee $ 405, receipt number ADEDC-5095348) - filed by Rozalynn Fisher. (Attachments: # 1 Civil Cover Sheet)(mpb) (Entered: 10/22/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/75002608/1/fisher-v-tintedmd-llc/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/75002608/fisher-v-tintedmd-llc/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/75002608/fisher-v-tintedmd-llc/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-23T11:45:43.818Z",
+      "lastSeenAt": "2026-10-23T11:45:43.818Z",
+      "lastChangedAt": "2026-10-23T11:45:43.818Z",
       "freshness": "current"
     },
     {
@@ -115,7 +309,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-21T11:57:43.670Z",
-      "lastSeenAt": "2026-10-22T11:59:49.857Z",
+      "lastSeenAt": "2026-10-23T11:45:43.818Z",
       "lastChangedAt": "2026-10-21T11:57:43.670Z",
       "freshness": "current"
     },
@@ -173,7 +367,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-20T11:45:41.081Z",
-      "lastSeenAt": "2026-10-22T11:59:49.857Z",
+      "lastSeenAt": "2026-10-23T11:45:43.818Z",
       "lastChangedAt": "2026-10-20T11:45:41.081Z",
       "freshness": "current"
     },
@@ -251,7 +445,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-20T11:45:41.081Z",
-      "lastSeenAt": "2026-10-22T11:59:49.857Z",
+      "lastSeenAt": "2026-10-23T11:45:43.818Z",
       "lastChangedAt": "2026-10-20T11:45:41.081Z",
       "freshness": "current"
     },
@@ -329,7 +523,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-17T10:51:01.508Z",
-      "lastSeenAt": "2026-10-22T11:59:49.857Z",
+      "lastSeenAt": "2026-10-23T11:45:43.818Z",
       "lastChangedAt": "2026-10-17T10:51:01.508Z",
       "freshness": "current"
     },
@@ -387,8 +581,66 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-22T11:59:49.857Z",
-      "lastSeenAt": "2026-10-22T11:59:49.857Z",
+      "lastSeenAt": "2026-10-23T11:45:43.818Z",
       "lastChangedAt": "2026-10-22T11:59:49.857Z",
+      "freshness": "current"
+    },
+    {
+      "id": "courtlistener-docket-74981316",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "74981316",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "Simpson v. Liberty University, Inc.",
+      "docketId": 74981316,
+      "docketNumber": "6:26-cv-00135",
+      "docketUrl": "https://www.courtlistener.com/docket/74981316/simpson-v-liberty-university-inc/",
+      "court": "District Court, W.D. Virginia",
+      "courtId": "vawd",
+      "dateFiled": "2026-10-16",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "47:227 Restrictions of Use of Telephone Equipment",
+      "suitNature": "485 Telephone Consumer Protection Act (TCPA)",
+      "matchedFilings": [
+        {
+          "documentId": "497694462",
+          "docketEntryId": "481930520",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-16",
+          "description": "CLASS ACTION COMPLAINT against Liberty University, Inc. (Filing & Administrative fee $405.00, receipt number AVAWDC-5041939), filed by Zana Simpson. (Attachment: # 1 Civil Cover Sheet) (ca) (Entered: 10/19/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74981316/1/simpson-v-liberty-university-inc/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/74981316/simpson-v-liberty-university-inc/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/74981316/simpson-v-liberty-university-inc/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-23T11:45:43.818Z",
+      "lastSeenAt": "2026-10-23T11:45:43.818Z",
+      "lastChangedAt": "2026-10-23T11:45:43.818Z",
       "freshness": "current"
     },
     {
@@ -451844,14 +452096,14 @@
     "status": "complete",
     "stale": false,
     "mode": "incremental",
-    "checkedAt": "2026-10-22T11:59:49.857Z",
-    "lastSuccessfulAt": "2026-10-22T11:59:49.857Z",
+    "checkedAt": "2026-10-23T11:45:43.818Z",
+    "lastSuccessfulAt": "2026-10-23T11:45:43.818Z",
     "queryCore": "description:(Class Action Complaint)",
-    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-15 TO 2026-10-22]",
-    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-15+TO+2026-10-22%5D",
+    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-16 TO 2026-10-23]",
+    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-16+TO+2026-10-23%5D",
     "dateRange": {
-      "startDate": "2026-10-15",
-      "endDate": "2026-10-22"
+      "startDate": "2026-10-16",
+      "endDate": "2026-10-23"
     },
     "resumedFromCursor": false,
     "restartRequested": false,
@@ -451864,8 +452116,8 @@
     "rawResultsSeen": 12,
     "approximateResultCount": 12,
     "resultCountCaveat": "CourtListener says type=r counts use cardinality aggregation and may vary by about 6% when more than 2,000 results match.",
-    "observedThisRun": 11,
-    "retainedFromPrevious": 6740,
+    "observedThisRun": 10,
+    "retainedFromPrevious": 6745,
     "error": null,
     "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/",
     "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
@@ -451886,17 +452138,17 @@
     },
     "incremental": {
       "status": "complete",
-      "startDate": "2026-10-15",
-      "endDate": "2026-10-22",
-      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-15 TO 2026-10-22]",
-      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-15+TO+2026-10-22%5D",
+      "startDate": "2026-10-16",
+      "endDate": "2026-10-23",
+      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-16 TO 2026-10-23]",
+      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-16+TO+2026-10-23%5D",
       "nextUrl": null,
       "incrementalDays": 7,
       "pagesFetchedTotal": 1,
       "rawResultsSeenTotal": 12,
-      "acceptedResultsTotal": 11,
-      "lastAttemptAt": "2026-10-22T11:59:49.857Z",
-      "lastCompletedAt": "2026-10-22T11:59:49.857Z"
+      "acceptedResultsTotal": 10,
+      "lastAttemptAt": "2026-10-23T11:45:43.818Z",
+      "lastCompletedAt": "2026-10-23T11:45:43.818Z"
     }
   }
 }
