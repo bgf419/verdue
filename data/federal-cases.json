@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-24T11:09:49.809Z",
-  "recordCount": 6756,
+  "generatedAt": "2026-10-25T11:39:26.322Z",
+  "recordCount": 6757,
   "records": [
     {
       "id": "courtlistener-docket-75005617",
@@ -57,7 +57,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-23T11:45:43.818Z",
-      "lastSeenAt": "2026-10-24T11:09:49.809Z",
+      "lastSeenAt": "2026-10-25T11:39:26.322Z",
       "lastChangedAt": "2026-10-23T11:45:43.818Z",
       "freshness": "current"
     },
@@ -115,7 +115,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-24T11:09:49.809Z",
-      "lastSeenAt": "2026-10-24T11:09:49.809Z",
+      "lastSeenAt": "2026-10-25T11:39:26.322Z",
       "lastChangedAt": "2026-10-24T11:09:49.809Z",
       "freshness": "current"
     },
@@ -173,7 +173,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-22T11:59:49.857Z",
-      "lastSeenAt": "2026-10-24T11:09:49.809Z",
+      "lastSeenAt": "2026-10-25T11:39:26.322Z",
       "lastChangedAt": "2026-10-22T11:59:49.857Z",
       "freshness": "current"
     },
@@ -251,7 +251,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-23T11:45:43.818Z",
-      "lastSeenAt": "2026-10-24T11:09:49.809Z",
+      "lastSeenAt": "2026-10-25T11:39:26.322Z",
       "lastChangedAt": "2026-10-23T11:45:43.818Z",
       "freshness": "current"
     },
@@ -309,7 +309,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-23T11:45:43.818Z",
-      "lastSeenAt": "2026-10-24T11:09:49.809Z",
+      "lastSeenAt": "2026-10-25T11:39:26.322Z",
       "lastChangedAt": "2026-10-23T11:45:43.818Z",
       "freshness": "current"
     },
@@ -367,7 +367,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-21T11:57:43.670Z",
-      "lastSeenAt": "2026-10-24T11:09:49.809Z",
+      "lastSeenAt": "2026-10-25T11:39:26.322Z",
       "lastChangedAt": "2026-10-21T11:57:43.670Z",
       "freshness": "current"
     },
@@ -425,8 +425,66 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-20T11:45:41.081Z",
-      "lastSeenAt": "2026-10-24T11:09:49.809Z",
+      "lastSeenAt": "2026-10-25T11:39:26.322Z",
       "lastChangedAt": "2026-10-20T11:45:41.081Z",
+      "freshness": "current"
+    },
+    {
+      "id": "courtlistener-docket-74984182",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "74984182",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "Delvalle v. Flex Finance, INC.",
+      "docketId": 74984182,
+      "docketNumber": "1:26-cv-27365",
+      "docketUrl": "https://www.courtlistener.com/docket/74984182/delvalle-v-flex-finance-inc/",
+      "court": "District Court, S.D. Florida",
+      "courtId": "flsd",
+      "dateFiled": "2026-10-19",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "47:227 Restrictions of Use of Telephone Equipment",
+      "suitNature": "485 Telephone Consumer Protection Act (TCPA)",
+      "matchedFilings": [
+        {
+          "documentId": "497766625",
+          "docketEntryId": "482001342",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-19",
+          "description": "NOTICE OF REMOVAL (STATE COURT COMPLAINT - CLASS ACTION COMPLAINT) Filing fee $405.00. Pay.gov Agency Tracking ID FLSDC-AFLSDC-20130193, payment transferred from : 26cv27349, filed by Flex Finance, Inc. d/b/a/ Flex. (Attachments: # 1 Civil Cover Sheet, # 2 Complaint, # 3 Summon(s) Recieved, # 4 Summon(s) Issued, # 5 Return of Service, # 6 Order Extending Time to Respond to Complaint)(Goodstone, Alexandra)No Motion to Dismiss/No Answer filed. Modified on 10/19/2026 (khrs). (Entered: 10/19/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/74984182/1/delvalle-v-flex-finance-inc-dba-flex/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/74984182/delvalle-v-flex-finance-inc/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/74984182/delvalle-v-flex-finance-inc/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-25T11:39:26.322Z",
+      "lastSeenAt": "2026-10-25T11:39:26.322Z",
+      "lastChangedAt": "2026-10-25T11:39:26.322Z",
       "freshness": "current"
     },
     {
@@ -503,7 +561,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-20T11:45:41.081Z",
-      "lastSeenAt": "2026-10-24T11:09:49.809Z",
+      "lastSeenAt": "2026-10-25T11:39:26.322Z",
       "lastChangedAt": "2026-10-20T11:45:41.081Z",
       "freshness": "current"
     },
@@ -452154,14 +452212,14 @@
     "status": "complete",
     "stale": false,
     "mode": "incremental",
-    "checkedAt": "2026-10-24T11:09:49.809Z",
-    "lastSuccessfulAt": "2026-10-24T11:09:49.809Z",
+    "checkedAt": "2026-10-25T11:39:26.322Z",
+    "lastSuccessfulAt": "2026-10-25T11:39:26.322Z",
     "queryCore": "description:(Class Action Complaint)",
-    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-17 TO 2026-10-24]",
-    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-17+TO+2026-10-24%5D",
+    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-18 TO 2026-10-25]",
+    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-18+TO+2026-10-25%5D",
     "dateRange": {
-      "startDate": "2026-10-17",
-      "endDate": "2026-10-24"
+      "startDate": "2026-10-18",
+      "endDate": "2026-10-25"
     },
     "resumedFromCursor": false,
     "restartRequested": false,
@@ -452171,10 +452229,10 @@
     "cacheHits": 0,
     "retries": 0,
     "requestBudgetExhausted": false,
-    "rawResultsSeen": 9,
-    "approximateResultCount": 9,
+    "rawResultsSeen": 10,
+    "approximateResultCount": 10,
     "resultCountCaveat": "CourtListener says type=r counts use cardinality aggregation and may vary by about 6% when more than 2,000 results match.",
-    "observedThisRun": 8,
+    "observedThisRun": 9,
     "retainedFromPrevious": 6748,
     "error": null,
     "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/",
@@ -452196,17 +452254,17 @@
     },
     "incremental": {
       "status": "complete",
-      "startDate": "2026-10-17",
-      "endDate": "2026-10-24",
-      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-17 TO 2026-10-24]",
-      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-17+TO+2026-10-24%5D",
+      "startDate": "2026-10-18",
+      "endDate": "2026-10-25",
+      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-18 TO 2026-10-25]",
+      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-18+TO+2026-10-25%5D",
       "nextUrl": null,
       "incrementalDays": 7,
       "pagesFetchedTotal": 1,
-      "rawResultsSeenTotal": 9,
-      "acceptedResultsTotal": 8,
-      "lastAttemptAt": "2026-10-24T11:09:49.809Z",
-      "lastCompletedAt": "2026-10-24T11:09:49.809Z"
+      "rawResultsSeenTotal": 10,
+      "acceptedResultsTotal": 9,
+      "lastAttemptAt": "2026-10-25T11:39:26.322Z",
+      "lastCompletedAt": "2026-10-25T11:39:26.322Z"
     }
   }
 }
