@@ -1,0 +1,439 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Hoboken in Motion</title>
+<meta name="description" content="An agent-based simulation of one day in Hoboken, NJ: ~59,000 synthetic residents plus commuters and visitors moving on the real street map, calibrated to Census and transit counts, with measured Citi Bike trips for comparison.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@600;800&family=Public+Sans:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --paper: #eef2ef;
+    --panel: #f9fbf9;
+    --ink: #132320;
+    --ink-2: #44554f;
+    --muted: #6d7d77;
+    --rule: #d3ddd8;
+    --accent: #1d7a66;
+    --accent-ink: #ffffff;
+    --accent-soft: #d4ebe3;
+    --warn: #9a5b00;
+    --s1: #2a78d6;
+    --s2: #eb6834;
+    --s3: #1baf7a;
+    --grid: #e1e0d9;
+    --focus: #1d7a66;
+    --display: "Big Shoulders Display", "Arial Narrow", "Roboto Condensed", sans-serif;
+    --ui: "Public Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --paper: #0b1211;
+      --panel: #111b19;
+      --ink: #e6efeb;
+      --ink-2: #b1c0ba;
+      --muted: #849690;
+      --rule: #22302d;
+      --accent: #52c3a4;
+      --accent-ink: #06201a;
+      --accent-soft: #163a31;
+      --warn: #f0b24a;
+      --s1: #3987e5;
+      --s2: #d95926;
+      --s3: #199e70;
+      --grid: #2c2c2a;
+      --focus: #52c3a4;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --paper: #0b1211;
+    --panel: #111b19;
+    --ink: #e6efeb;
+    --ink-2: #b1c0ba;
+    --muted: #849690;
+    --rule: #22302d;
+    --accent: #52c3a4;
+    --accent-ink: #06201a;
+    --accent-soft: #163a31;
+    --warn: #f0b24a;
+    --s1: #3987e5;
+    --s2: #d95926;
+    --s3: #199e70;
+    --grid: #2c2c2a;
+    --focus: #52c3a4;
+  }
+
+  [hidden] { display: none !important; }
+  html, body { height: 100%; }
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font: 400 14px/1.45 var(--ui);
+    -webkit-font-smoothing: antialiased;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  button, input { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+  .app {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 380px;
+    grid-template-rows: auto minmax(0, 1fr);
+    height: 100%;
+  }
+  header.top {
+    grid-column: 1 / -1;
+    display: flex;
+    align-items: baseline;
+    flex-wrap: wrap;
+    gap: 4px 18px;
+    padding: 10px 16px 8px;
+    border-bottom: 1px solid var(--rule);
+    background: var(--panel);
+  }
+  .brand {
+    font: 800 26px/1 var(--display);
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    margin: 0;
+  }
+  .brand span { color: var(--accent); }
+  .tagline { color: var(--ink-2); margin: 0; max-width: 62ch; }
+
+  .stage { position: relative; min-height: 0; overflow: hidden; }
+  .map { position: absolute; inset: 0; overflow: hidden; background: #dfe4dd; touch-action: none; }
+  .map canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+  #overlay { cursor: crosshair; }
+
+  .clock {
+    position: absolute; top: 12px; left: 12px;
+    background: color-mix(in srgb, var(--panel) 88%, transparent);
+    border: 1px solid var(--rule);
+    border-radius: 6px;
+    padding: 6px 12px 8px;
+    pointer-events: none;
+    backdrop-filter: blur(6px);
+  }
+  .clock .time { font: 800 40px/1 var(--display); letter-spacing: 0.01em; font-variant-numeric: tabular-nums; }
+  .clock .day { font-size: 12px; color: var(--ink-2); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+
+  .legend {
+    position: absolute; right: 12px; bottom: 72px;
+    background: color-mix(in srgb, var(--panel) 88%, transparent);
+    border: 1px solid var(--rule); border-radius: 6px;
+    padding: 8px 10px; font-size: 12px; color: var(--ink-2);
+    display: grid; gap: 4px; pointer-events: none;
+    backdrop-filter: blur(6px);
+  }
+  .legend .row { display: flex; align-items: center; gap: 8px; }
+  .legend .hint { max-width: 26ch; font-size: 11.5px; color: var(--muted); }
+  .sw.fig { width: 7px; height: 12px; border-radius: 3px 3px 2px 2px; }
+  .sw.car { width: 14px; height: 8px; border-radius: 2px; background: #9aa0a6; }
+  .map canvas.view3d { cursor: grab; }
+  .map canvas.view3d:active { cursor: grabbing; }
+  .presets { position: absolute; top: 12px; right: 12px; display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; max-width: min(60%, 520px); }
+  .presets button { border: 1px solid var(--rule); background: color-mix(in srgb, var(--panel) 90%, transparent); border-radius: 999px;
+    padding: 4px 10px; font-size: 12.5px; cursor: pointer; backdrop-filter: blur(6px); }
+  .presets button:hover { border-color: var(--accent); }
+  .pickcard { position: absolute; left: 12px; top: 96px; width: min(300px, calc(100% - 24px)); background: color-mix(in srgb, var(--panel) 94%, transparent);
+    border: 1px solid var(--rule); border-radius: 8px; padding: 8px 10px; display: grid; gap: 4px; backdrop-filter: blur(6px); }
+  .pc-who { font-weight: 600; }
+  .pc-now { font-size: 12.5px; color: var(--ink-2); }
+  .pc-actions { display: flex; gap: 6px; margin-top: 2px; }
+  .pc-actions .btn { padding: 3px 9px; font-size: 12.5px; }
+  .pc-actions .btn[aria-pressed="true"] { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+  .note3d { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); background: var(--panel); border: 1px solid var(--rule);
+    border-radius: 8px; padding: 10px 14px; max-width: 34ch; text-align: center; font-size: 13px; }
+  .sw { width: 10px; height: 10px; border-radius: 50%; flex: none; }
+  .sw.sq { border-radius: 2px; }
+  .sw.dia { border-radius: 1px; transform: rotate(45deg) scale(0.85); }
+  .sw.ring { background: transparent !important; border: 2px solid var(--accent); }
+  .legend hr { border: 0; border-top: 1px solid var(--rule); margin: 3px 0; }
+
+  .controls {
+    position: absolute; left: 12px; right: 12px; bottom: 12px;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px;
+    background: color-mix(in srgb, var(--panel) 92%, transparent);
+    border: 1px solid var(--rule); border-radius: 8px;
+    padding: 8px 10px;
+    backdrop-filter: blur(6px);
+  }
+  .btn {
+    border: 1px solid var(--rule); background: var(--panel);
+    border-radius: 6px; padding: 5px 10px; cursor: pointer; line-height: 1.2;
+  }
+  .btn:hover { border-color: var(--accent); }
+  .btn.primary { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); min-width: 72px; font-weight: 600; }
+  .seg { display: inline-flex; border: 1px solid var(--rule); border-radius: 6px; overflow: hidden; }
+  .seg button { border: 0; background: transparent; padding: 5px 9px; cursor: pointer; font-size: 13px; }
+  .seg button + button { border-left: 1px solid var(--rule); }
+  .seg button[aria-pressed="true"] { background: var(--accent-soft); color: var(--ink); font-weight: 600; }
+  .seg button:disabled { color: var(--muted); cursor: not-allowed; }
+  .scrub { flex: 1 1 220px; display: flex; align-items: center; gap: 8px; min-width: 0; }
+  .scrub input { flex: 1; min-width: 0; accent-color: var(--accent); }
+  .scrub output { font-variant-numeric: tabular-nums; color: var(--ink-2); font-size: 12px; min-width: 62px; text-align: right; }
+
+  .loading {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    background: color-mix(in srgb, var(--paper) 70%, transparent);
+    font: 600 15px/1.4 var(--ui);
+  }
+  .loading .bar { width: min(280px, 70vw); height: 4px; background: var(--rule); border-radius: 2px; overflow: hidden; margin-top: 10px; }
+  .loading .bar i { display: block; height: 100%; width: 0; background: var(--accent); transition: width 120ms linear; }
+
+  aside.side {
+    border-left: 1px solid var(--rule);
+    background: var(--panel);
+    overflow-y: auto;
+    padding: 4px 16px 32px;
+  }
+  section.block { padding: 14px 0 16px; border-bottom: 1px solid var(--rule); }
+  section.block:last-child { border-bottom: 0; }
+  h2 {
+    font: 600 12px/1.2 var(--ui); text-transform: uppercase; letter-spacing: 0.09em;
+    color: var(--ink-2); margin: 0 0 10px;
+    text-wrap: balance;
+  }
+  .note { color: var(--muted); font-size: 12px; margin: 8px 0 0; max-width: 60ch; }
+  .note code { font-size: 11.5px; background: var(--accent-soft); padding: 0 4px; border-radius: 3px; }
+
+  .kpis { display: grid; grid-template-columns: 1fr 1fr; gap: 12px 16px; }
+  .kpi .v { font: 800 30px/1 var(--display); font-variant-numeric: tabular-nums; letter-spacing: 0.01em; }
+  .kpi .l { font-size: 12px; color: var(--ink-2); margin-top: 3px; }
+
+  .chart { position: relative; }
+  .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .keys { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--ink-2); margin-bottom: 6px; }
+  .keys .k { display: inline-flex; align-items: center; gap: 6px; }
+  .keys b { font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+  .tip {
+    position: absolute; pointer-events: none; background: var(--panel); border: 1px solid var(--rule);
+    border-radius: 6px; padding: 6px 8px; font-size: 12px; box-shadow: 0 4px 16px rgb(0 0 0 / 0.12);
+    white-space: nowrap; font-variant-numeric: tabular-nums;
+  }
+
+  table.checks { width: 100%; border-collapse: collapse; font-size: 12.5px; }
+  table.checks th, table.checks td { text-align: left; padding: 6px 4px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+  table.checks th { font-weight: 600; color: var(--ink-2); font-size: 11.5px; text-transform: uppercase; letter-spacing: 0.06em; }
+  table.checks td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .chip { display: inline-block; border-radius: 999px; padding: 1px 7px; font-size: 11px; font-weight: 600; border: 1px solid currentColor; white-space: nowrap; }
+  .chip.ok { color: var(--accent); }
+  .chip.gap { color: var(--warn); }
+  .chip.set { color: var(--muted); }
+
+  .person .head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+  .person .who { font: 800 22px/1.1 var(--display); letter-spacing: 0.01em; }
+  .facts { display: flex; flex-wrap: wrap; gap: 4px; margin: 8px 0 10px; }
+  .facts span { background: var(--accent-soft); border-radius: 4px; padding: 1px 7px; font-size: 12px; }
+  ol.plan { list-style: none; margin: 0; padding: 0; font-size: 12.5px; max-height: 260px; overflow-y: auto; }
+  ol.plan li { display: grid; grid-template-columns: 64px 1fr; gap: 8px; padding: 3px 0; border-bottom: 1px dashed var(--rule); }
+  ol.plan li time { color: var(--muted); font-variant-numeric: tabular-nums; }
+  ol.plan li.now { font-weight: 600; }
+  ol.plan li.now time { color: var(--accent); }
+  .thought { margin: 10px 0 0; padding: 8px 10px; border-left: 3px solid var(--accent); background: var(--accent-soft); font-size: 13px; }
+  .thought[hidden] { display: none; }
+  .row-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+
+  .sliders { display: grid; gap: 12px; }
+  .sliders label { display: grid; gap: 4px; font-size: 12.5px; }
+  .sliders .lab { display: flex; justify-content: space-between; gap: 8px; }
+  .sliders output { font-variant-numeric: tabular-nums; font-weight: 600; }
+  .sliders input { width: 100%; accent-color: var(--accent); }
+  .conf { font-size: 11px; color: var(--muted); }
+
+  details { font-size: 13px; }
+  details summary { cursor: pointer; font-weight: 600; }
+  details p, details li { color: var(--ink-2); max-width: 62ch; }
+  details ul { padding-left: 18px; }
+  .attrib { font-size: 11px; color: var(--muted); }
+
+  @media (max-width: 999px) {
+    .app { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto auto auto; height: auto; }
+    .stage { overflow: visible; }
+    .map { position: relative; height: 60svh; min-height: 360px; }
+    .controls { position: static; border-radius: 0; border-width: 1px 0; padding-inline: 16px; }
+    .legend { bottom: 12px; }
+    aside.side { border-left: 0; border-top: 1px solid var(--rule); overflow: visible; }
+    .legend { font-size: 11px; padding: 6px 8px; }
+    .clock .time { font-size: 32px; }
+  }
+  @media (max-width: 520px) {
+    .legend { display: none; }
+    .presets { top: auto; bottom: 8px; right: 8px; left: 8px; max-width: none; justify-content: flex-start; }
+    .pickcard { top: 64px; left: 8px; }
+    .clock { top: 8px; left: 8px; padding: 4px 10px 6px; }
+    .clock .time { font-size: 26px; }
+    .brand { font-size: 22px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .loading .bar i { transition: none; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="top">
+    <h1 class="brand">Hoboken <span>in Motion</span></h1>
+    <p class="tagline">One simulated day in the Mile Square City. Every dot is a synthetic person moving on Hoboken's real streets, calibrated to Census and transit counts.</p>
+  </header>
+
+  <div class="stage">
+    <div class="map" id="map">
+    <canvas id="base" aria-hidden="true"></canvas>
+    <canvas id="agents" aria-hidden="true"></canvas>
+    <canvas id="overlay" role="img" aria-label="Map of Hoboken with simulated people. Click a dot to follow that person."></canvas>
+    <div class="clock" aria-live="off">
+      <div class="time" id="clockTime">6:30 am</div>
+      <div class="day" id="clockDay">Weekday · Sept 22, 2026</div>
+    </div>
+    <div class="legend" id="legend2d" hidden>
+      <div class="row"><i class="sw" style="background: var(--s1)"></i>Hoboken residents</div>
+      <div class="row"><i class="sw" style="background: var(--s2)"></i>Commuting in (work, Stevens)</div>
+      <div class="row"><i class="sw" style="background: var(--s3)"></i>Visitors</div>
+      <hr>
+      <div class="row"><i class="sw" style="background: var(--ink-2)"></i>On foot</div>
+      <div class="row"><i class="sw dia" style="background: var(--ink-2)"></i>Cycling</div>
+      <div class="row"><i class="sw sq" style="background: var(--ink-2)"></i>Driving</div>
+      <div class="row"><i class="sw ring"></i>Gateway traffic, last 15 min</div>
+      <div class="row"><i class="sw" style="background: #8a5a2b"></i>Dog (zoom in)</div>
+    </div>
+    <div class="legend" id="legend3d">
+      <div class="row"><i class="sw fig" style="background: var(--s1)"></i>Hoboken residents</div>
+      <div class="row"><i class="sw fig" style="background: var(--s2)"></i>Commuting in (work, Stevens)</div>
+      <div class="row"><i class="sw fig" style="background: var(--s3)"></i>Visitors</div>
+      <div class="row"><i class="sw car"></i>Cars</div>
+      <div class="row"><i class="sw sq" style="background: #8a5a2b"></i>Dogs out for a walk</div>
+      <hr>
+      <div class="hint">Drag to orbit · pinch or scroll to zoom · tap anyone to follow them. People indoors aren't shown.</div>
+    </div>
+    <div class="presets" id="presets" role="group" aria-label="Camera views"></div>
+    <div class="pickcard" id="pickCard" hidden>
+      <div class="pc-who" id="pcWho"></div>
+      <div class="pc-now" id="pcNow"></div>
+      <div class="pc-actions"><button class="btn" type="button" id="pcFollow" aria-pressed="false">Follow</button><button class="btn" type="button" id="pcDetails">Day plan</button><button class="btn" type="button" id="pcClose" aria-label="Close">×</button></div>
+    </div>
+    <div class="note3d" id="note3d" hidden></div>
+    <div class="loading" id="loading"><div><div id="loadingText">Loading Hoboken…</div><div class="bar"><i id="loadingBar"></i></div></div></div>
+    </div>
+    <div class="controls">
+      <button class="btn primary" id="play" type="button" aria-pressed="false">Play</button>
+      <div class="seg" role="group" aria-label="Simulation speed" id="speeds">
+        <button type="button" data-speed="60" aria-pressed="false">1 min/s</button>
+        <button type="button" data-speed="300" aria-pressed="true">5 min/s</button>
+        <button type="button" data-speed="1200" aria-pressed="false">20 min/s</button>
+        <button type="button" data-speed="3600" aria-pressed="false">1 hr/s</button>
+      </div>
+      <label class="scrub" for="scrub">
+        <span class="conf">4 am</span>
+        <input id="scrub" type="range" min="14400" max="100800" step="60" value="23400" aria-label="Time of day">
+        <output id="scrubOut" for="scrub">6:30 am</output>
+      </label>
+      <div class="seg" role="group" aria-label="View" id="views">
+        <button type="button" data-view="3d" aria-pressed="true">3D</button>
+        <button type="button" data-view="map" aria-pressed="false">Map</button>
+      </div>
+      <div class="seg" role="group" aria-label="Day" id="days">
+        <button type="button" data-day="weekday" aria-pressed="true">Weekday</button>
+        <button type="button" data-day="weekend" aria-pressed="false">Saturday</button>
+      </div>
+    </div>
+  </div>
+
+  <aside class="side">
+    <section class="block" aria-labelledby="h-now">
+      <h2 id="h-now">Right now</h2>
+      <div class="kpis">
+        <div class="kpi"><div class="v" id="kIn">–</div><div class="l">people in Hoboken</div></div>
+        <div class="kpi"><div class="v" id="kAway">–</div><div class="l">residents out of town</div></div>
+        <div class="kpi"><div class="v" id="kMoving">–</div><div class="l">on the move in Hoboken</div></div>
+        <div class="kpi"><div class="v" id="kCross">–</div><div class="l">city-line crossings today<br><span id="kCrossSplit"></span></div></div>
+        <div class="kpi"><div class="v" id="kCars">–</div><div class="l">cars on Hoboken streets</div></div>
+        <div class="kpi"><div class="v" id="kDogs">–</div><div class="l">dogs out for a walk</div></div>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="h-who">
+      <h2 id="h-who">Who's in Hoboken, hour by hour</h2>
+      <div class="keys" id="whoKeys"></div>
+      <div class="chart" id="whoChart"></div>
+      <p class="note">Stacked counts of people inside the city line. Residents drop as commuters leave; the evening peak is residents home plus diners and bar-goers.</p>
+    </section>
+
+    <section class="block" aria-labelledby="h-cross">
+      <h2 id="h-cross">Crossing the city line so far today</h2>
+      <div class="chart" id="crossChart"></div>
+      <p class="note">People, not vehicles. Deliveries, rideshare trips and through traffic aren't modeled. Riders who only change trains inside Hoboken Terminal are counted in the station totals below, not here.</p>
+    </section>
+
+    <section class="block person" id="personBlock" aria-labelledby="h-person" hidden>
+      <div class="head"><h2 id="h-person">Selected person</h2><button class="btn" id="closePerson" type="button">Close</button></div>
+      <div class="who" id="pWho"></div>
+      <div class="facts" id="pFacts"></div>
+      <ol class="plan" id="pPlan"></ol>
+      <div class="row-actions">
+        <button class="btn" id="follow" type="button" aria-pressed="false">Follow on map</button>
+        <button class="btn" id="think" type="button" hidden>Imagine their thoughts</button>
+      </div>
+      <blockquote class="thought" id="thought" hidden></blockquote>
+      <p class="note">A synthetic person generated from Census aggregates, not a real resident. Names are never assigned.</p>
+    </section>
+
+    <section class="block" aria-labelledby="h-checks">
+      <h2 id="h-checks">Model vs. published counts</h2>
+      <table class="checks" id="checks"></table>
+      <p class="note" id="checksNote"></p>
+    </section>
+
+    <section class="block" aria-labelledby="h-bike">
+      <h2 id="h-bike">Citi Bike trips from Hoboken docks, measured</h2>
+      <div class="keys" id="bikeKeys"></div>
+      <div class="chart" id="bikeChart"></div>
+      <p class="note" id="bikeNote"></p>
+    </section>
+
+    <section class="block" aria-labelledby="h-decide">
+      <h2 id="h-decide">Who makes the choices</h2>
+      <div class="seg" role="group" aria-label="Decisions made by" id="deciders">
+        <button type="button" data-decider="rules" aria-pressed="true">Rules</button>
+        <button type="button" data-decider="jev" aria-pressed="false" disabled>Jev</button>
+      </div>
+      <p class="note" id="deciderNote"></p>
+    </section>
+
+    <section class="block" aria-labelledby="h-assume">
+      <h2 id="h-assume">Assumptions you can change</h2>
+      <div class="sliders">
+        <label for="sWfh"><span class="lab"><span>Workers who work from home</span><output id="oWfh" for="sWfh"></output></span>
+          <input id="sWfh" type="range" min="0.1" max="0.6" step="0.01">
+          <span class="conf">ACS 2024: 36.7% · medium confidence</span></label>
+        <label for="sIn"><span class="lab"><span>People commuting in to work</span><output id="oIn" for="sIn"></output></span>
+          <input id="sIn" type="range" min="4000" max="24000" step="500">
+          <span class="conf" id="cIn"></span></label>
+        <label for="sVis"><span class="lab"><span>Visitors</span><output id="oVis" for="sVis"></output></span>
+          <input id="sVis" type="range" min="2000" max="30000" step="500">
+          <span class="conf" id="cVis"></span></label>
+        <div class="row-actions"><button class="btn primary" id="rebuild" type="button">Rebuild the day</button><button class="btn" id="resetAssume" type="button">Reset</button></div>
+        <p class="note" id="assumeNote" hidden>Jev's day uses the default assumptions. Switch to Rules to change them.</p>
+      </div>
+    </section>
+
+    <section class="block" aria-labelledby="h-about">
+      <h2 id="h-about">How this works</h2>
+      <details>
+        <summary>Method, sources and limits</summary>
+        <ul id="aboutList"></ul>
+      </details>
+      <p class="attrib" id="attrib"></p>
+    </section>
+  </aside>
+</div>
+
+<script src="sim.js"></script>
+<script src="view3d.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
