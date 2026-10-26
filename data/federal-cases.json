@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-25T11:39:26.322Z",
+  "generatedAt": "2026-10-26T13:11:57.290Z",
   "recordCount": 6757,
   "records": [
     {
@@ -57,7 +57,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-23T11:45:43.818Z",
-      "lastSeenAt": "2026-10-25T11:39:26.322Z",
+      "lastSeenAt": "2026-10-26T13:11:57.290Z",
       "lastChangedAt": "2026-10-23T11:45:43.818Z",
       "freshness": "current"
     },
@@ -115,7 +115,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-24T11:09:49.809Z",
-      "lastSeenAt": "2026-10-25T11:39:26.322Z",
+      "lastSeenAt": "2026-10-26T13:11:57.290Z",
       "lastChangedAt": "2026-10-24T11:09:49.809Z",
       "freshness": "current"
     },
@@ -173,7 +173,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-22T11:59:49.857Z",
-      "lastSeenAt": "2026-10-25T11:39:26.322Z",
+      "lastSeenAt": "2026-10-26T13:11:57.290Z",
       "lastChangedAt": "2026-10-22T11:59:49.857Z",
       "freshness": "current"
     },
@@ -251,7 +251,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-23T11:45:43.818Z",
-      "lastSeenAt": "2026-10-25T11:39:26.322Z",
+      "lastSeenAt": "2026-10-26T13:11:57.290Z",
       "lastChangedAt": "2026-10-23T11:45:43.818Z",
       "freshness": "current"
     },
@@ -309,7 +309,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-23T11:45:43.818Z",
-      "lastSeenAt": "2026-10-25T11:39:26.322Z",
+      "lastSeenAt": "2026-10-26T13:11:57.290Z",
       "lastChangedAt": "2026-10-23T11:45:43.818Z",
       "freshness": "current"
     },
@@ -367,7 +367,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-21T11:57:43.670Z",
-      "lastSeenAt": "2026-10-25T11:39:26.322Z",
+      "lastSeenAt": "2026-10-26T13:11:57.290Z",
       "lastChangedAt": "2026-10-21T11:57:43.670Z",
       "freshness": "current"
     },
@@ -425,7 +425,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-20T11:45:41.081Z",
-      "lastSeenAt": "2026-10-25T11:39:26.322Z",
+      "lastSeenAt": "2026-10-26T13:11:57.290Z",
       "lastChangedAt": "2026-10-20T11:45:41.081Z",
       "freshness": "current"
     },
@@ -483,7 +483,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-25T11:39:26.322Z",
-      "lastSeenAt": "2026-10-25T11:39:26.322Z",
+      "lastSeenAt": "2026-10-26T13:11:57.290Z",
       "lastChangedAt": "2026-10-25T11:39:26.322Z",
       "freshness": "current"
     },
@@ -561,7 +561,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-20T11:45:41.081Z",
-      "lastSeenAt": "2026-10-25T11:39:26.322Z",
+      "lastSeenAt": "2026-10-26T13:11:57.290Z",
       "lastChangedAt": "2026-10-20T11:45:41.081Z",
       "freshness": "current"
     },
@@ -452212,14 +452212,14 @@
     "status": "complete",
     "stale": false,
     "mode": "incremental",
-    "checkedAt": "2026-10-25T11:39:26.322Z",
-    "lastSuccessfulAt": "2026-10-25T11:39:26.322Z",
+    "checkedAt": "2026-10-26T13:11:57.290Z",
+    "lastSuccessfulAt": "2026-10-26T13:11:57.290Z",
     "queryCore": "description:(Class Action Complaint)",
-    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-18 TO 2026-10-25]",
-    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-18+TO+2026-10-25%5D",
+    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-19 TO 2026-10-26]",
+    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-19+TO+2026-10-26%5D",
     "dateRange": {
-      "startDate": "2026-10-18",
-      "endDate": "2026-10-25"
+      "startDate": "2026-10-19",
+      "endDate": "2026-10-26"
     },
     "resumedFromCursor": false,
     "restartRequested": false,
@@ -452254,17 +452254,17 @@
     },
     "incremental": {
       "status": "complete",
-      "startDate": "2026-10-18",
-      "endDate": "2026-10-25",
-      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-18 TO 2026-10-25]",
-      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-18+TO+2026-10-25%5D",
+      "startDate": "2026-10-19",
+      "endDate": "2026-10-26",
+      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-19 TO 2026-10-26]",
+      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-19+TO+2026-10-26%5D",
       "nextUrl": null,
       "incrementalDays": 7,
       "pagesFetchedTotal": 1,
       "rawResultsSeenTotal": 10,
       "acceptedResultsTotal": 9,
-      "lastAttemptAt": "2026-10-25T11:39:26.322Z",
-      "lastCompletedAt": "2026-10-25T11:39:26.322Z"
+      "lastAttemptAt": "2026-10-26T13:11:57.290Z",
+      "lastCompletedAt": "2026-10-26T13:11:57.290Z"
     }
   }
 }
