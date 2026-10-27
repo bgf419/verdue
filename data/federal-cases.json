@@ -1,8 +1,164 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-26T13:11:57.290Z",
-  "recordCount": 6757,
+  "generatedAt": "2026-10-27T12:20:03.903Z",
+  "recordCount": 6759,
   "records": [
+    {
+      "id": "courtlistener-docket-75012282",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "75012282",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "Stark Medical Specialties, Inc. v. Blink Health Inc.",
+      "docketId": 75012282,
+      "docketNumber": "5:26-cv-02787",
+      "docketUrl": "https://www.courtlistener.com/docket/75012282/stark-medical-specialties-inc-v-blink-health-inc/",
+      "court": "District Court, N.D. Ohio",
+      "courtId": "ohnd",
+      "dateFiled": "2026-10-23",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "47:227 Restrictions of Use of Telephone Equipment",
+      "suitNature": "485 Telephone Consumer Protection Act (TCPA)",
+      "matchedFilings": [
+        {
+          "documentId": "498420057",
+          "docketEntryId": "482637202",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-23",
+          "description": "Class Action Complaint with jury demand against Blink Health Inc. and Blink RX LLC. Filing fee paid $ 405, Receipt number AOHNDC-13950514. Filed by Stark Medical Specialties, Inc.. (Attachments: # 1 Civil Cover Sheet, # 2 Exhibit A - 4/16/2026 fax, # 3 Exhibit B - 5/15/2026 fax, # 4 Exhibit C - 6/16/2026 fax, # 5 Exhibit D - 7/16/2026 fax, # 6 Exhibit E - 8/18/2026 fax, # 7 Summons, # 8 Summons) (Simpkins, Scott) (Entered: 10/23/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/75012282/1/stark-medical-specialties-inc-v-blink-health-inc/"
+        },
+        {
+          "documentId": "498580312",
+          "docketEntryId": "482637202",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-23",
+          "description": "Class Action Complaint with jury demand against Blink Health Inc. and Blink RX LLC. Filing fee paid $ 405, Receipt number AOHNDC-13950514. Filed by Stark Medical Specialties, Inc.. (Attachments: # 1 Civil Cover Sheet, # 2 Exhibit A - 4/16/2026 fax, # 3 Exhibit B - 5/15/2026 fax, # 4 Exhibit C - 6/16/2026 fax, # 5 Exhibit D - 7/16/2026 fax, # 6 Exhibit E - 8/18/2026 fax, # 7 Summons, # 8 Summons) (Simpkins, Scott) (Entered: 10/23/2026)",
+          "documentType": "Attachment",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/75012282/1/1/stark-medical-specialties-inc-v-blink-health-inc/"
+        },
+        {
+          "documentId": "498580313",
+          "docketEntryId": "482637202",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-23",
+          "description": "Class Action Complaint with jury demand against Blink Health Inc. and Blink RX LLC. Filing fee paid $ 405, Receipt number AOHNDC-13950514. Filed by Stark Medical Specialties, Inc.. (Attachments: # 1 Civil Cover Sheet, # 2 Exhibit A - 4/16/2026 fax, # 3 Exhibit B - 5/15/2026 fax, # 4 Exhibit C - 6/16/2026 fax, # 5 Exhibit D - 7/16/2026 fax, # 6 Exhibit E - 8/18/2026 fax, # 7 Summons, # 8 Summons) (Simpkins, Scott) (Entered: 10/23/2026)",
+          "documentType": "Attachment",
+          "availableInRecap": false,
+          "url": "https://www.courtlistener.com/docket/75012282/1/2/stark-medical-specialties-inc-v-blink-health-inc/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/75012282/stark-medical-specialties-inc-v-blink-health-inc/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/75012282/stark-medical-specialties-inc-v-blink-health-inc/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-27T12:20:03.903Z",
+      "lastSeenAt": "2026-10-27T12:20:03.903Z",
+      "lastChangedAt": "2026-10-27T12:20:03.903Z",
+      "freshness": "current"
+    },
+    {
+      "id": "courtlistener-docket-75014894",
+      "sourceId": "courtlistener-recap-class-action-complaints",
+      "sourceRecordId": "75014894",
+      "sourceAuthority": "court_docket_metadata",
+      "kind": "potential_class_case",
+      "proceedingType": "federal_rule_23",
+      "classStatus": "putative",
+      "classStatusBasis": "A complaint-entry description matched the class-action query. Certification and later procedural status have not been verified.",
+      "participationMode": "no_current_action",
+      "windowStatus": "not_applicable",
+      "caseName": "Taylor v. Hard Rock International (USA), Inc.",
+      "docketId": 75014894,
+      "docketNumber": "0:26-cv-62989",
+      "docketUrl": "https://www.courtlistener.com/docket/75014894/taylor-v-hard-rock-international-usa-inc/",
+      "court": "District Court, S.D. Florida",
+      "courtId": "flsd",
+      "dateFiled": "2026-10-23",
+      "dateTerminated": null,
+      "terminationState": "termination_not_reported",
+      "active": true,
+      "activeStatusCaveat": "No termination date was returned; this does not prove the matter remains active.",
+      "cause": "29:1109 Breach of Fiduciary Duties",
+      "suitNature": "791 Labor: E.R.I.S.A.",
+      "matchedFilings": [
+        {
+          "documentId": "498473699",
+          "docketEntryId": "482689823",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-23",
+          "description": "COMPLAINT Class Action against All Defendants. Filing fees $ 405.00 receipt number AFLSDC-20154535, filed by Russell Taylor, Joe Bermudes, Rosemary B Parker. (Attachments: # 1 Civil Cover Sheet, # 2 Summon(s))(Perkins, Alycia) (Entered: 10/23/2026)",
+          "documentType": "PACER Document",
+          "availableInRecap": true,
+          "url": "https://www.courtlistener.com/docket/75014894/1/taylor-v-hard-rock-international-usa-inc/"
+        },
+        {
+          "documentId": "498695103",
+          "docketEntryId": "482689823",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-23",
+          "description": "COMPLAINT Class Action against All Defendants. Filing fees $ 405.00 receipt number AFLSDC-20154535, filed by Russell Taylor, Joe Bermudes, Rosemary B Parker. (Attachments: # 1 Civil Cover Sheet, # 2 Summon(s))(Perkins, Alycia) (Entered: 10/23/2026)",
+          "documentType": "Attachment",
+          "availableInRecap": true,
+          "url": "https://www.courtlistener.com/docket/75014894/1/1/taylor-v-hard-rock-international-usa-inc/"
+        },
+        {
+          "documentId": "498695104",
+          "docketEntryId": "482689823",
+          "documentNumber": 1,
+          "entryDateFiled": "2026-10-23",
+          "description": "COMPLAINT Class Action against All Defendants. Filing fees $ 405.00 receipt number AFLSDC-20154535, filed by Russell Taylor, Joe Bermudes, Rosemary B Parker. (Attachments: # 1 Civil Cover Sheet, # 2 Summon(s))(Perkins, Alycia) (Entered: 10/23/2026)",
+          "documentType": "Attachment",
+          "availableInRecap": true,
+          "url": "https://www.courtlistener.com/docket/75014894/1/2/taylor-v-hard-rock-international-usa-inc/"
+        }
+      ],
+      "action": {
+        "label": "View CourtListener docket",
+        "url": "https://www.courtlistener.com/docket/75014894/taylor-v-hard-rock-international-usa-inc/",
+        "type": "source_only",
+        "allowsParticipation": false
+      },
+      "deadline": null,
+      "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
+      "provenance": {
+        "publisher": "Free Law Project",
+        "product": "CourtListener RECAP Archive",
+        "api": "CourtListener REST API v4 search, type=r",
+        "authority": "court_docket_metadata",
+        "accessMode": "unauthenticated_public_api",
+        "recordUrl": "https://www.courtlistener.com/docket/75014894/taylor-v-hard-rock-international-usa-inc/",
+        "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
+      },
+      "firstSeenAt": "2026-10-27T12:20:03.903Z",
+      "lastSeenAt": "2026-10-27T12:20:03.903Z",
+      "lastChangedAt": "2026-10-27T12:20:03.903Z",
+      "freshness": "current"
+    },
     {
       "id": "courtlistener-docket-75005617",
       "sourceId": "courtlistener-recap-class-action-complaints",
@@ -57,7 +213,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-23T11:45:43.818Z",
-      "lastSeenAt": "2026-10-26T13:11:57.290Z",
+      "lastSeenAt": "2026-10-27T12:20:03.903Z",
       "lastChangedAt": "2026-10-23T11:45:43.818Z",
       "freshness": "current"
     },
@@ -115,7 +271,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-24T11:09:49.809Z",
-      "lastSeenAt": "2026-10-26T13:11:57.290Z",
+      "lastSeenAt": "2026-10-27T12:20:03.903Z",
       "lastChangedAt": "2026-10-24T11:09:49.809Z",
       "freshness": "current"
     },
@@ -173,7 +329,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-22T11:59:49.857Z",
-      "lastSeenAt": "2026-10-26T13:11:57.290Z",
+      "lastSeenAt": "2026-10-27T12:20:03.903Z",
       "lastChangedAt": "2026-10-22T11:59:49.857Z",
       "freshness": "current"
     },
@@ -251,7 +407,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-23T11:45:43.818Z",
-      "lastSeenAt": "2026-10-26T13:11:57.290Z",
+      "lastSeenAt": "2026-10-27T12:20:03.903Z",
       "lastChangedAt": "2026-10-23T11:45:43.818Z",
       "freshness": "current"
     },
@@ -309,7 +465,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-23T11:45:43.818Z",
-      "lastSeenAt": "2026-10-26T13:11:57.290Z",
+      "lastSeenAt": "2026-10-27T12:20:03.903Z",
       "lastChangedAt": "2026-10-23T11:45:43.818Z",
       "freshness": "current"
     },
@@ -367,7 +523,7 @@
         "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/"
       },
       "firstSeenAt": "2026-10-21T11:57:43.670Z",
-      "lastSeenAt": "2026-10-26T13:11:57.290Z",
+      "lastSeenAt": "2026-10-27T12:20:03.903Z",
       "lastChangedAt": "2026-10-21T11:57:43.670Z",
       "freshness": "current"
     },
@@ -452212,14 +452368,14 @@
     "status": "complete",
     "stale": false,
     "mode": "incremental",
-    "checkedAt": "2026-10-26T13:11:57.290Z",
-    "lastSuccessfulAt": "2026-10-26T13:11:57.290Z",
+    "checkedAt": "2026-10-27T12:20:03.903Z",
+    "lastSuccessfulAt": "2026-10-27T12:20:03.903Z",
     "queryCore": "description:(Class Action Complaint)",
-    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-19 TO 2026-10-26]",
-    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-19+TO+2026-10-26%5D",
+    "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-20 TO 2026-10-27]",
+    "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-20+TO+2026-10-27%5D",
     "dateRange": {
-      "startDate": "2026-10-19",
-      "endDate": "2026-10-26"
+      "startDate": "2026-10-20",
+      "endDate": "2026-10-27"
     },
     "resumedFromCursor": false,
     "restartRequested": false,
@@ -452229,11 +452385,11 @@
     "cacheHits": 0,
     "retries": 0,
     "requestBudgetExhausted": false,
-    "rawResultsSeen": 10,
-    "approximateResultCount": 10,
+    "rawResultsSeen": 8,
+    "approximateResultCount": 8,
     "resultCountCaveat": "CourtListener says type=r counts use cardinality aggregation and may vary by about 6% when more than 2,000 results match.",
-    "observedThisRun": 9,
-    "retainedFromPrevious": 6748,
+    "observedThisRun": 8,
+    "retainedFromPrevious": 6751,
     "error": null,
     "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/",
     "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
@@ -452254,17 +452410,17 @@
     },
     "incremental": {
       "status": "complete",
-      "startDate": "2026-10-19",
-      "endDate": "2026-10-26",
-      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-19 TO 2026-10-26]",
-      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-19+TO+2026-10-26%5D",
+      "startDate": "2026-10-20",
+      "endDate": "2026-10-27",
+      "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-20 TO 2026-10-27]",
+      "searchUrl": "https://www.courtlistener.com/api/rest/v4/search/?type=r&order_by=dateFiled+desc&q=description%3A%28Class+Action+Complaint%29+AND+dateFiled%3A%5B2026-10-20+TO+2026-10-27%5D",
       "nextUrl": null,
       "incrementalDays": 7,
       "pagesFetchedTotal": 1,
-      "rawResultsSeenTotal": 10,
-      "acceptedResultsTotal": 9,
-      "lastAttemptAt": "2026-10-26T13:11:57.290Z",
-      "lastCompletedAt": "2026-10-26T13:11:57.290Z"
+      "rawResultsSeenTotal": 8,
+      "acceptedResultsTotal": 8,
+      "lastAttemptAt": "2026-10-27T12:20:03.903Z",
+      "lastCompletedAt": "2026-10-27T12:20:03.903Z"
     }
   }
 }
