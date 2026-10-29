@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-10-28T13:03:17.291Z",
+  "generatedAt": "2026-10-29T13:10:45.819Z",
   "recordCount": 6759,
   "records": [
     {
@@ -452368,7 +452368,7 @@
     "status": "degraded",
     "stale": true,
     "mode": "incremental",
-    "checkedAt": "2026-10-28T13:03:17.291Z",
+    "checkedAt": "2026-10-29T13:10:45.819Z",
     "lastSuccessfulAt": "2026-10-27T12:20:03.903Z",
     "queryCore": "description:(Class Action Complaint)",
     "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-21 TO 2026-10-28]",
@@ -452377,7 +452377,7 @@
       "startDate": "2026-10-21",
       "endDate": "2026-10-28"
     },
-    "resumedFromCursor": false,
+    "resumedFromCursor": true,
     "restartRequested": false,
     "boundedRequestLimit": 10,
     "pagesProcessed": 0,
@@ -452419,7 +452419,7 @@
       "pagesFetchedTotal": 0,
       "rawResultsSeenTotal": 0,
       "acceptedResultsTotal": 0,
-      "lastAttemptAt": "2026-10-28T13:03:17.291Z",
+      "lastAttemptAt": "2026-10-29T13:10:45.819Z",
       "lastCompletedAt": "2026-10-27T12:20:03.903Z"
     }
   }
