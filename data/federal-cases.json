@@ -1,6 +1,6 @@
 {
   "schemaVersion": 1,
-  "generatedAt": "2026-11-13T14:40:40.193Z",
+  "generatedAt": "2026-11-14T13:38:13.661Z",
   "recordCount": 6759,
   "records": [
     {
@@ -452368,7 +452368,7 @@
     "status": "degraded",
     "stale": true,
     "mode": "incremental",
-    "checkedAt": "2026-11-13T14:40:40.193Z",
+    "checkedAt": "2026-11-14T13:38:13.661Z",
     "lastSuccessfulAt": "2026-10-27T12:20:03.903Z",
     "queryCore": "description:(Class Action Complaint)",
     "searchQuery": "description:(Class Action Complaint) AND dateFiled:[2026-10-21 TO 2026-10-28]",
@@ -452390,7 +452390,7 @@
     "resultCountCaveat": "CourtListener says type=r counts use cardinality aggregation and may vary by about 6% when more than 2,000 results match.",
     "observedThisRun": 0,
     "retainedFromPrevious": 6759,
-    "error": "HTTP 405",
+    "error": "HTTP 401",
     "coverageUrl": "https://www.courtlistener.com/help/coverage/recap/",
     "coverageCaveat": "CourtListener's RECAP index is broad but not a complete, continuously current copy of PACER. A missing docket, filing, or termination date does not prove that none exists.",
     "operationalCaveat": "This conservative query finds federal dockets with matching complaint-entry descriptions. It is not a complete census of federal or state class actions, and putative status does not establish certification.",
@@ -452419,7 +452419,7 @@
       "pagesFetchedTotal": 0,
       "rawResultsSeenTotal": 0,
       "acceptedResultsTotal": 0,
-      "lastAttemptAt": "2026-11-13T14:40:40.193Z",
+      "lastAttemptAt": "2026-11-14T13:38:13.661Z",
       "lastCompletedAt": "2026-10-27T12:20:03.903Z"
     }
   }
